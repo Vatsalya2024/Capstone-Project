@@ -85,7 +85,7 @@ namespace Capstone_Project.Services
         {
             try
             {
-                var transactions = await GetTransactionsByAccountNumber(accountNumber);
+                var transactions = await _transactionsRepository.GetAll(); 
                 if (transactions == null)
                 {
                     return 0;
@@ -104,7 +104,7 @@ namespace Capstone_Project.Services
         {
             try
             {
-                var transactions = await GetTransactionsByAccountNumber(accountNumber);
+                var transactions = await _transactionsRepository.GetAll(); ;
                 if (transactions == null)
                 {
                     return 0;

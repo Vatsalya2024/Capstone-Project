@@ -5,11 +5,11 @@ using Capstone_Project.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LoanController : ControllerBase
+public class LoanBanKEmployeeController : ControllerBase
 {
     private readonly IBankEmployeeLoanService _bankEmployeeLoanService;
 
-    public LoanController(IBankEmployeeLoanService bankEmployeeLoanService)
+    public LoanBanKEmployeeController(IBankEmployeeLoanService bankEmployeeLoanService)
     {
         _bankEmployeeLoanService = bankEmployeeLoanService;
     }
@@ -27,19 +27,21 @@ public class LoanController : ControllerBase
             return StatusCode(500, $"Error reviewing loan application: {ex.Message}");
         }
     }
-    //[HttpPost("Decision")]
-    //public async Task<IActionResult> ReviewLoanApplication(int loanId, int customerId)
-    //{
-    //    try
-    //    {
-    //        var result = await _bankEmployeeLoanService.ReviewAndApproveLoan(loanId, customerId);
-    //        return Ok(result);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return StatusCode(500, $"Error reviewing and approving loan: {ex.Message}");
-    //    }
-    //}
+
+    [HttpPost("checkcredit")]
+    public async Task<IActionResult> CheckCredit(long accountId)
+    {
+        try
+        {
+            var result = await _bankEmployeeLoanService.CheckCredit(accountId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error checking credit: {ex.Message}");
+        }
+    }
+
 
     [HttpPost("decision")]
     public async Task<IActionResult> MakeLoanDecision(int loanId, bool approved)
@@ -55,17 +57,17 @@ public class LoanController : ControllerBase
         }
     }
 
-    //[HttpPost("disburse")]
-    //public async Task<IActionResult> DisburseLoan(int loanId)
-    //{
-    //    try
-    //    {
-    //        var result = await _bankEmployeeLoanService.DisburseLoan(loanId);
-    //        return Ok(result);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return StatusCode(500, $"Error disbursing loan: {ex.Message}");
-    //    }
-    //}
+    [HttpPost("disburse")]
+    public async Task<IActionResult> DisburseLoan(int loanId, long AccId)
+    {
+        try
+        {
+            var result = await _bankEmployeeLoanService.DisburseLoan(loanId, AccId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error disbursing loan: {ex.Message}");
+        }
+    }
 }

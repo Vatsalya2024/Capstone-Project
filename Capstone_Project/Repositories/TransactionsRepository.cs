@@ -56,6 +56,7 @@ namespace Capstone_Project.Repositories
         public async Task<List<Transactions>?> GetAll()
         {
             var allTransactions = await _mavericksBankContext.Transactions.ToListAsync();
+
             if (allTransactions.Count == 0)
             {
                 return null;
