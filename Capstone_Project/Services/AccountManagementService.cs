@@ -24,7 +24,7 @@ namespace Capstone_Project.Services
             if (account != null)
             {
 
-                account.Status = "Closed";
+                account.Status = "PendingDeletion";
                 await _accountsRepository.Update(account);
                 return true;
             }
@@ -79,24 +79,39 @@ namespace Capstone_Project.Services
             return filteredTransactions;
         }
 
+        //public async Task<Accounts> OpenNewAccount(AccountOpeningDTO accountOpeningDTO)
+        //{
+        //    // Create a new account instance
+        //    var newAccount = new Accounts
+        //    {
+
+        //        Balance = 0,
+        //        AccountType = accountOpeningDTO.AccountType,
+        //        Status = "Active",
+        //        IFSC = accountOpeningDTO.IFSC,
+        //        CustomerID = accountOpeningDTO.CustomerID
+        //    };
+
+
+        //    var addedAccount = await _accountsRepository.Add(newAccount);
+        //    return addedAccount;
+        //}
+
         public async Task<Accounts> OpenNewAccount(AccountOpeningDTO accountOpeningDTO)
         {
             // Create a new account instance
             var newAccount = new Accounts
             {
-
                 Balance = 0,
                 AccountType = accountOpeningDTO.AccountType,
-                Status = "Active",
+                Status = "Pending", // Set status to Pending
                 IFSC = accountOpeningDTO.IFSC,
                 CustomerID = accountOpeningDTO.CustomerID
             };
 
-
             var addedAccount = await _accountsRepository.Add(newAccount);
             return addedAccount;
         }
-
 
     }
 }

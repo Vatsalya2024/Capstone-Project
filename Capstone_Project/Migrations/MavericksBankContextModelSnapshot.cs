@@ -80,6 +80,40 @@ namespace Capstone_Project.Migrations
                     b.ToTable("Admin");
                 });
 
+            modelBuilder.Entity("Capstone_Project.Models.AvailableLoans", b =>
+                {
+                    b.Property<int>("LoanID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoanID"), 1L, 1);
+
+                    b.Property<double>("Interest")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LoanAmount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LoanType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Tenure")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoanID");
+
+                    b.ToTable("AvailableLoans");
+                });
+
             modelBuilder.Entity("Capstone_Project.Models.BankEmployees", b =>
                 {
                     b.Property<int>("EmployeeID")
@@ -122,11 +156,14 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Beneficiaries", b =>
                 {
-                    b.Property<long>("AccountNumber")
+                    b.Property<int>("BeneficiaryID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AccountNumber"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BeneficiaryID"), 1L, 1);
+
+                    b.Property<long>("AccountNumber")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -139,7 +176,9 @@ namespace Capstone_Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AccountNumber");
+                    b.HasKey("BeneficiaryID");
+
+                    b.HasIndex("AccountNumber");
 
                     b.HasIndex("CustomerID");
 
@@ -326,7 +365,7 @@ namespace Capstone_Project.Migrations
                         .IsRequired();
 
                     b.HasOne("Capstone_Project.Models.Branches", "Branches")
-                        .WithMany("Accounts")
+                        .WithMany()
                         .HasForeignKey("IFSC")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -360,27 +399,35 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Beneficiaries", b =>
                 {
-                    b.HasOne("Capstone_Project.Models.Customers", "Customers")
+                    b.HasOne("Capstone_Project.Models.Accounts", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountNumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Capstone_Project.Models.Customers", "Customer")
                         .WithMany("Beneficiaries")
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Capstone_Project.Models.Branches", "Branches")
+                    b.HasOne("Capstone_Project.Models.Branches", "Branch")
                         .WithMany()
                         .HasForeignKey("IFSC")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Branches");
+                    b.Navigation("Account");
 
-                    b.Navigation("Customers");
+                    b.Navigation("Branch");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Capstone_Project.Models.Branches", b =>
                 {
                     b.HasOne("Capstone_Project.Models.Banks", "Banks")
-                        .WithMany("Branches")
+                        .WithMany()
                         .HasForeignKey("BankID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -430,16 +477,6 @@ namespace Capstone_Project.Migrations
                     b.Navigation("SourceTransaction");
 
                     b.Navigation("Transfers");
-                });
-
-            modelBuilder.Entity("Capstone_Project.Models.Banks", b =>
-                {
-                    b.Navigation("Branches");
-                });
-
-            modelBuilder.Entity("Capstone_Project.Models.Branches", b =>
-                {
-                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("Capstone_Project.Models.Customers", b =>

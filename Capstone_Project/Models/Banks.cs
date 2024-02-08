@@ -8,7 +8,7 @@ namespace Capstone_Project.Models
         [Key]
         public int BankID { get; set; }
         public string BankName { get; set; }
-        public ICollection<Branches> Branches { set; get; }
+        
         public Banks(int bankID, string bankName)
         {
             BankID = bankID;

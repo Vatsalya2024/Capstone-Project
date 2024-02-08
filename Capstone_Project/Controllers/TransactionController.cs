@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
-using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
-using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Logging;
 
 namespace Capstone_Project.Controllers
 {
@@ -16,71 +11,75 @@ namespace Capstone_Project.Controllers
     [Route("api/[controller]")]
     public class TransactionController : ControllerBase
     {
+        private readonly ILogger<TransactionController> _logger;
         private readonly ITransactionService _transactionService;
 
-        public TransactionController(ITransactionService transactionService)
+        public TransactionController(
+            ILogger<TransactionController> logger,
+            ITransactionService transactionService)
         {
+            _logger = logger;
             _transactionService = transactionService;
         }
 
         [HttpPost("deposit")]
-        public async Task<ActionResult<Transactions>> Deposit(DepositDTO depositDTO)
+        public async Task<IActionResult> Deposit(DepositDTO depositDTO)
         {
             try
             {
                 var result = await _transactionService.Deposit(depositDTO);
-                if (result)
-                    return Ok("Deposit successful.");
-                else
-                    return BadRequest("Deposit failed.");
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError(ex, "Argument exception occurred during deposit.");
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error occurred during deposit.");
+                return StatusCode(500, "Internal server error occurred.");
             }
         }
 
         [HttpPost("withdraw")]
-        public async Task<ActionResult<Transactions>> Withdraw(WithdrawalDTO withdrawalDTO)
+        public async Task<IActionResult> Withdraw(WithdrawalDTO withdrawalDTO)
         {
             try
             {
                 var result = await _transactionService.Withdraw(withdrawalDTO);
-                if (result)
-                    return Ok("Withdrawal successful.");
-                else
-                    return BadRequest("Withdrawal failed.");
+                return Ok(result);
             }
-            catch (NotSufficientBalanceException ex)
+            catch (ArgumentException ex)
             {
+                _logger.LogError(ex, "Argument exception occurred during withdrawal.");
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error occurred during withdrawal.");
+                return StatusCode(500, "Internal server error occurred.");
             }
         }
 
         [HttpPost("transfer")]
-        public async Task<ActionResult<Transactions>> Transfer(TransferDTO transferDTO)
+        public async Task<IActionResult> Transfer(TransferDTO transferDTO)
         {
             try
             {
                 var result = await _transactionService.Transfer(transferDTO);
-                if (result)
-                    return Ok("Transfer successful.");
-                else
-                    return BadRequest("Transfer failed.");
+                return Ok(result);
             }
-            catch (NotSufficientBalanceException ex)
+            catch (ArgumentException ex)
             {
+                _logger.LogError(ex, "Argument exception occurred during transfer.");
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                _logger.LogError(ex, "Error occurred during transfer.");
+                return StatusCode(500, "Internal server error occurred.");
             }
         }
     }
 }
-

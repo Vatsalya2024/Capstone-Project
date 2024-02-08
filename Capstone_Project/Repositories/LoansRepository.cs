@@ -42,7 +42,10 @@ namespace Capstone_Project.Repositories
 
         public async Task<Loans?> Get(int key)
         {
-            var foundedLoan = await _mavericksBankContext.Loans.FirstOrDefaultAsync(loan => loan.LoanID == key);
+            var foundedLoan = await _mavericksBankContext.Loans
+                 .Include(l => l.Customers)
+                .ThenInclude(c => c.Accounts)
+                .FirstOrDefaultAsync(loan => loan.LoanID == key);
             if (foundedLoan == null)
             {
                 return null;

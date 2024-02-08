@@ -1,135 +1,169 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace Capstone_Project.Services
 {
     public class TransactionService : ITransactionService
     {
+        private readonly ILogger<TransactionService> _logger;
         private readonly IRepository<int, Transactions> _transactionsRepository;
         private readonly IRepository<long, Accounts> _accountsRepository;
 
-        public TransactionService(IRepository<int, Transactions> transactionsRepository, IRepository<long, Accounts> accountsRepository)
+        public TransactionService(
+            ILogger<TransactionService> logger,
+            IRepository<int, Transactions> transactionsRepository,
+            IRepository<long, Accounts> accountsRepository)
         {
+            _logger = logger;
             _transactionsRepository = transactionsRepository;
             _accountsRepository = accountsRepository;
         }
 
         public async Task<bool> Deposit(DepositDTO depositDTO)
         {
-            if (depositDTO.Amount <= 0)
-                throw new ArgumentException("Deposit amount should be greater than zero.");
-
-            var transaction = new Transactions
+            try
             {
-                Amount = depositDTO.Amount,
-                Description = "Deposit",
-                TransactionType = "Credit",
-                Status = "Completed",
-                SourceAccountNumber = depositDTO.AccountNumber,
-            };
+                var account = await _accountsRepository.Get(depositDTO.AccountNumber);
+                if (account != null && account.Status == "Active")
+                {
+                    if (depositDTO.Amount <= 0)
+                        throw new ArgumentException("Deposit amount should be greater than zero.");
 
-            await _transactionsRepository.Add(transaction);
+                    var transaction = new Transactions
+                    {
+                        Amount = depositDTO.Amount,
+                        Description = "Deposit",
+                        TransactionType = "Credit",
+                        Status = "Completed",
+                        SourceAccountNumber = depositDTO.AccountNumber,
+                    };
 
-            // Update account balance
-            var account = await _accountsRepository.Get(depositDTO.AccountNumber);
-            if (account != null)
-            {
-                account.Balance += depositDTO.Amount;
-                await _accountsRepository.Update(account);
+                    await _transactionsRepository.Add(transaction);
+
+                    // Update account balance
+                    account.Balance += depositDTO.Amount;
+                    await _accountsRepository.Update(account);
+
+                    return true;
+                }
+                else
+                {
+                    return false; // Account not found or inactive
+                }
             }
-
-            return true;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while processing deposit.");
+                throw;
+            }
         }
 
         public async Task<bool> Withdraw(WithdrawalDTO withdrawalDTO)
         {
-            if (withdrawalDTO.Amount <= 0)
-                throw new ArgumentException("Withdrawal amount should be greater than zero.");
-
-            var account = await _accountsRepository.Get(withdrawalDTO.AccountNumber);
-            if (account != null)
+            try
             {
-                if (account.Balance < withdrawalDTO.Amount)
-                    throw new NotSufficientBalanceException();
-
-                var transaction = new Transactions
+                var account = await _accountsRepository.Get(withdrawalDTO.AccountNumber);
+                if (account != null && account.Status == "Active")
                 {
-                    Amount = withdrawalDTO.Amount,
-                    Description = "Withdrawal",
-                    TransactionType = "Debit",
-                    Status = "Completed",
-                    SourceAccountNumber = withdrawalDTO.AccountNumber,
-                };
+                    if (withdrawalDTO.Amount <= 0)
+                        throw new ArgumentException("Withdrawal amount should be greater than zero.");
 
-                await _transactionsRepository.Add(transaction);
+                    if (account.Balance < withdrawalDTO.Amount)
+                        throw new NotSufficientBalanceException();
 
-                // Update account balance
-                account.Balance -= withdrawalDTO.Amount;
-                await _accountsRepository.Update(account);
+                    var transaction = new Transactions
+                    {
+                        Amount = withdrawalDTO.Amount,
+                        Description = "Withdrawal",
+                        TransactionType = "Debit",
+                        Status = "Completed",
+                        SourceAccountNumber = withdrawalDTO.AccountNumber,
+                    };
 
-                return true;
+                    await _transactionsRepository.Add(transaction);
+
+                    // Update account balance
+                    account.Balance -= withdrawalDTO.Amount;
+                    await _accountsRepository.Update(account);
+
+                    return true;
+                }
+                else
+                {
+                    return false; // Account not found or inactive
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return false; // Account not found
+                _logger.LogError(ex, "Error occurred while processing withdrawal.");
+                throw;
             }
         }
 
         public async Task<bool> Transfer(TransferDTO transferDTO)
         {
-            if (transferDTO.Amount <= 0)
-                throw new ArgumentException("Transfer amount should be greater than zero.");
-
-            var sourceAccount = await _accountsRepository.Get(transferDTO.SourceAccountNumber);
-            if (sourceAccount != null)
+            try
             {
-                if (sourceAccount.Balance < transferDTO.Amount)
-                    throw new NotSufficientBalanceException();
-
-                var sourceTransaction = new Transactions
+                var sourceAccount = await _accountsRepository.Get(transferDTO.SourceAccountNumber);
+                if (sourceAccount != null && sourceAccount.Status == "Active")
                 {
-                    Amount = transferDTO.Amount,
-                    Description = "Transfer to " + transferDTO.DestinationAccountNumber,
-                    TransactionType = "Debit",
-                    Status = "Completed",
-                    SourceAccountNumber = transferDTO.SourceAccountNumber,
-                    DestinationAccountNumber = transferDTO.DestinationAccountNumber
-                };
+                    if (transferDTO.Amount <= 0)
+                        throw new ArgumentException("Transfer amount should be greater than zero.");
 
-                var destinationTransaction = new Transactions
-                {
-                    Amount = transferDTO.Amount,
-                    Description = "Transfer from " + transferDTO.SourceAccountNumber,
-                    TransactionType = "Credit",
-                    Status = "Completed",
-                    SourceAccountNumber = transferDTO.SourceAccountNumber,
-                    DestinationAccountNumber = transferDTO.DestinationAccountNumber
-                };
+                    if (sourceAccount.Balance < transferDTO.Amount)
+                        throw new NotSufficientBalanceException();
 
-                await _transactionsRepository.Add(sourceTransaction);
-                await _transactionsRepository.Add(destinationTransaction);
+                    var sourceTransaction = new Transactions
+                    {
+                        Amount = transferDTO.Amount,
+                        Description = "Transfer to " + transferDTO.DestinationAccountNumber,
+                        TransactionType = "Debit",
+                        Status = "Completed",
+                        SourceAccountNumber = transferDTO.SourceAccountNumber,
+                        DestinationAccountNumber = transferDTO.DestinationAccountNumber
+                    };
 
-                // Update source account balance
-                sourceAccount.Balance -= transferDTO.Amount;
-                await _accountsRepository.Update(sourceAccount);
+                    var destinationTransaction = new Transactions
+                    {
+                        Amount = transferDTO.Amount,
+                        Description = "Transfer from " + transferDTO.SourceAccountNumber,
+                        TransactionType = "Credit",
+                        Status = "Completed",
+                        SourceAccountNumber = transferDTO.SourceAccountNumber,
+                        DestinationAccountNumber = transferDTO.DestinationAccountNumber
+                    };
 
-                // Update destination account balance
-                var destinationAccount = await _accountsRepository.Get(transferDTO.DestinationAccountNumber);
-                if (destinationAccount != null)
-                {
-                    destinationAccount.Balance += transferDTO.Amount;
-                    await _accountsRepository.Update(destinationAccount);
+                    await _transactionsRepository.Add(sourceTransaction);
+                    await _transactionsRepository.Add(destinationTransaction);
+
+                    // Update source account balance
+                    sourceAccount.Balance -= transferDTO.Amount;
+                    await _accountsRepository.Update(sourceAccount);
+
+                    // Update destination account balance
+                    var destinationAccount = await _accountsRepository.Get(transferDTO.DestinationAccountNumber);
+                    if (destinationAccount != null && destinationAccount.Status == "Active")
+                    {
+                        destinationAccount.Balance += transferDTO.Amount;
+                        await _accountsRepository.Update(destinationAccount);
+                    }
+
+                    return true;
                 }
-
-                return true;
+                else
+                {
+                    return false; // Source account not found or inactive
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return false; // Source account not found
+                _logger.LogError(ex, "Error occurred while processing transfer.");
+                throw;
             }
         }
     }
-
 }

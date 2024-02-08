@@ -13,7 +13,7 @@ namespace Capstone_Project.Models
         [ForeignKey("BankID")]
         public Banks? Banks { get; set; }
 
-        public ICollection<Accounts> Accounts { set; get; }
+        
         public Branches(string iFSCNumber, string branchName, int bankID)
         {
             IFSCNumber = iFSCNumber;

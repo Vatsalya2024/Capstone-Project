@@ -1,33 +1,38 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
+ 
 
 namespace Capstone_Project.Models
 {
     public class Beneficiaries : IEquatable<Beneficiaries>
     {
         [Key]
+        public int BeneficiaryID { get; set; } // New primary key for Beneficiary table
+
         public long AccountNumber { get; set; }
         public string Name { get; set; }
         public string IFSC { get; set; }
+
         [ForeignKey("IFSC")]
-        public Branches? Branches { get; set; }
+        public Branches Branch { get; set; }
+
         public int CustomerID { get; set; }
+
         [ForeignKey("CustomerID")]
-        public Customers? Customers { get; set; }
+        public Customers Customer { get; set; }
+
+        [ForeignKey("AccountNumber")] // Foreign key to the Account table
+        public Accounts Account { get; set; }
 
 
-        public Beneficiaries(long accountNumber, string name, string iFSC, int customerID)
-        {
-            AccountNumber = accountNumber;
-            Name = name;
-            IFSC = iFSC;
-            CustomerID = customerID;
-        }
+        
+
 
         public bool Equals(Beneficiaries? other)
         {
-            return AccountNumber == other.AccountNumber;
+            return BeneficiaryID == other.BeneficiaryID;
         }
     }
 }

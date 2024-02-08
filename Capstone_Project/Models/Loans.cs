@@ -17,6 +17,10 @@ namespace Capstone_Project.Models
         public int CustomerID { get; set; }
         [ForeignKey("CustomerID")]
         public Customers? Customers { get; set; }
+        public Loans()
+        {
+
+        }
 
         public Loans(int loanID, double loanAmount, string loanType, double interest, int tenure, string purpose, string status, int customerID)
         {

@@ -1,31 +1,33 @@
-﻿using System;
-using Capstone_Project.Context;
+﻿using Capstone_Project.Context;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Capstone_Project.Repositories
 {
-    public class BeneficiariesRepository : IRepository<long, Beneficiaries>
+    public class BeneficiariesRepository : IRepository<int, Beneficiaries>
     {
         private readonly MavericksBankContext _mavericksBankContext;
-        private readonly ILogger<BranchesRepository> _loggerBranchesRepository;
+        private readonly ILogger<BeneficiariesRepository> _logger;
 
-        public BeneficiariesRepository(MavericksBankContext mavericksBankContext, ILogger<BranchesRepository> loggerBranchesRepository)
+        public BeneficiariesRepository(MavericksBankContext mavericksBankContext, ILogger<BeneficiariesRepository> logger)
         {
             _mavericksBankContext = mavericksBankContext;
-            _loggerBranchesRepository = loggerBranchesRepository;
+            _logger = logger;
         }
 
         public async Task<Beneficiaries> Add(Beneficiaries item)
         {
             _mavericksBankContext.Beneficiaries.Add(item);
             await _mavericksBankContext.SaveChangesAsync();
-            _loggerBranchesRepository.LogInformation($"Added New Beneficiary : {item.AccountNumber}");
+            _logger.LogInformation($"Added New Beneficiary : {item.AccountNumber}");
             return item;
         }
 
-        public async Task<Beneficiaries?> Delete(long key)
+        public async Task<Beneficiaries?> Delete(int key)
         {
             var foundedBeneficiary = await Get(key);
             if (foundedBeneficiary == null)
@@ -40,38 +42,23 @@ namespace Capstone_Project.Repositories
             }
         }
 
-        public async Task<Beneficiaries?> Get(long key)
+        public async Task<Beneficiaries?> Get(int key)
         {
-            var foundedBeneficiary = await _mavericksBankContext.Beneficiaries.FirstOrDefaultAsync(beneficiary => beneficiary.AccountNumber == key);
-            if (foundedBeneficiary == null)
-            {
-                return null;
-            }
-            else
-            {
-                return foundedBeneficiary;
-            }
+            var foundedBeneficiary = await _mavericksBankContext.Beneficiaries.FirstOrDefaultAsync(beneficiary => beneficiary.BeneficiaryID == key);
+            return foundedBeneficiary;
         }
 
         public async Task<List<Beneficiaries>?> GetAll()
         {
             var allBeneficiaries = await _mavericksBankContext.Beneficiaries.ToListAsync();
-            if (allBeneficiaries.Count == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return allBeneficiaries;
-            }
+            return allBeneficiaries.Count > 0 ? allBeneficiaries : null;
         }
 
         public async Task<Beneficiaries> Update(Beneficiaries item)
         {
-            _mavericksBankContext.Entry<Beneficiaries>(item).State = EntityState.Modified;
+            _mavericksBankContext.Entry(item).State = EntityState.Modified;
             await _mavericksBankContext.SaveChangesAsync();
             return item;
         }
     }
 }
-

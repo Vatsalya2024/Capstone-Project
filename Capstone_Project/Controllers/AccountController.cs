@@ -47,7 +47,7 @@ namespace Capstone_Project.Controllers
                 var result = await _accountManagementService.CloseAccount(accountNumber);
                 if (result)
                 {
-                    return Ok("Account closed successfully.");
+                    return Ok("Account Closing Request Submitted.");
                 }
                 else
                 {

@@ -79,10 +79,13 @@ public class Program
         builder.Services.AddScoped<IRepository<int, Banks>, BanksRepository>();
         builder.Services.AddScoped<IRepository<string, Branches>, BranchesRepository>();
         builder.Services.AddScoped<IRepository<long, Accounts>, AccountsRepository>();
-        builder.Services.AddScoped<IRepository<long, Beneficiaries>, BeneficiariesRepository>();
+        builder.Services.AddScoped<IRepository<int, Beneficiaries>, BeneficiariesRepository>();
         builder.Services.AddScoped<IRepository<int, Loans>, LoansRepository>();
         builder.Services.AddScoped<IRepository<int, Transactions>, TransactionsRepository>();
+        builder.Services.AddScoped<IRepository<int,AvailableLoans>,AvailableLoansRepository>();
 
+        builder.Services.AddScoped<IAdminAvailableLoansService, AdminAvailableLoansService>();
+        builder.Services.AddScoped<IAvailableLoansUserService, AvailableLoansUserService>();
         builder.Services.AddScoped<IBanksAdminService, BanksService>();
         builder.Services.AddScoped<IBranchesAdminService, BranchesService>();
 
@@ -91,9 +94,13 @@ public class Program
         builder.Services.AddScoped<ICustomerAdminService, CustomerServices>();
 
 
+        builder.Services.AddScoped<IBankEmployeeTransactionService, BankEmployeeTransactionService>();
+        builder.Services.AddScoped<IBankEmployeeAccountService, BankEmployeeAccountService>();
+        builder.Services.AddScoped<IBankEmployeeLoanService, BankEmployeeLoanService>();
+        builder.Services.AddScoped<ILoanCustomerService, LoanCustomerService>();
         builder.Services.AddScoped<ITransactionService, TransactionService>();
         builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();
-
+        builder.Services.AddScoped<IBeneficiaryService, BeneficiaryService>();
         var app = builder.Build();
 
 
