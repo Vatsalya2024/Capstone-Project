@@ -347,6 +347,10 @@ namespace Capstone_Project.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

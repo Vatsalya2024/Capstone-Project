@@ -93,14 +93,14 @@ public class Program
         builder.Services.AddScoped<ICustomerLoginService, CustomerServices>();
         builder.Services.AddScoped<ICustomerAdminService, CustomerServices>();
 
-
+        builder.Services.AddScoped<IAdministratorCustomerManagementService, AdministratorCustomerManagementService>();
         builder.Services.AddScoped<IBankEmployeeTransactionService, BankEmployeeTransactionService>();
         builder.Services.AddScoped<IBankEmployeeAccountService, BankEmployeeAccountService>();
         builder.Services.AddScoped<IBankEmployeeLoanService, BankEmployeeLoanService>();
         builder.Services.AddScoped<ILoanCustomerService, LoanCustomerService>();
         builder.Services.AddScoped<ITransactionService, TransactionService>();
         builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();
-        builder.Services.AddScoped<IBeneficiaryService, BeneficiaryService>();
+        builder.Services.AddScoped<ICustomerBeneficiaryService, CustomerBeneficiaryService>();
         var app = builder.Build();
 
 

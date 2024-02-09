@@ -47,7 +47,8 @@ namespace Capstone_Project.Migrations
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Key = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Key = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

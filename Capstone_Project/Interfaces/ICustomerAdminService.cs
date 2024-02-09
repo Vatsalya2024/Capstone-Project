@@ -10,6 +10,7 @@ namespace Capstone_Project.Interfaces
         public Task<Customers> ChangeCustomerName(int id, string name);
         public Task<Customers> ChangeCustomerAddress(int id, string address);
         public Task<Customers> DeleteCustomers(int id);
+        Task<bool> UpdateCustomerPassword(string email, string newPassword);
     }
 }
 

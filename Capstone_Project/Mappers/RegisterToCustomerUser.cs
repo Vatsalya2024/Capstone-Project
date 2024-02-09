@@ -14,6 +14,7 @@ namespace Capstone_Project.Mappers
             validation = new Validation();
             validation.Email = register.Email;
             validation.UserType = register.UserType;
+            validation.Status = "Active";
             GetPassword(register.Password);
         }
 

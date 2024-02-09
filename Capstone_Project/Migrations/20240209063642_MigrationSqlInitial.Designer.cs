@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone_Project.Migrations
 {
     [DbContext(typeof(MavericksBankContext))]
-    [Migration("20240208083703_MigrationSqlInitial")]
+    [Migration("20240209063642_MigrationSqlInitial")]
     partial class MigrationSqlInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -348,6 +348,10 @@ namespace Capstone_Project.Migrations
                     b.Property<byte[]>("Password")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserType")
                         .IsRequired()

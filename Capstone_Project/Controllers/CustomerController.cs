@@ -29,6 +29,28 @@ namespace Capstone_Project.Controllers
             _customerAdminService = customerAdminService;
         }
 
+        //[HttpPost("Register")]
+        //public async Task<ActionResult<LoginUserDTO>> Register(RegisterCustomerDTO user)
+        //{
+        //    var result = await _customerLoginService.Register(user);
+        //    return Ok(result);
+        //}
+
+        //[HttpPost("Login")]
+        //public async Task<ActionResult<LoginUserDTO>> Login(LoginUserDTO user)
+        //{
+        //    try
+        //    {
+        //        var result = await _customerLoginService.Login(user);
+        //        return Ok(result);
+        //    }
+        //    catch (InvalidUserException iuse)
+        //    {
+        //        _logger.LogError(iuse.Message);
+        //        return Unauthorized("Invalid username or password");
+        //    }
+        //}
+
         [HttpPost("Register")]
         public async Task<ActionResult<LoginUserDTO>> Register(RegisterCustomerDTO user)
         {
@@ -50,6 +72,7 @@ namespace Capstone_Project.Controllers
                 return Unauthorized("Invalid username or password");
             }
         }
+
 
         [Authorize]
         [HttpGet("GetAllCustomer")]
@@ -106,7 +129,29 @@ namespace Capstone_Project.Controllers
                 return NotFound("Customer not found");
             }
         }
+        [HttpPut("UpdatePassword")]
+        public async Task<IActionResult> UpdatePassword(UpdateCustomerPasswordDTO updatePasswordDTO)
+        {
+            try
+            {
+                // Call the service method to update the customer's password
+                bool passwordUpdated = await _customerAdminService.UpdateCustomerPassword(updatePasswordDTO.Email, updatePasswordDTO.NewPassword);
 
+                if (passwordUpdated)
+                {
+                    return Ok("Password updated successfully");
+                }
+                else
+                {
+                    return NotFound("Customer not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
 
