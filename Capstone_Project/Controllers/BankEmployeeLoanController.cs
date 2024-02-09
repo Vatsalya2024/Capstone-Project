@@ -5,11 +5,11 @@ using Capstone_Project.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LoanBanKEmployeeController : ControllerBase
+public class BankEmployeeLoanController : ControllerBase
 {
     private readonly IBankEmployeeLoanService _bankEmployeeLoanService;
 
-    public LoanBanKEmployeeController(IBankEmployeeLoanService bankEmployeeLoanService)
+    public BankEmployeeLoanController(IBankEmployeeLoanService bankEmployeeLoanService)
     {
         _bankEmployeeLoanService = bankEmployeeLoanService;
     }

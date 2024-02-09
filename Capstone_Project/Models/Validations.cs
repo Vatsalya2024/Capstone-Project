@@ -15,12 +15,14 @@ namespace Capstone_Project.Models
 
 
         [Key]
-        public string Email { get; set; }
+        public string Email { get; set; } 
         public byte[] Password { get; set; }
-        public string UserType { get; set; }
+        public string UserType { get; set; } 
         public byte[] Key { get; set; }
-        public string Status { get; set; } // Add this field
-        public Customers Customers { get; set; }
+        public string Status { get; set; } 
+        public Customers? Customers { get; set; }
+        public BankEmployees? BankEmployees { get; set; }
+        public Admin Admin { get; set; }
 
 
 

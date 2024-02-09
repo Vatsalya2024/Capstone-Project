@@ -9,13 +9,13 @@ namespace Capstone_Project.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TransactionController : ControllerBase
+    public class CustomerTransactionController : ControllerBase
     {
-        private readonly ILogger<TransactionController> _logger;
+        private readonly ILogger<CustomerTransactionController> _logger;
         private readonly ITransactionService _transactionService;
 
-        public TransactionController(
-            ILogger<TransactionController> logger,
+        public CustomerTransactionController(
+            ILogger<CustomerTransactionController> logger,
             ITransactionService transactionService)
         {
             _logger = logger;

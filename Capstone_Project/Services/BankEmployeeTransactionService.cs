@@ -7,8 +7,8 @@ namespace Capstone_Project.Services
 	public class BankEmployeeTransactionService:IBankEmployeeTransactionService
 	{
         private readonly IRepository<int, Transactions> _transactionsRepository;
-        private readonly ILogger<TransactionService> _logger;
-        public BankEmployeeTransactionService(IRepository<int, Transactions> transactionsRepository, ILogger<TransactionService> logger)
+        private readonly ILogger<CustomerTransactionService> _logger;
+        public BankEmployeeTransactionService(IRepository<int, Transactions> transactionsRepository, ILogger<CustomerTransactionService> logger)
 		{
             _transactionsRepository = transactionsRepository;
             _logger = logger;

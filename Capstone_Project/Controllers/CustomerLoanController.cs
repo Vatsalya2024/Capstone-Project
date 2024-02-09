@@ -11,12 +11,12 @@ namespace Capstone_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoanController : ControllerBase
+    public class CustomerLoanController : ControllerBase
     {
         private readonly ILoanCustomerService _loanCustomerService;
-        private readonly ILogger<LoanController> _logger;
+        private readonly ILogger<CustomerLoanController> _logger;
 
-        public LoanController(ILoanCustomerService loanCustomerService, ILogger<LoanController> logger)
+        public CustomerLoanController(ILoanCustomerService loanCustomerService, ILogger<CustomerLoanController> logger)
         {
             _loanCustomerService = loanCustomerService;
             _logger = logger;

@@ -6,7 +6,7 @@ namespace Capstone_Project.Models.DTOs
         
             public double InboundAmount { get; set; }
             public double OutboundAmount { get; set; }
-        public string CreditScore { get; set; }
+        public string CreditScore { get; set; } = string.Empty;
 
     }
 }

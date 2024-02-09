@@ -1,0 +1,57 @@
+﻿using Capstone_Project.Interfaces;
+using Capstone_Project.Models.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+
+namespace Capstone_Project.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AdminLoginController : ControllerBase
+    {
+        private readonly IAdminLoginService _adminLoginService;
+        private readonly ILogger<AdminLoginController> _logger;
+
+        public AdminLoginController(IAdminLoginService adminLoginService, ILogger<AdminLoginController> logger)
+        {
+            _adminLoginService = adminLoginService;
+            _logger = logger;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUserDTO loginUserDTO)
+        {
+            try
+            {
+                var user = await _adminLoginService.Login(loginUserDTO);
+                return Ok(user);
+            }
+            catch (InvalidUserException)
+            {
+                return Unauthorized("Invalid email or password.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error logging in: {ex.Message}");
+                return StatusCode(500, "An error occurred while processing the login request.");
+            }
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterAdminDTO registerAdminDTO)
+        {
+            try
+            {
+                var user = await _adminLoginService.Register(registerAdminDTO);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error registering user: {ex.Message}");
+                return StatusCode(500, "An error occurred while processing the registration request.");
+            }
+        }
+    }
+}

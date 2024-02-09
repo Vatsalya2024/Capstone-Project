@@ -13,12 +13,12 @@ namespace Capstone_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class CustomerAccountController : ControllerBase
     {
         private readonly IAccountManagementService _accountManagementService;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger<CustomerAccountController> _logger;
 
-        public AccountController(IAccountManagementService accountManagementService, ILogger<AccountController> logger)
+        public CustomerAccountController(IAccountManagementService accountManagementService, ILogger<CustomerAccountController> logger)
         {
             _accountManagementService = accountManagementService;
             _logger = logger;

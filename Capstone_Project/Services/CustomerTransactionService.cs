@@ -7,14 +7,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Capstone_Project.Services
 {
-    public class TransactionService : ITransactionService
+    public class CustomerTransactionService : ITransactionService
     {
-        private readonly ILogger<TransactionService> _logger;
+        private readonly ILogger<CustomerTransactionService> _logger;
         private readonly IRepository<int, Transactions> _transactionsRepository;
         private readonly IRepository<long, Accounts> _accountsRepository;
 
-        public TransactionService(
-            ILogger<TransactionService> logger,
+        public CustomerTransactionService(
+            ILogger<CustomerTransactionService> logger,
             IRepository<int, Transactions> transactionsRepository,
             IRepository<long, Accounts> accountsRepository)
         {

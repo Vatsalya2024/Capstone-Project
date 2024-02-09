@@ -73,9 +73,14 @@ namespace Capstone_Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("AdminID");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Admin");
                 });
@@ -130,9 +135,18 @@ namespace Capstone_Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EmployeeID");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("BankEmployees");
                 });
@@ -382,8 +396,8 @@ namespace Capstone_Project.Migrations
             modelBuilder.Entity("Capstone_Project.Models.Admin", b =>
                 {
                     b.HasOne("Capstone_Project.Models.Validation", "Validation")
-                        .WithMany()
-                        .HasForeignKey("Email")
+                        .WithOne("Admin")
+                        .HasForeignKey("Capstone_Project.Models.Admin", "Email")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -393,8 +407,8 @@ namespace Capstone_Project.Migrations
             modelBuilder.Entity("Capstone_Project.Models.BankEmployees", b =>
                 {
                     b.HasOne("Capstone_Project.Models.Validation", "Validation")
-                        .WithMany()
-                        .HasForeignKey("Email")
+                        .WithOne("BankEmployees")
+                        .HasForeignKey("Capstone_Project.Models.BankEmployees", "Email")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -494,6 +508,12 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Validation", b =>
                 {
+                    b.Navigation("Admin")
+                        .IsRequired();
+
+                    b.Navigation("BankEmployees")
+                        .IsRequired();
+
                     b.Navigation("Customers")
                         .IsRequired();
                 });

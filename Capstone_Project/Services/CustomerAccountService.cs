@@ -5,12 +5,12 @@ using Capstone_Project.Models.DTOs;
 
 namespace Capstone_Project.Services
 {
-    public class AccountManagementService : IAccountManagementService
+    public class CustomerAccountService : IAccountManagementService
     {
         private readonly IRepository<long, Accounts> _accountsRepository;
         private readonly IRepository<int, Transactions> _transactionsRepository;
 
-        public AccountManagementService(IRepository<long, Accounts> accountsRepository, IRepository<int, Transactions> transactionsRepository)
+        public CustomerAccountService(IRepository<long, Accounts> accountsRepository, IRepository<int, Transactions> transactionsRepository)
         {
             _accountsRepository = accountsRepository;
             _transactionsRepository = transactionsRepository;

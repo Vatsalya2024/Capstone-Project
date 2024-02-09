@@ -2,12 +2,12 @@
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 
-public class LoanCustomerService : ILoanCustomerService
+public class CustomerLoanService : ILoanCustomerService
 {
     private readonly IRepository<int, Loans> _loansRepository;
-    private readonly ILogger<LoanCustomerService> _logger;
+    private readonly ILogger<CustomerLoanService> _logger;
 
-    public LoanCustomerService(IRepository<int, Loans> loansRepository, ILogger<LoanCustomerService> logger)
+    public CustomerLoanService(IRepository<int, Loans> loansRepository, ILogger<CustomerLoanService> logger)
     {
         _loansRepository = loansRepository;
         _logger = logger;
