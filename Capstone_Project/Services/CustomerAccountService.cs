@@ -1,4 +1,5 @@
 ﻿using System;
+using Capstone_Project.Controllers;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
@@ -9,93 +10,88 @@ namespace Capstone_Project.Services
     {
         private readonly IRepository<long, Accounts> _accountsRepository;
         private readonly IRepository<int, Transactions> _transactionsRepository;
+        private readonly ILogger<CustomerAccountService> _logger;
 
-        public CustomerAccountService(IRepository<long, Accounts> accountsRepository, IRepository<int, Transactions> transactionsRepository)
+        public CustomerAccountService(IRepository<long, Accounts> accountsRepository, IRepository<int, Transactions> transactionsRepository,ILogger<CustomerAccountService>  logger)
         {
             _accountsRepository = accountsRepository;
             _transactionsRepository = transactionsRepository;
+            _logger = logger;
         }
 
 
-        public async Task<bool> CloseAccount(long accountNumber)
+        public async Task<string> CloseAccount(long accountNumber)
         {
-            var account = await _accountsRepository.Get(accountNumber);
-
-            if (account != null)
+            try
             {
+                var account = await _accountsRepository.Get(accountNumber);
 
-                account.Status = "PendingDeletion";
-                await _accountsRepository.Update(account);
-                return true;
+                if (account != null)
+                {
+                    account.Status = "PendingDeletion";
+                    await _accountsRepository.Update(account);
+                    return $"Account with number {accountNumber} is scheduled for deletion.";
+                }
+                else
+                {
+                    throw new NoAccountsFoundException($"No account found with number: {accountNumber}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                _logger.LogError(ex, $"Error closing account with number: {accountNumber}");
+                throw;
             }
         }
+
 
         public async Task<Accounts> GetAccountDetails(long accountNumber)
         {
-            var account = await _accountsRepository.Get(accountNumber);
-            return account;
+            try
+            {
+                var account = await _accountsRepository.Get(accountNumber);
+
+                if (account != null)
+                {
+                    return account;
+                }
+                else
+                {
+                    throw new NoAccountsFoundException($"No account found with number: {accountNumber}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
+                throw;
+            }
         }
 
         public async Task<List<Accounts>> GetAllAccountsByCustomerId(int customerId)
         {
-            var accounts = await _accountsRepository.GetAll();
-            var customerAccounts = accounts.FindAll(a => a.CustomerID == customerId);
-            return customerAccounts;
+            try
+            {
+                var accounts = await _accountsRepository.GetAll();
+                var customerAccounts = accounts.FindAll(a => a.CustomerID == customerId);
+
+                if (customerAccounts.Count > 0)
+                {
+                    return customerAccounts;
+                }
+                else
+                {
+                    throw new NoCustomersFoundException($"No customer found with ID: {customerId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting accounts for customer with ID: {customerId}");
+                throw;
+            }
         }
 
-        public async Task<List<Transactions>> GetLast10Transactions(long accountNumber)
-        {
-            var transactions = await _transactionsRepository.GetAll();
-            var last10Transactions = transactions
-                .Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber)
-                .OrderByDescending(t => t.TransactionDate)
-                .Take(10)
-                .ToList();
-            return last10Transactions;
-        }
 
-        public async Task<List<Transactions>> GetLastMonthTransactions(long accountNumber)
-        {
-            var lastMonth = DateTime.Now.AddMonths(-1);
-            var transactions = await _transactionsRepository.GetAll();
-            var lastMonthTransactions = transactions
-                .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
-                            t.TransactionDate >= lastMonth)
-                .ToList();
-            return lastMonthTransactions;
-        }
-
-        public async Task<List<Transactions>> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate)
-        {
-            var transactions = await _transactionsRepository.GetAll();
-            var filteredTransactions = transactions
-                .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
-                            t.TransactionDate >= startDate && t.TransactionDate <= endDate)
-                .ToList();
-            return filteredTransactions;
-        }
-
-        //public async Task<Accounts> OpenNewAccount(AccountOpeningDTO accountOpeningDTO)
-        //{
-        //    // Create a new account instance
-        //    var newAccount = new Accounts
-        //    {
-
-        //        Balance = 0,
-        //        AccountType = accountOpeningDTO.AccountType,
-        //        Status = "Active",
-        //        IFSC = accountOpeningDTO.IFSC,
-        //        CustomerID = accountOpeningDTO.CustomerID
-        //    };
-
-
-        //    var addedAccount = await _accountsRepository.Add(newAccount);
-        //    return addedAccount;
-        //}
+    
 
         public async Task<Accounts> OpenNewAccount(AccountOpeningDTO accountOpeningDTO)
         {

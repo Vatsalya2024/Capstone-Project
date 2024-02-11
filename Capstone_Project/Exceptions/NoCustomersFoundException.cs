@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NoCustomersFoundException : Exception
+    public class NoCustomersFoundException : Exception
     {
         public NoCustomersFoundException()
         {

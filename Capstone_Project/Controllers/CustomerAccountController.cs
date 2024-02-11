@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,8 +24,8 @@ namespace Capstone_Project.Controllers
             _accountManagementService = accountManagementService;
             _logger = logger;
         }
-
-        [HttpPost("OpenAccount")]
+        [Route("Open Account")]
+        [HttpPost]
         public async Task<ActionResult<Accounts>> OpenAccount(AccountOpeningDTO accountOpeningDTO)
         {
             try
@@ -39,111 +40,67 @@ namespace Capstone_Project.Controllers
             }
         }
 
-        [HttpPut("CloseAccount/{accountNumber}")]
-        public async Task<ActionResult> CloseAccount(long accountNumber)
+        [Route("Close Account")]
+        [HttpPost]
+        public async Task<ActionResult<bool>> CloseAccount(long accountNumber)
         {
             try
             {
                 var result = await _accountManagementService.CloseAccount(accountNumber);
-                if (result)
-                {
-                    return Ok("Account Closing Request Submitted.");
-                }
-                else
-                {
-                    return NotFound("Account not found.");
-                }
+                return Ok(result);
             }
-            catch (NoAccountsFoundException nafe)
+            catch (NoAccountsFoundException ex)
             {
-                _logger.LogError(nafe, "Error occurred while closing account");
+                _logger.LogError(ex, $"No account found with number: {accountNumber}");
+                return NotFound($"No account found with number: {accountNumber}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error closing account with number: {accountNumber}");
                 return StatusCode(500, "Internal server error");
             }
         }
-        [HttpGet("GetAccountDetails/{accountNumber}")]
+        [Route("GetAccountDetailsByAccountNumber")]
+        [HttpGet]
         public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber)
         {
             try
             {
                 var account = await _accountManagementService.GetAccountDetails(accountNumber);
-                if (account != null)
-                {
+                
                     return Ok(account);
-                }
-                else
-                {
-                    return NotFound("Account not found.");
-                }
+                
+            }
+            catch (NoAccountsFoundException ex)
+            {
+                _logger.LogError(ex, $"No account found with number: {accountNumber}");
+                return NotFound($"No account found with number: {accountNumber}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching account details");
+                _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpGet("GetAllAccountsByCustomerId/{customerId}")]
+        [Route("GetAccountDetailsByCustomerId")]
+        [HttpGet]
         public async Task<ActionResult<List<Accounts>>> GetAllAccountsByCustomerId(int customerId)
         {
             try
             {
-                var accounts = await _accountManagementService.GetAllAccountsByCustomerId(customerId);
-                if (accounts != null && accounts.Count > 0)
-                {
-                    return Ok(accounts);
-                }
-                else
-                {
-                    return NotFound("No accounts found for the customer.");
-                }
+                var customerAccounts = await _accountManagementService.GetAllAccountsByCustomerId(customerId);
+               return Ok(customerAccounts);
+                
+                
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, $"No customer found with ID: {customerId}");
+                return NotFound($"No customer found with ID: {customerId}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching accounts for the customer");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-        [HttpGet("GetLast10Transactions/{accountNumber}")]
-        public async Task<ActionResult<List<Transactions>>> GetLast10Transactions(long accountNumber)
-        {
-            try
-            {
-                var transactions = await _accountManagementService.GetLast10Transactions(accountNumber);
-                return Ok(transactions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching last 10 transactions");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpGet("GetLastMonthTransactions/{accountNumber}")]
-        public async Task<ActionResult<List<Transactions>>> GetLastMonthTransactions(long accountNumber)
-        {
-            try
-            {
-                var transactions = await _accountManagementService.GetLastMonthTransactions(accountNumber);
-                return Ok(transactions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching last month transactions");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpGet("GetTransactionsBetweenDates/{accountNumber}")]
-        public async Task<ActionResult<List<Transactions>>> GetTransactionsBetweenDates(long accountNumber, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-        {
-            try
-            {
-                var transactions = await _accountManagementService.GetTransactionsBetweenDates(accountNumber, startDate, endDate);
-                return Ok(transactions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching transactions between dates");
+                _logger.LogError(ex, $"Error getting accounts for customer with ID: {customerId}");
                 return StatusCode(500, "Internal server error");
             }
         }

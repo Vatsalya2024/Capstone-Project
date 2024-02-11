@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
+using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -20,8 +22,42 @@ namespace Capstone_Project.Controllers
             _bankEmployeeAccountService = bankEmployeeAccountService;
             _logger = logger;
         }
-
-        [HttpPost("approve-creation/{accountNumber}")]
+        [Route(("GetAllCustomer"))]
+        [HttpGet]
+        public async Task<ActionResult<List<Customers>>> GetCustomers()
+        {
+            try
+            {
+                var customers = await _bankEmployeeAccountService.GetCustomersListasync();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [Route("GetCustomerById")]
+        [HttpGet]
+        public async Task<ActionResult<Customers>> GetCustomerByID(int id)
+        {
+            try
+            {
+                var customer = await _bankEmployeeAccountService.GetCustomers(id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [Route("Approve Account Creation")]
+        [HttpPost]
         public async Task<IActionResult> ApproveAccountCreation(long accountNumber)
         {
             try
@@ -32,14 +68,19 @@ namespace Capstone_Project.Controllers
                 else
                     return NotFound($"Account with account number {accountNumber} not found or not pending approval.");
             }
+            catch (AccountApprovalException ex)
+            {
+                _logger.LogError($"Error approving account creation for account number {accountNumber}: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Error approving account creation for account number {accountNumber}: {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpPost("approve-deletion/{accountNumber}")]
+        [Route("Approve Account Deletion")]
+        [HttpPost]
         public async Task<IActionResult> ApproveAccountDeletion(long accountNumber)
         {
             try
@@ -50,14 +91,19 @@ namespace Capstone_Project.Controllers
                 else
                     return NotFound($"Account with account number {accountNumber} not found or not pending deletion.");
             }
+            catch (AccountApprovalException ex)
+            {
+                _logger.LogError($"Error approving account deletion for account number {accountNumber}: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Error approving account deletion for account number {accountNumber}: {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpGet("pending-accounts")]
+        [Route("Get Pending Accounts")]
+        [HttpGet]
         public async Task<IActionResult> GetPendingAccounts()
         {
             try
@@ -65,20 +111,30 @@ namespace Capstone_Project.Controllers
                 var pendingAccounts = await _bankEmployeeAccountService.GetPendingAccounts();
                 return Ok(pendingAccounts);
             }
+            catch (AccountFetchException ex)
+            {
+                _logger.LogError($"Error fetching pending accounts: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Error fetching pending accounts: {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpGet("pending-deletion-accounts")]
+        [Route("Get Pending Deletion")]
+        [HttpGet]
         public async Task<IActionResult> GetPendingDeletionAccounts()
         {
             try
             {
                 var pendingDeletionAccounts = await _bankEmployeeAccountService.GetPendingDeletionAccounts();
                 return Ok(pendingDeletionAccounts);
+            }
+            catch (AccountFetchException ex)
+            {
+                _logger.LogError($"Error fetching accounts pending deletion: {ex.Message}");
+                return StatusCode(500, ex.Message);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Capstone_Project.Controllers;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 
@@ -27,34 +28,66 @@ namespace Capstone_Project.Services
             }
         }
 
+        //public async Task<List<Transactions>?> GetTransactionsByAccountNumber(long accountNumber)
+        //{
+        //    try
+        //    {
+        //        var allTransactions = await _transactionsRepository.GetAll();
+        //        if (allTransactions == null)
+        //        {
+        //            
+        //            return null;
+        //        }
+        //        return allTransactions.Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber).ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, $"Error occurred while retrieving transactions for account number: {accountNumber}");
+        //        throw new BankTransactionServiceException($"Error occurred while retrieving transactions for account number: {accountNumber}", ex);
+        //    }
+        //}
         public async Task<List<Transactions>?> GetTransactionsByAccountNumber(long accountNumber)
         {
             try
             {
                 var allTransactions = await _transactionsRepository.GetAll();
-                if (allTransactions == null)
+
+                if (allTransactions == null || allTransactions.Count == 0)
                 {
-                    return null;
+                    throw new BankTransactionServiceException($"No transactions found for account number: {accountNumber}");
                 }
-                return allTransactions.Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber).ToList();
+
+                var transactions = allTransactions.Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber).ToList();
+
+                if (transactions == null || transactions.Count == 0)
+                {
+                    throw new NoAccountsFoundException($"Account not found for account number: {accountNumber}");
+                }
+
+                return transactions;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while retrieving transactions for account number: {accountNumber}");
-                throw new BankTransactionServiceException($"Error occurred while retrieving transactions for account number: {accountNumber}", ex);
+                throw;
             }
         }
+
+
+
+
 
         //public async Task<double> GetTotalInboundTransactions(long accountNumber)
         //{
         //    try
         //    {
-        //        var transactions = await GetTransactionsByAccountNumber(accountNumber);
+        //        var transactions = await _transactionsRepository.GetAll(); 
         //        if (transactions == null)
         //        {
         //            return 0;
         //        }
-        //        return transactions.Where(t => t.DestinationAccountNumber == accountNumber).Sum(t => t.Amount);
+        //        // Filter transactions by type Credit and sum their amounts
+        //        return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Credit").Sum(t => t.Amount);
         //    }
         //    catch (Exception ex)
         //    {
@@ -63,16 +96,18 @@ namespace Capstone_Project.Services
         //    }
         //}
 
+
         //public async Task<double> GetTotalOutboundTransactions(long accountNumber)
         //{
         //    try
         //    {
-        //        var transactions = await GetTransactionsByAccountNumber(accountNumber);
+        //        var transactions = await _transactionsRepository.GetAll(); ;
         //        if (transactions == null)
         //        {
         //            return 0;
         //        }
-        //        return transactions.Where(t => t.SourceAccountNumber == accountNumber).Sum(t => t.Amount);
+        //        // Filter transactions by type Debit and sum their amounts
+        //        return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Debit").Sum(t => t.Amount);
         //    }
         //    catch (Exception ex)
         //    {
@@ -85,18 +120,24 @@ namespace Capstone_Project.Services
         {
             try
             {
-                var transactions = await _transactionsRepository.GetAll(); 
+                var transactions = await _transactionsRepository.GetAll();
                 if (transactions == null)
                 {
-                    return 0;
+                    throw new BankTransactionServiceException($"No transactions found for account number: {accountNumber}");
                 }
+
+                if (!transactions.Any(t => t.SourceAccountNumber == accountNumber))
+                {
+                    throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
+                }
+
                 // Filter transactions by type Credit and sum their amounts
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Credit").Sum(t => t.Amount);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while calculating total inbound transactions for account number: {accountNumber}");
-                throw new BankTransactionServiceException($"Error occurred while calculating total inbound transactions for account number: {accountNumber}", ex);
+                throw;
             }
         }
 
@@ -104,21 +145,26 @@ namespace Capstone_Project.Services
         {
             try
             {
-                var transactions = await _transactionsRepository.GetAll(); ;
+                var transactions = await _transactionsRepository.GetAll();
                 if (transactions == null)
                 {
-                    return 0;
+                    throw new BankTransactionServiceException($"No transactions found for account number: {accountNumber}");
                 }
+
+                if (!transactions.Any(t => t.SourceAccountNumber == accountNumber))
+                {
+                    throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
+                }
+
                 // Filter transactions by type Debit and sum their amounts
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Debit").Sum(t => t.Amount);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while calculating total outbound transactions for account number: {accountNumber}");
-                throw new BankTransactionServiceException($"Error occurred while calculating total outbound transactions for account number: {accountNumber}", ex);
+                throw;
             }
         }
-
 
 
 

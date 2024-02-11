@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NoBanksFoundException : Exception
+    public class NoBanksFoundException : Exception
     {
         public NoBanksFoundException()
         {

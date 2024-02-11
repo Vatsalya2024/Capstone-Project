@@ -1,4 +1,5 @@
-﻿using Capstone_Project.Interfaces;
+﻿using Capstone_Project.Exceptions;
+using Capstone_Project.Interfaces;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace Capstone_Project.Controllers
 
         public BankEmployeeLoginController(IBankEmployeeLoginService bankEmployeeService)
         {
-            _bankEmployeeService = bankEmployeeService ?? throw new ArgumentNullException(nameof(bankEmployeeService));
+            _bankEmployeeService = bankEmployeeService;
         }
         [Route("login")]
         [HttpPost]
@@ -28,13 +29,18 @@ namespace Capstone_Project.Controllers
             }
             catch (InvalidUserException)
             {
-                return Unauthorized();
+                return Unauthorized("Invalid username or password");
+            }
+            catch (DeactivatedUserException)
+            {
+                return Unauthorized("User deactivated");
             }
             catch (Exception)
             {
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
         [Route("register")]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterBankEmployeeDTO registerBankEmployeeDTO)

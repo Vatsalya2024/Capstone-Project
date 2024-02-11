@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,67 +23,64 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddBeneficiary([FromBody] BeneficiaryDTO beneficiaryDTO)
+        [Route("Add Beneficiary")]
+        [HttpPost]
+        public async Task<IActionResult> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
         {
             try
             {
-                var result = await _customerBeneficiaryService.AddBeneficiary(beneficiaryDTO);
-                if (result)
-                {
-                    _logger.LogInformation("Beneficiary added successfully.");
-                    return Ok("Beneficiary added successfully.");
-                }
-                else
-                {
-                    _logger.LogWarning("Failed to add beneficiary.");
-                    return BadRequest("Failed to add beneficiary.");
-                }
+                await _customerBeneficiaryService.AddBeneficiary(beneficiaryDTO);
+                return Ok("Beneficiary added successfully.");
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, "Error adding beneficiary: No customer found.");
+                return NotFound(ex.Message);
+            }
+            catch (NoBranchesFoundException ex)
+            {
+                _logger.LogError(ex, "Error adding beneficiary: Branch not found.");
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while adding beneficiary.");
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "Error adding beneficiary.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        [HttpGet("branches/{bankName}")]
+        [Route("Get Bank Branches By Bank Name")]
+        [HttpGet]
         public async Task<IActionResult> GetBranchesByBank(string bankName)
         {
             try
             {
                 var branches = await _customerBeneficiaryService.GetBranchesByBank(bankName);
-                _logger.LogInformation("Branches fetched successfully by bank.");
                 return Ok(branches);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching branches by bank.");
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "Error fetching branches by bank.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        [HttpGet("ifsc/{branchName}")]
+        [Route("Get IFSC By Branc Name")]
+        [HttpGet]
         public async Task<IActionResult> GetIFSCByBranch(string branchName)
         {
             try
             {
                 var ifsc = await _customerBeneficiaryService.GetIFSCByBranch(branchName);
-                if (ifsc != null)
-                {
-                    _logger.LogInformation("IFSC fetched successfully for the branch.");
-                    return Ok(ifsc);
-                }
-                else
-                {
-                    _logger.LogWarning("IFSC not found for the specified branch name.");
-                    return NotFound("IFSC not found for the specified branch name.");
-                }
+                return Ok(ifsc);
+            }
+            catch (NoBranchesFoundException ex)
+            {
+                _logger.LogError(ex, "Error fetching IFSC by branch: Branch not found.");
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching IFSC by branch.");
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "Error fetching IFSC by branch.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
     }

@@ -5,20 +5,13 @@ namespace Capstone_Project.Services
     [Serializable]
     internal class NotSufficientBalanceException : Exception
     {
+        string message;
         public NotSufficientBalanceException()
         {
+            message = "Not Sufficient Balance";
         }
 
-        public NotSufficientBalanceException(string? message) : base(message)
-        {
-        }
+        public override string Message => message;
 
-        public NotSufficientBalanceException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected NotSufficientBalanceException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

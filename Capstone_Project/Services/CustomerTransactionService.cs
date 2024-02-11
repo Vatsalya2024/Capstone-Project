@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Repositories;
 using Microsoft.Extensions.Logging;
+using Capstone_Project.Mappers; 
+using Capstone_Project.Interfaces;
+using Capstone_Project.Exceptions;
 
 namespace Capstone_Project.Services
 {
@@ -12,18 +15,21 @@ namespace Capstone_Project.Services
         private readonly ILogger<CustomerTransactionService> _logger;
         private readonly IRepository<int, Transactions> _transactionsRepository;
         private readonly IRepository<long, Accounts> _accountsRepository;
+        private readonly TransactionMapper _transactionMapper;
 
         public CustomerTransactionService(
             ILogger<CustomerTransactionService> logger,
             IRepository<int, Transactions> transactionsRepository,
-            IRepository<long, Accounts> accountsRepository)
+            IRepository<long, Accounts> accountsRepository,
+            TransactionMapper transactionMapper)
         {
             _logger = logger;
             _transactionsRepository = transactionsRepository;
             _accountsRepository = accountsRepository;
+            _transactionMapper = transactionMapper; 
         }
 
-        public async Task<bool> Deposit(DepositDTO depositDTO)
+        public async Task<string> Deposit(DepositDTO depositDTO)
         {
             try
             {
@@ -31,28 +37,28 @@ namespace Capstone_Project.Services
                 if (account != null && account.Status == "Active")
                 {
                     if (depositDTO.Amount <= 0)
-                        throw new ArgumentException("Deposit amount should be greater than zero.");
-
-                    var transaction = new Transactions
                     {
-                        Amount = depositDTO.Amount,
-                        Description = "Deposit",
-                        TransactionType = "Credit",
-                        Status = "Completed",
-                        SourceAccountNumber = depositDTO.AccountNumber,
-                    };
+                        var errorMessage = "Deposit amount should be greater than zero.";
+                        _logger.LogError(errorMessage);
+                        return errorMessage;
+                    }
 
+                    var transaction = _transactionMapper.MapDepositDtoToTransaction(depositDTO);
                     await _transactionsRepository.Add(transaction);
 
-                    // Update account balance
+                
                     account.Balance += depositDTO.Amount;
                     await _accountsRepository.Update(account);
 
-                    return true;
+                    var successMessage = "Deposit successful.";
+                    _logger.LogInformation(successMessage);
+                    return successMessage;
                 }
                 else
                 {
-                    return false; // Account not found or inactive
+                    var errorMessage = "Account not found or inactive";
+                    _logger.LogError(errorMessage);
+                    return errorMessage;
                 }
             }
             catch (Exception ex)
@@ -62,7 +68,7 @@ namespace Capstone_Project.Services
             }
         }
 
-        public async Task<bool> Withdraw(WithdrawalDTO withdrawalDTO)
+        public async Task<string> Withdraw(WithdrawalDTO withdrawalDTO)
         {
             try
             {
@@ -70,31 +76,31 @@ namespace Capstone_Project.Services
                 if (account != null && account.Status == "Active")
                 {
                     if (withdrawalDTO.Amount <= 0)
-                        throw new ArgumentException("Withdrawal amount should be greater than zero.");
+                    {
+                        var errorMessage = "Withdrawal amount should be greater than zero.";
+                        _logger.LogError(errorMessage);
+                        return errorMessage;
+                    }
 
                     if (account.Balance < withdrawalDTO.Amount)
                         throw new NotSufficientBalanceException();
 
-                    var transaction = new Transactions
-                    {
-                        Amount = withdrawalDTO.Amount,
-                        Description = "Withdrawal",
-                        TransactionType = "Debit",
-                        Status = "Completed",
-                        SourceAccountNumber = withdrawalDTO.AccountNumber,
-                    };
-
+                    var transaction = _transactionMapper.MapWithdrawalDtoToTransaction(withdrawalDTO);
                     await _transactionsRepository.Add(transaction);
 
-                    // Update account balance
+
                     account.Balance -= withdrawalDTO.Amount;
                     await _accountsRepository.Update(account);
 
-                    return true;
+                    var successMessage = "Withdrawal successful.";
+                    _logger.LogInformation(successMessage);
+                    return successMessage;
                 }
                 else
                 {
-                    return false; // Account not found or inactive
+                    var errorMessage = "Account not found or inactive";
+                    _logger.LogError(errorMessage);
+                    return errorMessage;
                 }
             }
             catch (Exception ex)
@@ -104,7 +110,7 @@ namespace Capstone_Project.Services
             }
         }
 
-        public async Task<bool> Transfer(TransferDTO transferDTO)
+        public async Task<string> Transfer(TransferDTO transferDTO)
         {
             try
             {
@@ -112,30 +118,17 @@ namespace Capstone_Project.Services
                 if (sourceAccount != null && sourceAccount.Status == "Active")
                 {
                     if (transferDTO.Amount <= 0)
-                        throw new ArgumentException("Transfer amount should be greater than zero.");
+                    {
+                        var errorMessage = "Transfer amount should be greater than zero.";
+                        _logger.LogError(errorMessage);
+                        return errorMessage;
+                    }
 
                     if (sourceAccount.Balance < transferDTO.Amount)
                         throw new NotSufficientBalanceException();
 
-                    var sourceTransaction = new Transactions
-                    {
-                        Amount = transferDTO.Amount,
-                        Description = "Transfer to " + transferDTO.DestinationAccountNumber,
-                        TransactionType = "Debit",
-                        Status = "Completed",
-                        SourceAccountNumber = transferDTO.SourceAccountNumber,
-                        DestinationAccountNumber = transferDTO.DestinationAccountNumber
-                    };
-
-                    var destinationTransaction = new Transactions
-                    {
-                        Amount = transferDTO.Amount,
-                        Description = "Transfer from " + transferDTO.SourceAccountNumber,
-                        TransactionType = "Credit",
-                        Status = "Completed",
-                        SourceAccountNumber = transferDTO.SourceAccountNumber,
-                        DestinationAccountNumber = transferDTO.DestinationAccountNumber
-                    };
+                    var sourceTransaction = _transactionMapper.MapTransferDtoToSourceTransaction(transferDTO);
+                    var destinationTransaction = _transactionMapper.MapTransferDtoToDestinationTransaction(transferDTO);
 
                     await _transactionsRepository.Add(sourceTransaction);
                     await _transactionsRepository.Add(destinationTransaction);
@@ -152,17 +145,89 @@ namespace Capstone_Project.Services
                         await _accountsRepository.Update(destinationAccount);
                     }
 
-                    return true;
+                    var successMessage = "Transfer successful.";
+                    _logger.LogInformation(successMessage);
+                    return successMessage;
                 }
                 else
                 {
-                    return false; // Source account not found or inactive
+                    var errorMessage = "Source account not found or inactive";
+                    _logger.LogError(errorMessage);
+                    return errorMessage;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while processing transfer.");
                 throw;
+            }
+            
+        }
+        public async Task<List<Transactions>> GetLast10Transactions(long accountNumber)
+        {
+            try
+            {
+                var transactions = await _transactionsRepository.GetAll();
+                var last10Transactions = transactions
+                    .Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber)
+                    .OrderByDescending(t => t.TransactionDate)
+                    .Take(10)
+                    .ToList();
+                if (last10Transactions.Count == 0)
+                {
+                    throw new NoTransactionsException("No transactions found for the account.");
+                }
+                return last10Transactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving last 10 transactions.");
+                throw; // Re-throw the exception for handling in the controller
+            }
+        }
+
+        public async Task<List<Transactions>> GetLastMonthTransactions(long accountNumber)
+        {
+            try
+            {
+                var lastMonth = DateTime.Now.AddMonths(-1);
+                var transactions = await _transactionsRepository.GetAll();
+                var lastMonthTransactions = transactions
+                    .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
+                                t.TransactionDate >= lastMonth)
+                    .ToList();
+                if (lastMonthTransactions.Count == 0)
+                {
+                    throw new NoTransactionsException("No transactions found for the account in the last month.");
+                }
+                return lastMonthTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving last month transactions.");
+                throw; // Re-throw the exception for handling in the controller
+            }
+        }
+
+        public async Task<List<Transactions>> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var transactions = await _transactionsRepository.GetAll();
+                var filteredTransactions = transactions
+                    .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
+                                t.TransactionDate >= startDate && t.TransactionDate <= endDate)
+                    .ToList();
+                if (filteredTransactions.Count == 0)
+                {
+                    throw new NoTransactionsException("No transactions found for the account within the specified dates.");
+                }
+                return filteredTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving transactions between dates.");
+                throw; // Re-throw the exception for handling in the controller
             }
         }
     }

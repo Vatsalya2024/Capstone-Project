@@ -3,7 +3,7 @@
 namespace Capstone_Project.Controllers
 {
     [Serializable]
-    internal class NoAccountsFoundException : Exception
+    public class NoAccountsFoundException : Exception
     {
         public NoAccountsFoundException()
         {

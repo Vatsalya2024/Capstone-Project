@@ -1,4 +1,5 @@
 ﻿using Capstone_Project.Controllers;
+using Capstone_Project.Exceptions;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Mappers;
 using Capstone_Project.Models;
@@ -30,7 +31,7 @@ namespace Capstone_Project.Services
             var myUser = await _validationRepository.Get(employee.Email);
             if (myUser == null || myUser.Status != "Active")
             {
-                throw new InvalidUserException();
+                throw new DeactivatedUserException();
             }
             var userPassword = GetPasswordEncrypted(employee.Password, myUser.Key);
             var checkPasswordMatch = ComparePasswords(myUser.Password, userPassword);
@@ -43,6 +44,7 @@ namespace Capstone_Project.Services
             }
             throw new InvalidUserException();
         }
+
         private bool ComparePasswords(byte[] password, byte[] userPassword)
         {
             for (int i = 0; i < password.Length; i++)

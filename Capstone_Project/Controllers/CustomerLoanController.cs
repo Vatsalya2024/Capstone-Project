@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Capstone_Project.Models;
+using Capstone_Project.Services;
 
 namespace Capstone_Project.Controllers
 {
@@ -22,43 +23,89 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-        [HttpPost("apply")]
-        public async Task<IActionResult> ApplyForLoan([FromBody] LoanApplicationDTO loanApplication)
+        //    [HttpPost("apply")]
+        //    public async Task<IActionResult> ApplyForLoan([FromBody] LoanApplicationDTO loanApplication)
+        //    {
+        //        try
+        //        {
+        //            var success = await _loanCustomerService.ApplyForLoan(loanApplication);
+        //            if (success)
+        //            {
+        //                return Ok("Loan application submitted successfully.");
+        //            }
+        //            else
+        //            {
+        //                return BadRequest("Failed to submit loan application.");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError($"Error applying for loan: {ex.Message}");
+        //            return StatusCode(500, "Internal server error");
+        //        }
+        //    }
+
+        //    [HttpGet("availed")]
+        //    public async Task<IActionResult> ViewAvailedLoans()
+        //    {
+        //        try
+        //        {
+        //            var availedLoans = await _loanCustomerService.ViewAvailedLoans();
+        //            return Ok(availedLoans);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError($"Error viewing availed loans: {ex.Message}");
+        //            return StatusCode(500, "Internal server error");
+        //        }
+        //    }
+
+
+        //}
+        [Route("ApplyForLoan")]
+        [HttpPost]
+        public async Task<IActionResult> ApplyForLoan(LoanApplicationDTO loanApplication)
         {
             try
             {
-                var success = await _loanCustomerService.ApplyForLoan(loanApplication);
-                if (success)
-                {
-                    return Ok("Loan application submitted successfully.");
-                }
-                else
-                {
-                    return BadRequest("Failed to submit loan application.");
-                }
+                await _loanCustomerService.ApplyForLoan(loanApplication);
+                return Ok("Loan application submitted successfully.");
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, $"Error applying for loan: {ex.Message}");
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error applying for loan: {ex.Message}");
-                return StatusCode(500, "Internal server error");
+                _logger.LogError(ex, "Error applying for loan.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        [HttpGet("availed")]
-        public async Task<IActionResult> ViewAvailedLoans()
+        [Route("AvailedLoans")]
+        [HttpGet]
+        public async Task<IActionResult> ViewAvailedLoans(int customerId)
         {
             try
             {
-                var availedLoans = await _loanCustomerService.ViewAvailedLoans();
+                var availedLoans = await _loanCustomerService.ViewAvailedLoans(customerId);
                 return Ok(availedLoans);
             }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, $"Error viewing availed loans: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (NoLoansFoundException ex)
+            {
+                _logger.LogError(ex, $"Error viewing availed loans: {ex.Message}");
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
-                _logger.LogError($"Error viewing availed loans: {ex.Message}");
-                return StatusCode(500, "Internal server error");
+                _logger.LogError(ex, "Error viewing availed loans.");
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        
     }
 }

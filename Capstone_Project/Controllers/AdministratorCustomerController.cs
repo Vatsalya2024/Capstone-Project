@@ -1,6 +1,7 @@
 ﻿using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,18 +22,16 @@ namespace Capstone_Project.Controllers
             _customerManagementService = customerManagementService;
             _logger = logger;
         }
-
-        [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
+        [Route("Get All Customers")]
+        [HttpGet]
+        public async Task<ActionResult<Customers>> GetAllUsers()
         {
             try
             {
                 var users = await _customerManagementService.GetAllUsers();
-                if (users != null)
-                {
+               
                     return Ok(users);
-                }
-                return NoContent();
+                
             }
             catch (Exception ex)
             {
@@ -40,114 +39,166 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetUser(int id)
+       
+        [Route("GetCustomerById")]
+        [HttpGet]
+        public async Task<ActionResult<Customers>> GetUser(int id)
         {
             try
             {
                 var user = await _customerManagementService.GetUser(id);
-                if (user != null)
-                {
+               
                     return Ok(user);
-                }
-                return NotFound();
+              
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError($"Error retrieving user with ID {id}: {ex.Message}");
+                return NotFound($"User with ID {id} not found.");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error retrieving user: {ex.Message}");
+                _logger.LogError($"Error retrieving user with ID {id}: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [Route("Deactivate Customer")]
+        [HttpPut]
+        public async Task<ActionResult<Customers>> DeactivateUser(int customerId)
+        {
+            try
+            {
+                var user = await _customerManagementService.DeactivateUser(customerId);
+                
+                    return Ok($"User with ID {customerId} deactivated successfully.");
+                
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError($"Error deactivating user: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError($"Error deactivating user: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deactivating user: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [Route("Activate Customer")]
+        [HttpPut]
+        public async Task<ActionResult<Customers>> ActivateUser(int customerId)
+        {
+            try
+            {
+                var user = await _customerManagementService.ActivateUser(customerId);
+                
+                    return Ok($"User with ID {customerId} activated successfully.");
+                
+                
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError($"Error activating user: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError($"Error activating user: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error activating user: {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
         }
 
-        [HttpPut("deactivate/{customerId}")]
-        public async Task<IActionResult> DeactivateUser(int customerId)
-        {
-            var user = await _customerManagementService.DeactivateUser(customerId);
-            if (user != null)
-            {
-                return Ok($"User with ID {customerId} deactivated successfully.");
-            }
-            else
-            {
-                return NotFound($"User with ID {customerId} not found or unable to deactivate.");
-            }
-        }
+        
+        
 
-        [HttpPut("activate/{customerId}")]
-        public async Task<IActionResult> ActivateUser(int customerId)
+        [Route("UpdateCustomerName")]
+        [HttpPut]
+        public async Task<ActionResult<Customers>> UpdateCustomerName(int customerId, AdminUpdateCustomerNameDTO nameDTO)
         {
-            var user = await _customerManagementService.ActivateUser(customerId);
-            if (user != null)
+            try
             {
-                return Ok($"User with ID {customerId} activated successfully.");
-            }
-            else
-            {
-                return NotFound($"User with ID {customerId} not found or unable to activate.");
-            }
-        }
-
-        [HttpPut("update/name/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerName(int customerId, AdminUpdateCustomerNameDTO nameDTO)
-        {
-            var user = await _customerManagementService.UpdateCustomerName(customerId, nameDTO);
-            if (user != null)
-            {
+                var user = await _customerManagementService.UpdateCustomerName(customerId, nameDTO);
                 return Ok($"Name for user with ID {customerId} updated successfully.");
             }
-            else
+            catch (NoCustomersFoundException ex)
             {
-                return NotFound($"User with ID {customerId} not found or unable to update name.");
+                _logger.LogError($"Error updating name for user with ID {customerId}: {ex.Message}");
+                return NotFound($"User with ID {customerId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating name for user with ID {customerId}: {ex.Message}");
+                throw;
             }
         }
 
-        [HttpPut("update/contact/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerContact(int customerId, AdminUpdateCustomerContactDTO contactDTO)
+        [Route("UpdateCustomerContact")]
+        [HttpPut]
+        public async Task<ActionResult<Customers>> UpdateCustomerContact(int customerId, AdminUpdateCustomerContactDTO contactDTO)
         {
-            var user = await _customerManagementService.UpdateCustomerContact(customerId, contactDTO);
-            if (user != null)
+            try
             {
+                var user = await _customerManagementService.UpdateCustomerContact(customerId, contactDTO);
                 return Ok($"Contact information for user with ID {customerId} updated successfully.");
             }
-            else
+            catch (NoCustomersFoundException ex)
             {
-                return NotFound($"User with ID {customerId} not found or unable to update contact information.");
+                _logger.LogError($"Error updating contact information for user with ID {customerId}: {ex.Message}");
+                return NotFound($"User with ID {customerId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating contact information for user with ID {customerId}: {ex.Message}");
+                throw;
             }
         }
 
-        [HttpPut("update/details/{customerId}")]
-        public async Task<IActionResult> UpdateCustomerDetails(int customerId, AdminUpdateCustomerDetailsDTO detailsDTO)
+        [Route("UpdateCustomerDetails")]
+        [HttpPut]
+        public async Task<ActionResult<Customers>> UpdateCustomerDetails(int customerId, AdminUpdateCustomerDetailsDTO detailsDTO)
         {
-            var user = await _customerManagementService.UpdateCustomerDetails(customerId, detailsDTO);
-            if (user != null)
+            try
             {
+                var user = await _customerManagementService.UpdateCustomerDetails(customerId, detailsDTO);
                 return Ok($"Details for user with ID {customerId} updated successfully.");
             }
-            else
+            catch (NoCustomersFoundException ex)
             {
-                return NotFound($"User with ID {customerId} not found or unable to update details.");
+                _logger.LogError($"Error updating details for user with ID {customerId}: {ex.Message}");
+                return NotFound($"User with ID {customerId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating details for user with ID {customerId}: {ex.Message}");
+                throw;
             }
         }
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateCustomer(RegisterCustomerDTO customerDTO)
+
+        [Route("Register Customer")]
+        [HttpPost]
+        public async Task<ActionResult<Customers>> CreateCustomer(RegisterCustomerDTO customerDTO)
         {
             try
             {
                 var createdCustomer = await _customerManagementService.CreateCustomer(customerDTO);
-                if (createdCustomer != null)
-                {
-                    return Ok("Customer created successfully.");
-                }
-                else
-                {
-                    return StatusCode(500, "Failed to create customer.");
-                }
+                
+                    return Ok("Customer created successfully");
+               
             }
-            catch (Exception ex)
+            catch (CustomerCreationException ex)
             {
                 _logger.LogError($"Error creating customer: {ex.Message}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 

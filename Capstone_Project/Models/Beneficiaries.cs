@@ -6,6 +6,9 @@ using System.Security.Principal;
 
 namespace Capstone_Project.Models
 {
+
+
+
     public class Beneficiaries : IEquatable<Beneficiaries>
     {
         [Key]
@@ -23,11 +26,9 @@ namespace Capstone_Project.Models
         [ForeignKey("CustomerID")]
         public Customers Customer { get; set; }
 
-        [ForeignKey("AccountNumber")] // Foreign key to the Account table
-        public Accounts Account { get; set; }
+       
 
 
-        
 
 
         public bool Equals(Beneficiaries? other)

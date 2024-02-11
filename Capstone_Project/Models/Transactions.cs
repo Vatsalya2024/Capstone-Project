@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Capstone_Project.Models
 {
+
+
+
     public class Transactions : IEquatable<Transactions>
     {
         [Key]

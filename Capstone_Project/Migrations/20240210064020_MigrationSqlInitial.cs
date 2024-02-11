@@ -174,6 +174,32 @@ namespace Capstone_Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Beneficiaries",
+                columns: table => new
+                {
+                    BeneficiaryID = table.Column<int>(type: "int", nullable: false)
+                        ,
+                    AccountNumber = table.Column<long>(type: "bigint", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IFSC = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Beneficiaries", x => x.BeneficiaryID);
+                    table.ForeignKey(
+                        name: "FK_Beneficiaries_Branches_IFSC",
+                        column: x => x.IFSC,
+                        principalTable: "Branches",
+                        principalColumn: "IFSCNumber");
+                    table.ForeignKey(
+                        name: "FK_Beneficiaries_Customers_CustomerID",
+                        column: x => x.CustomerID,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loans",
                 columns: table => new
                 {
@@ -196,37 +222,6 @@ namespace Capstone_Project.Migrations
                         principalTable: "Customers",
                         principalColumn: "CustomerID",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Beneficiaries",
-                columns: table => new
-                {
-                    BeneficiaryID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountNumber = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IFSC = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CustomerID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Beneficiaries", x => x.BeneficiaryID);
-                    table.ForeignKey(
-                        name: "FK_Beneficiaries_Accounts_AccountNumber",
-                        column: x => x.AccountNumber,
-                        principalTable: "Accounts",
-                        principalColumn: "AccountNumber");
-                    table.ForeignKey(
-                        name: "FK_Beneficiaries_Branches_IFSC",
-                        column: x => x.IFSC,
-                        principalTable: "Branches",
-                        principalColumn: "IFSCNumber");
-                    table.ForeignKey(
-                        name: "FK_Beneficiaries_Customers_CustomerID",
-                        column: x => x.CustomerID,
-                        principalTable: "Customers",
-                        principalColumn: "CustomerID");
                 });
 
             migrationBuilder.CreateTable(
@@ -279,11 +274,6 @@ namespace Capstone_Project.Migrations
                 table: "BankEmployees",
                 column: "Email",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Beneficiaries_AccountNumber",
-                table: "Beneficiaries",
-                column: "AccountNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Beneficiaries_CustomerID",

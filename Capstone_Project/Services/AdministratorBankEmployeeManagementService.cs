@@ -28,70 +28,80 @@ namespace Capstone_Project.Services
         public async Task<BankEmployees?> ActivateEmployee(int employeeId)
         {
             var employee = await _bankEmployeesRepository.Get(employeeId);
-            if (employee != null)
+            if (employee == null)
             {
-                var validation = await _validationRepository.Get(employee.Email);
-                if (validation != null)
-                {
-                    validation.Status = "Active";
-                    await _validationRepository.Update(validation);
-                    return employee;
-                }
+                throw new EmployeeNotFoundException($"Employee with ID {employeeId} not found.");
             }
-            return null;
+
+            var validation = await _validationRepository.Get(employee.Email);
+            if (validation == null)
+            {
+                throw new ValidationNotFoundException($"Validation for employee with ID {employeeId} not found.");
+            }
+
+            validation.Status = "Active";
+            await _validationRepository.Update(validation);
+            return employee;
         }
 
         public async Task<BankEmployees?> DeactivateEmployee(int employeeId)
         {
             var employee = await _bankEmployeesRepository.Get(employeeId);
-            if (employee != null)
+            if (employee == null)
             {
-                var validation = await _validationRepository.Get(employee.Email);
-                if (validation != null)
-                {
-                    validation.Status = "deactivated";
-                    await _validationRepository.Update(validation);
-
-                    _logger.LogInformation($"Employee with ID {employeeId} deactivated.");
-                    return employee;
-                }
+                throw new EmployeeNotFoundException($"Employee with ID {employeeId} not found.");
             }
-            return null;
+
+            var validation = await _validationRepository.Get(employee.Email);
+            if (validation == null)
+            {
+                throw new ValidationNotFoundException($"Validation for employee with ID {employeeId} not found.");
+            }
+
+            validation.Status = "deactivated";
+            await _validationRepository.Update(validation);
+
+            _logger.LogInformation($"Employee with ID {employeeId} deactivated.");
+            return employee;
         }
 
         public async Task<List<BankEmployees>?> GetAllEmployees()
         {
             var employees = await _validationRepository.GetAll();
-            if (employees != null)
+            if (employees == null)
             {
-                var filteredEmployees = employees
-                    .Where(u => u.UserType == "BankEmployee")
-                    .Select(u => u.Email)
-                    .ToList();
-
-                var bankEmployees = new List<BankEmployees>();
-                foreach (var email in filteredEmployees)
-                {
-                    var employeeList = await _bankEmployeesRepository.GetAll();
-                    var employee = employeeList
-                        .Where(e => e.Email == email)
-                        .FirstOrDefault();
-
-                    if (employee != null)
-                    {
-                        bankEmployees.Add(employee);
-                    }
-                }
-
-                return bankEmployees;
+                throw new EmployeeNotFoundException("No employees found.");
             }
 
-            return null;
+            var filteredEmployees = employees
+                .Where(u => u.UserType == "BankEmployee")
+                .Select(u => u.Email)
+                .ToList();
+
+            var bankEmployees = new List<BankEmployees>();
+            foreach (var email in filteredEmployees)
+            {
+                var employeeList = await _bankEmployeesRepository.GetAll();
+                var employee = employeeList
+                    .Where(e => e.Email == email)
+                    .FirstOrDefault();
+
+                if (employee != null)
+                {
+                    bankEmployees.Add(employee);
+                }
+            }
+
+            return bankEmployees;
         }
 
         public async Task<BankEmployees?> GetEmployee(int employeeId)
         {
             var employee = await _bankEmployeesRepository.Get(employeeId);
+            if (employee == null)
+            {
+                throw new EmployeeNotFoundException($"Employee with ID {employeeId} not found.");
+            }
             return employee;
         }
 
@@ -119,9 +129,10 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error creating bank employee: {ex.Message}");
-                return null;
+                throw new BankEmployeeCreationException($"Error creating bank employee: {ex.Message}");
             }
         }
+
         public async Task<BankEmployees?> UpdateEmployee(BankEmployees employee)
         {
             try
@@ -133,8 +144,9 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error updating employee: {ex.Message}");
-                return null;
+                throw new EmployeeUpdateException($"Error updating employee: {ex.Message}");
             }
         }
     }
+
 }

@@ -9,6 +9,8 @@ namespace Capstone_Project.Interfaces
         Task<bool> ApproveAccountDeletion(long accountNumber);
         Task<List<Accounts>> GetPendingAccounts();
         Task<List<Accounts>> GetPendingDeletionAccounts();
+        Task<List<Customers>> GetCustomersListasync();
+        Task<Customers> GetCustomers(int id);
     }
 }
 

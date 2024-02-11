@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Capstone_Project.Repositories
 {
+
+
+
+
     public class BeneficiariesRepository : IRepository<int, Beneficiaries>
     {
         private readonly MavericksBankContext _mavericksBankContext;

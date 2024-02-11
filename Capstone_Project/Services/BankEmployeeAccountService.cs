@@ -1,21 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
-using Capstone_Project.Repositories;
-using Microsoft.Extensions.Logging; // Add this namespace
+using Microsoft.Extensions.Logging;
 
 namespace Capstone_Project.Services
 {
     public class BankEmployeeAccountService : IBankEmployeeAccountService
     {
         private readonly IRepository<long, Accounts> _accountsRepository;
-        private readonly ILogger<BankEmployeeAccountService> _logger; // Logger instance
+        private readonly ILogger<BankEmployeeAccountService> _logger;
+        private readonly IRepository<int, Customers> _customerRepository;
 
-        public BankEmployeeAccountService(IRepository<long, Accounts> accountsRepository, ILogger<BankEmployeeAccountService> logger)
+        public BankEmployeeAccountService(IRepository<long, Accounts> accountsRepository, IRepository<int,Customers> customerRepository,ILogger<BankEmployeeAccountService> logger)
         {
             _accountsRepository = accountsRepository;
-            _logger = logger; // Initialize logger
+            _logger = logger;
+            _customerRepository = customerRepository;
         }
+
+        public async Task<Customers> GetCustomers(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Fetching customer with ID {id}...");
+
+                var customer = await _customerRepository.Get(id);
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while fetching customer with ID {id}.");
+                throw;
+            }
+        }
+        public async Task<List<Customers>> GetCustomersListasync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching customer list...");
+
+                var customer = await _customerRepository.GetAll();
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching the customer list.");
+                throw;
+            }
+        }
+
 
         public async Task<bool> ApproveAccountCreation(long accountNumber)
         {
@@ -39,7 +75,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error approving account creation for account number {accountNumber}: {ex.Message}");
-                throw;
+                throw new AccountApprovalException($"Error approving account creation for account number {accountNumber}: {ex.Message}");
             }
         }
 
@@ -64,7 +100,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error approving account deletion for account number {accountNumber}: {ex.Message}");
-                throw;
+                throw new AccountApprovalException($"Error approving account deletion for account number {accountNumber}: {ex.Message}");
             }
         }
 
@@ -80,7 +116,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error fetching pending accounts: {ex.Message}");
-                throw;
+                throw new AccountFetchException($"Error fetching pending accounts: {ex.Message}");
             }
         }
 
@@ -96,37 +132,10 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error fetching accounts pending deletion: {ex.Message}");
-                throw;
+                throw new AccountFetchException($"Error fetching accounts pending deletion: {ex.Message}");
             }
         }
     }
+
+    
 }
-
-
-
-
-//public async Task<bool> ApproveAccountCreation(long accountNumber)
-//{
-//    var account = await _accountsRepository.Get(accountNumber);
-
-//    if (account != null && account.Status == "Pending")
-//    {
-//        account.Status = "Active"; // Approve the account creation
-//        await _accountsRepository.Update(account);
-//        return true;
-//    }
-//    return false;
-//}
-
-//public async Task<bool> ApproveAccountDeletion(long accountNumber)
-//{
-//    var account = await _accountsRepository.Get(accountNumber);
-
-//    if (account != null && account.Status == "PendingDeletion")
-//    {
-//        await _accountsRepository.Delete(accountNumber);
-//        return true;
-//    }
-
-//    return false;
-//}

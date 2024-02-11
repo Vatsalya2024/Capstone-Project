@@ -9,9 +9,9 @@ namespace Capstone_Project.Interfaces
 	{
         Task<Loans> ReviewLoanApplication(int loanId);
 
-        Task<bool> MakeLoanDecision(int loanId, bool approved);
+        Task<string> MakeLoanDecision(int loanId, bool approved);
         Task<Accounts> DisburseLoan(int loanId,long AccId);
-        //Task<bool> ReviewAndApproveLoan(int loanId, int customerId);
+        Task<List<Loans>> GetAllLoans();
         Task<ActionResult<CreditCheckResultDTO>> CheckCredit(long accountId);
     }
 }

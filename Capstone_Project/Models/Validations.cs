@@ -22,7 +22,7 @@ namespace Capstone_Project.Models
         public string Status { get; set; } 
         public Customers? Customers { get; set; }
         public BankEmployees? BankEmployees { get; set; }
-        public Admin Admin { get; set; }
+        public Admin? Admin { get; set; }
 
 
 

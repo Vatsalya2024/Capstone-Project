@@ -29,44 +29,99 @@ namespace Capstone_Project.Services
             _customerRepository = customerRepository;
         }
 
-        //public async Task<bool> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
-        //{
-        //    try
+        //    public async Task<bool> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
         //    {
-        //        // Fetch the IFSC code based on the branch name
-        //        string ifscCode = await GetIFSCByBranch(beneficiaryDTO.BranchName);
-
-        //        if (!string.IsNullOrEmpty(ifscCode))
+        //        try
         //        {
-        //            // Create Beneficiary entity
-        //            var beneficiary = new Beneficiaries
+        //            // Fetch the IFSC code based on the branch name
+        //            string ifscCode = await GetIFSCByBranch(beneficiaryDTO.BranchName);
+
+        //            if (!string.IsNullOrEmpty(ifscCode))
         //            {
-        //                AccountNumber = beneficiaryDTO.AccountNumber,
-        //                Name = beneficiaryDTO.Name,
-        //                IFSC = ifscCode,
-        //                // Assign other properties accordingly
-        //            };
+        //                // Fetch customer by ID (you should implement this method)
+        //                var customer = await _customerRepository.Get(beneficiaryDTO.CustomerId);
 
-        //            // Add the beneficiary to the repository
-        //            await _beneficiariesRepository.Add(beneficiary);
+        //                if (customer != null)
+        //                {
+        //                    // Create Beneficiary entity
+        //                    var beneficiary = new Beneficiaries
+        //                    {
+        //                        AccountNumber = beneficiaryDTO.AccountNumber,
+        //                        Name = beneficiaryDTO.Name,
+        //                        IFSC = ifscCode,
+        //                        CustomerID = customer.CustomerID, // Assign CustomerID
+        //                                                          // Assign other properties accordingly
+        //                    };
 
-        //            _logger.LogInformation("Beneficiary added successfully.");
-        //            return true;
+        //                    // Add the beneficiary to the repository
+        //                    await _beneficiariesRepository.Add(beneficiary);
+
+        //                    _logger.LogInformation("Beneficiary added successfully.");
+        //                    return true;
+        //                }
+        //                else
+        //                {
+        //                    _logger.LogWarning("Customer not found with the specified ID.");
+        //                    return false;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                _logger.LogWarning("IFSC code not found for the branch.");
+        //                return false;
+        //            }
         //        }
-        //        else
+        //        catch (Exception ex)
         //        {
-        //            _logger.LogWarning("IFSC code not found for the branch.");
-        //            return false;
+        //            _logger.LogError(ex, "Error occurred while adding beneficiary.");
+        //            throw; // Re-throwing the exception for higher-level handling
         //        }
         //    }
-        //    catch (Exception ex)
+
+
+
+        //    public async Task<List<BranchDTO>> GetBranchesByBank(string bankName)
         //    {
-        //        _logger.LogError(ex, "Error occurred while adding beneficiary.");
-        //        throw; // Re-throwing the exception for higher-level handling
+        //        try
+        //        {
+        //            var branches = await _branchesRepository.GetAll();
+        //            var bankBranch = branches
+        //                .Where(bankBranch => bankBranch.Banks.BankName == bankName)
+        //                .Select(bankBranch => new BranchDTO
+        //                {
+        //                    BranchName = bankBranch.BranchName,
+        //                    IFSC = bankBranch.IFSCNumber
+        //                })
+        //                .ToList();
+
+        //            _logger.LogInformation("Branches fetched successfully by bank.");
+        //            return bankBranch;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError(ex, "Error occurred while fetching branches by bank.");
+        //            throw; // Re-throwing the exception for higher-level handling
+        //        }
+        //    }
+
+        //    public async Task<string> GetIFSCByBranch(string branchName)
+        //    {
+        //        try
+        //        {
+        //            var branches = await _branchesRepository.GetAll();
+        //            var branch = branches.FirstOrDefault(b => b.BranchName.Equals(branchName, StringComparison.OrdinalIgnoreCase));
+
+        //            _logger.LogInformation("IFSC fetched successfully for the branch.");
+        //            return branch?.IFSCNumber;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError(ex, "Error occurred while fetching IFSC by branch.");
+        //            throw; // Re-throwing the exception for higher-level handling
+        //        }
         //    }
         //}
-
-        public async Task<bool> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
+        public async Task AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
         {
             try
             {
@@ -94,19 +149,28 @@ namespace Capstone_Project.Services
                         await _beneficiariesRepository.Add(beneficiary);
 
                         _logger.LogInformation("Beneficiary added successfully.");
-                        return true;
                     }
                     else
                     {
                         _logger.LogWarning("Customer not found with the specified ID.");
-                        return false;
+                        throw new NoCustomersFoundException("No customer found with the specified ID.");
                     }
                 }
                 else
                 {
                     _logger.LogWarning("IFSC code not found for the branch.");
-                    return false;
+                    throw new NoBranchesFoundException("IFSC code not found for the branch.");
                 }
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, "Error occurred while adding beneficiary: No customer found.");
+                throw;
+            }
+            catch (NoBranchesFoundException ex)
+            {
+                _logger.LogError(ex, "Error occurred while adding beneficiary: IFSC code not found for the branch.");
+                throw;
             }
             catch (Exception ex)
             {
@@ -114,8 +178,6 @@ namespace Capstone_Project.Services
                 throw; // Re-throwing the exception for higher-level handling
             }
         }
-
-
 
         public async Task<List<BranchDTO>> GetBranchesByBank(string bankName)
         {
@@ -148,8 +210,18 @@ namespace Capstone_Project.Services
                 var branches = await _branchesRepository.GetAll();
                 var branch = branches.FirstOrDefault(b => b.BranchName.Equals(branchName, StringComparison.OrdinalIgnoreCase));
 
+                if (branch == null)
+                {
+                    throw new NoBranchesFoundException("Branch not found with the specified name.");
+                }
+
                 _logger.LogInformation("IFSC fetched successfully for the branch.");
-                return branch?.IFSCNumber;
+                return branch.IFSCNumber;
+            }
+            catch (NoBranchesFoundException ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching IFSC by branch: Branch not found.");
+                throw;
             }
             catch (Exception ex)
             {

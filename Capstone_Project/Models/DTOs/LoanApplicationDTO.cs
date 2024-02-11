@@ -8,7 +8,7 @@ namespace Capstone_Project.Models.DTOs
         public double Interest { get; set; }
         public int Tenure { get; set; }
         public string Purpose { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
+        public string Status { get; set; } = "Pending";
         public int CustomerID { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Capstone_Project.Context;
 using Capstone_Project.Interfaces;
+using Capstone_Project.Mappers;
 using Capstone_Project.Models;
 using Capstone_Project.Repositories;
 using Capstone_Project.Services;
@@ -83,16 +84,16 @@ public class Program
         builder.Services.AddScoped<IRepository<int, Loans>, LoansRepository>();
         builder.Services.AddScoped<IRepository<int, Transactions>, TransactionsRepository>();
         builder.Services.AddScoped<IRepository<int,AvailableLoans>,AvailableLoansRepository>();
-
+        builder.Services.AddSingleton<TransactionMapper>();
         builder.Services.AddScoped<IAdminAvailableLoansService, AdminAvailableLoansService>();
         builder.Services.AddScoped<IAvailableLoansUserService, AvailableLoansUserService>();
         builder.Services.AddScoped<IBanksAdminService, BanksService>();
         builder.Services.AddScoped<IBranchesAdminService, BranchesService>();
-
+        builder.Services.AddScoped<IBankEmployeeService, BankEmployeeService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ICustomerLoginService, CustomerServices>();
         builder.Services.AddScoped<ICustomerAdminService, CustomerServices>();
-
+        builder.Services.AddScoped<IAdminService, AdminService>();
         builder.Services.AddScoped<IAdminLoginService, AdminLoginService>();
         builder.Services.AddScoped<IAdministratorBankEmployeeManagementService, AdministratorBankEmployeeManagementService>();
         builder.Services.AddScoped<IBankEmployeeLoginService, BankEmployeeLoginServices>();

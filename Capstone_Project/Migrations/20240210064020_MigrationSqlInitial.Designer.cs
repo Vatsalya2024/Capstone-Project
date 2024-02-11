@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone_Project.Migrations
 {
     [DbContext(typeof(MavericksBankContext))]
-    [Migration("20240209143520_MigrationSqlInitial")]
+    [Migration("20240210064020_MigrationSqlInitial")]
     partial class MigrationSqlInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -193,8 +193,6 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BeneficiaryID");
-
-                    b.HasIndex("AccountNumber");
 
                     b.HasIndex("CustomerID");
 
@@ -419,12 +417,6 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Beneficiaries", b =>
                 {
-                    b.HasOne("Capstone_Project.Models.Accounts", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountNumber")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Capstone_Project.Models.Customers", "Customer")
                         .WithMany("Beneficiaries")
                         .HasForeignKey("CustomerID")
@@ -436,8 +428,6 @@ namespace Capstone_Project.Migrations
                         .HasForeignKey("IFSC")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Account");
 
                     b.Navigation("Branch");
 
@@ -513,11 +503,9 @@ namespace Capstone_Project.Migrations
                     b.Navigation("Admin")
                         .IsRequired();
 
-                    b.Navigation("BankEmployees")
-                        .IsRequired();
+                    b.Navigation("BankEmployees");
 
-                    b.Navigation("Customers")
-                        .IsRequired();
+                    b.Navigation("Customers");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,22 +3,16 @@
 namespace Capstone_Project.Controllers
 {
     [Serializable]
-    internal class InvalidUserException : Exception
+    public class InvalidUserException : Exception
     {
         public InvalidUserException()
         {
         }
 
-        public InvalidUserException(string? message) : base(message)
+        public InvalidUserException(string? message) : base("Invalid username or password")
         {
         }
 
-        public InvalidUserException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
 
-        protected InvalidUserException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

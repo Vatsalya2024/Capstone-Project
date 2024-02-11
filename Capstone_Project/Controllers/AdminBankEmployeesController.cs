@@ -2,8 +2,10 @@
 using Capstone_Project.Mappers;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,70 +24,118 @@ namespace Capstone_Project.Controllers
             _bankEmployeeService = bankEmployeeService;
             _logger = logger;
         }
-
+        [Route("Get All Employees")]
         [HttpGet]
         public async Task<ActionResult<List<BankEmployees>>> GetAllEmployees()
         {
-            var employees = await _bankEmployeeService.GetAllEmployees();
-            if (employees == null)
+            try
             {
-                return NotFound();
+                var employees = await _bankEmployeeService.GetAllEmployees();
+                
+                return employees;
             }
-            return employees;
+            catch (EmployeeNotFoundException ex)
+            {
+                _logger.LogError($"No employees found: {ex.Message}");
+                return NotFound("No employees found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error retrieving employees: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
-
-        [HttpGet("{employeeId}")]
+        [Route("get employee by id")]
+        [HttpGet]
         public async Task<ActionResult<BankEmployees>> GetEmployee(int employeeId)
         {
-            var employee = await _bankEmployeeService.GetEmployee(employeeId);
-            if (employee == null)
+            try
             {
-                return NotFound();
+                var employee = await _bankEmployeeService.GetEmployee(employeeId);
+               
+                return employee;
             }
-            return employee;
+            catch (EmployeeNotFoundException ex)
+            {
+                _logger.LogError($"Employee not found: {ex.Message}");
+                return NotFound($"Employee with ID {employeeId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error retrieving employee: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
-
-        [HttpPost("{employeeId}/activate")]
+        [Route("Activate Employee")]
+        [HttpPost]
         public async Task<ActionResult<BankEmployees>> ActivateEmployee(int employeeId)
         {
-            var activatedEmployee = await _bankEmployeeService.ActivateEmployee(employeeId);
-            if (activatedEmployee == null)
+            try
             {
-                return NotFound();
+                var activatedEmployee = await _bankEmployeeService.ActivateEmployee(employeeId);
+                
+                return activatedEmployee;
             }
-            return activatedEmployee;
+            catch (EmployeeNotFoundException ex)
+            {
+                _logger.LogError($"Employee not found: {ex.Message}");
+                return NotFound($"Employee with ID {employeeId} not found.");
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError($"Validation not found: {ex.Message}");
+                return NotFound($"Validation for employee with ID {employeeId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error activating employee: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
-
-        [HttpPost("{employeeId}/deactivate")]
+        [Route("Deactivate Employee")]
+        [HttpPost]
         public async Task<ActionResult<BankEmployees>> DeactivateEmployee(int employeeId)
         {
-            var deactivatedEmployee = await _bankEmployeeService.DeactivateEmployee(employeeId);
-            if (deactivatedEmployee == null)
+            try
             {
-                return NotFound();
+                var deactivatedEmployee = await _bankEmployeeService.DeactivateEmployee(employeeId);
+                
+                return deactivatedEmployee;
             }
-            return deactivatedEmployee;
+            catch (EmployeeNotFoundException ex)
+            {
+                _logger.LogError($"Employee not found: {ex.Message}");
+                return NotFound($"Employee with ID {employeeId} not found.");
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError($"Validation not found: {ex.Message}");
+                return NotFound($"Validation for employee with ID {employeeId} not found.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deactivating employee: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
-
+        [Route("Register Bank Employee")]
         [HttpPost]
         public async Task<ActionResult<BankEmployees>> CreateBankEmployee(RegisterBankEmployeeDTO employeeDTO)
         {
             try
             {
                 var addedBankEmployee = await _bankEmployeeService.CreateBankEmployee(employeeDTO);
-                if (addedBankEmployee == null)
-                {
-                    return BadRequest();
-                }
+               
                 return addedBankEmployee;
             }
-            catch (Exception ex)
+            catch (BankEmployeeCreationException ex)
             {
                 _logger.LogError($"Error creating bank employee: {ex.Message}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Error creating bank employee");
             }
         }
-        [HttpPut("update/{employeeId}")]
+        [Route("Update Bank Employee")]
+        [HttpPut]
         public async Task<IActionResult> UpdateEmployee(int employeeId, UpdateBankEmployeeByAdminDTO updateDTO)
         {
             try
@@ -111,6 +161,11 @@ namespace Capstone_Project.Controllers
                 {
                     return StatusCode(500, "Failed to update employee.");
                 }
+            }
+            catch (EmployeeNotFoundException ex)
+            {
+                _logger.LogError($"Employee not found: {ex.Message}");
+                return NotFound($"Employee with ID {employeeId} not found.");
             }
             catch (Exception ex)
             {

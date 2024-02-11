@@ -1,4 +1,5 @@
 ﻿using Capstone_Project.Interfaces;
+using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,9 +20,9 @@ namespace Capstone_Project.Controllers
             _adminLoginService = adminLoginService;
             _logger = logger;
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUserDTO loginUserDTO)
+        [Route("Admin Login")]
+        [HttpPost]
+        public async Task<ActionResult<Admin>> Login(LoginUserDTO loginUserDTO)
         {
             try
             {
@@ -38,9 +39,9 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing the login request.");
             }
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterAdminDTO registerAdminDTO)
+        [Route("Admin Register")]
+        [HttpPost]
+        public async Task<ActionResult<Admin>> Register(RegisterAdminDTO registerAdminDTO)
         {
             try
             {

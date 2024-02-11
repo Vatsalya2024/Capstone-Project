@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NoBranchesFoundException : Exception
+    public class NoBranchesFoundException : Exception
     {
         public NoBranchesFoundException()
         {

@@ -6,8 +6,9 @@ namespace Capstone_Project.Interfaces
 {
 	public interface ILoanCustomerService
 	{
-        Task<bool> ApplyForLoan(LoanApplicationDTO loanApplication);
-        Task<List<Loans>> ViewAvailedLoans();
+        Task ApplyForLoan(LoanApplicationDTO loanApplication);
+        //Task<List<Loans>> ViewAvailedLoans();
+        Task<List<Loans>> ViewAvailedLoans(int customerId);
     }
 }
 
