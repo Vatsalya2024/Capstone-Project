@@ -19,8 +19,8 @@ public class BankEmployeeLoanController : ControllerBase
         _bankEmployeeLoanService = bankEmployeeLoanService;
         _logger = logger;
     }
-
-    [HttpGet("all")]
+    [Route("GetAllLoans")]
+    [HttpGet]
     public async Task<ActionResult<List<Loans>>> GetAllLoans()
     {
         try

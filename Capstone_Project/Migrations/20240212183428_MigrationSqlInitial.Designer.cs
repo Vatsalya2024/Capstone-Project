@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone_Project.Migrations
 {
     [DbContext(typeof(MavericksBankContext))]
-    [Migration("20240210064020_MigrationSqlInitial")]
+    [Migration("20240212183428_MigrationSqlInitial")]
     partial class MigrationSqlInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -500,8 +500,7 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Validation", b =>
                 {
-                    b.Navigation("Admin")
-                        .IsRequired();
+                    b.Navigation("Admin");
 
                     b.Navigation("BankEmployees");
 

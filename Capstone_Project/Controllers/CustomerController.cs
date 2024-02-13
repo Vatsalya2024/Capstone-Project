@@ -26,8 +26,8 @@ namespace Capstone_Project.Controllers
             _logger = logger;
             _customerAdminService = customerAdminService;
         }
-
-        [HttpPost("Register")]
+        [Route("Register")]
+        [HttpPost]
         public async Task<ActionResult<LoginUserDTO>> Register(RegisterCustomerDTO user)
         {
             try
@@ -41,8 +41,8 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
-        [HttpPost("Login")]
+        [Route("Login")]
+        [HttpPost]
         public async Task<ActionResult<LoginUserDTO>> Login(LoginUserDTO user)
         {
             try
@@ -65,70 +65,44 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles ="Customer")]
+        [Route("ResetPassword")]
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string email, string newPassword, string confirmPassword)
+        {
+            try
+            {
+                // Call the service method to reset the password
+                var resetSuccessful = await _customerAdminService.ResetPassword(email, newPassword, confirmPassword);
 
-        //[Authorize]
-        //[HttpGet("GetAllCustomer")]
-        //public async Task<ActionResult<List<Customers>>> GetCustomers()
-        //{
-        //    try
-        //    {
-        //        var customers = await _customerAdminService.GetCustomersListasync();
-        //        return Ok(customers);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        //[Authorize(Roles = "Customer")]
-        //[HttpPut("UpdatePhone")]
-        //public async Task<ActionResult<Customers>> UpdatePhone(UpdateCustomerPhoneDTO updateCustomerPhoneDTO)
-        //{
-        //    try
-        //    {
-        //        var customer = await _customerAdminService.ChangeCustomerPhoneAsync(updateCustomerPhoneDTO.CustomerID, updateCustomerPhoneDTO.Phone);
-        //        return Ok(customer);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        //[HttpPut("UpdateName")]
-        //public async Task<ActionResult<Customers>> UpdateCustomerName(UpdateCustomerNameDTO updateCustomerNameDTO)
-        //{
-        //    try
-        //    {
-        //        var customer = await _customerAdminService.ChangeCustomerName(updateCustomerNameDTO.CustomerID, updateCustomerNameDTO.Name);
-        //        return Ok(customer);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        //[HttpPut("UpdateAddress")]
-        //public async Task<ActionResult<Customers>> UpdateCustomerAddress(UpdateCustomerAddressDTO updateCustomerAddressDTO)
-        //{
-        //    try
-        //    {
-        //        var customer = await _customerAdminService.ChangeCustomerAddress(updateCustomerAddressDTO.CustomerID, updateCustomerAddressDTO.Address);
-        //        return Ok(customer);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        [HttpPut("{id}/change-phone")]
+                if (resetSuccessful)
+                {
+                    return Ok("Password reset successfully.");
+                }
+                else
+                {
+                    return BadRequest("Password reset failed.");
+                }
+            }
+            catch (PasswordMismatchException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("New password and confirm password do not match.");
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound($"Validation not found for email: {email}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+        [Authorize(Roles = "Customer")]
+        [Route("ChangePhoneNumber")]
+        [HttpPut]
         public async Task<IActionResult> ChangeCustomerPhoneAsync(int id, long phone)
         {
             try
@@ -147,8 +121,9 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        [HttpPut("{id}/change-name")]
+        [Authorize(Roles = "Customer")]
+        [Route("ChangeName")]
+        [HttpPut]
         public async Task<IActionResult> ChangeCustomerName(int id, string name)
         {
             try
@@ -167,8 +142,9 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        [HttpPut("{id}/change-address")]
+        [Authorize(Roles = "Customer")]
+        [Route("Change Address")]
+        [HttpPut]
         public async Task<IActionResult> ChangeCustomerAddress(int id, string address)
         {
             try
@@ -189,47 +165,9 @@ namespace Capstone_Project.Controllers
         }
 
 
-        //[HttpGet("GetCustomerById")]
-        //public async Task<ActionResult<Customers>> GetCustomerByID(int id)
-        //{
-        //    try
-        //    {
-        //        var customer = await _customerAdminService.GetCustomers(id);
-        //        if (customer == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        //[HttpDelete("DeleteCustomer/{id}")]
-        //[Authorize(Roles = "Customer")]
-        //public async Task<ActionResult<Customers>> DeleteCustomer(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _customerAdminService.DeleteCustomers(id);
-        //        return Ok(result);
-        //    }
-        //    catch (NoCustomersFoundException ncf)
-        //    {
-        //        _logger.LogError(ncf.Message);
-        //        return NotFound("Customer not found");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        [HttpDelete("delete-customer/{id}")]
+        [Authorize(Roles = "Customer")]
+        [Route("Delete")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
             try
@@ -250,31 +188,9 @@ namespace Capstone_Project.Controllers
         }
 
 
-
-        //[HttpPut("UpdatePassword")]
-        //public async Task<ActionResult> UpdatePassword(UpdateCustomerPasswordDTO updatePasswordDTO)
-        //{
-        //    try
-        //    {
-        //        bool passwordUpdated = await _customerAdminService.UpdateCustomerPassword(updatePasswordDTO.Email, updatePasswordDTO.NewPassword);
-
-        //        if (passwordUpdated)
-        //        {
-        //            return Ok("Password updated successfully");
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Customer not found");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
-
-        [HttpPost("update-password")]
+        [Authorize(Roles = "Customer")]
+        [Route("UpdatePassword")]
+        [HttpPost]
         public async Task<IActionResult> UpdateCustomerPassword(string email, string newPassword)
         {
             try

@@ -24,7 +24,7 @@ namespace Capstone_Project.Controllers
             _bankEmployeeService = bankEmployeeService;
             _logger = logger;
         }
-        [Route("Get All Employees")]
+        [Route("GetAllEmployees")]
         [HttpGet]
         public async Task<ActionResult<List<BankEmployees>>> GetAllEmployees()
         {
@@ -39,11 +39,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"No employees found: {ex.Message}");
                 return NotFound("No employees found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error retrieving employees: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+            
         }
         [Route("get employee by id")]
         [HttpGet]
@@ -60,11 +56,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Employee not found: {ex.Message}");
                 return NotFound($"Employee with ID {employeeId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error retrieving employee: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+           
         }
         [Route("Activate Employee")]
         [HttpPost]
@@ -86,11 +78,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Validation not found: {ex.Message}");
                 return NotFound($"Validation for employee with ID {employeeId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error activating employee: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+          
         }
         [Route("Deactivate Employee")]
         [HttpPost]
@@ -112,11 +100,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Validation not found: {ex.Message}");
                 return NotFound($"Validation for employee with ID {employeeId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error deactivating employee: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+           
         }
         [Route("Register Bank Employee")]
         [HttpPost]
@@ -149,8 +133,7 @@ namespace Capstone_Project.Controllers
                 // Update the employee
                 UpdateBankEmployeeByAdminMapper.MapToBankEmployee(updateDTO, employee);
 
-                // Save the changes
-                // Assuming you have a method to update the employee in your repository
+                
                 var updatedEmployee = await _bankEmployeeService.UpdateEmployee(employee);
 
                 if (updatedEmployee != null)

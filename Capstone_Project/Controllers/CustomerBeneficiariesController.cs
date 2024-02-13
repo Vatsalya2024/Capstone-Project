@@ -57,6 +57,11 @@ namespace Capstone_Project.Controllers
                 var branches = await _customerBeneficiaryService.GetBranchesByBank(bankName);
                 return Ok(branches);
             }
+            catch(NoBanksFoundException nbfe)
+            {
+                _logger.LogError(nbfe, "Bank Not found");
+                return StatusCode(500, "No bank found");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching branches by bank.");

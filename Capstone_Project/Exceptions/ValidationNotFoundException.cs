@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class ValidationNotFoundException : Exception
+    public class ValidationNotFoundException : Exception
     {
         public ValidationNotFoundException()
         {

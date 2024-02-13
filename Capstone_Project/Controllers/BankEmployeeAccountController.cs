@@ -58,7 +58,7 @@ namespace Capstone_Project.Controllers
         }
         [Route("Approve Account Creation")]
         [HttpPost]
-        public async Task<IActionResult> ApproveAccountCreation(long accountNumber)
+        public async Task<ActionResult<Accounts>> ApproveAccountCreation(long accountNumber)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace Capstone_Project.Controllers
         }
         [Route("Approve Account Deletion")]
         [HttpPost]
-        public async Task<IActionResult> ApproveAccountDeletion(long accountNumber)
+        public async Task<ActionResult<Accounts>> ApproveAccountDeletion(long accountNumber)
         {
             try
             {
@@ -102,9 +102,10 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles ="BankEmployee")]
         [Route("Get Pending Accounts")]
         [HttpGet]
-        public async Task<IActionResult> GetPendingAccounts()
+        public async Task<ActionResult<Accounts>> GetPendingAccounts()
         {
             try
             {
@@ -122,9 +123,10 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles = "BankEmployee")]
         [Route("Get Pending Deletion")]
         [HttpGet]
-        public async Task<IActionResult> GetPendingDeletionAccounts()
+        public async Task<ActionResult<Accounts>> GetPendingDeletionAccounts()
         {
             try
             {

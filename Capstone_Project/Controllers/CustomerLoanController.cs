@@ -23,45 +23,7 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-        //    [HttpPost("apply")]
-        //    public async Task<IActionResult> ApplyForLoan([FromBody] LoanApplicationDTO loanApplication)
-        //    {
-        //        try
-        //        {
-        //            var success = await _loanCustomerService.ApplyForLoan(loanApplication);
-        //            if (success)
-        //            {
-        //                return Ok("Loan application submitted successfully.");
-        //            }
-        //            else
-        //            {
-        //                return BadRequest("Failed to submit loan application.");
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError($"Error applying for loan: {ex.Message}");
-        //            return StatusCode(500, "Internal server error");
-        //        }
-        //    }
-
-        //    [HttpGet("availed")]
-        //    public async Task<IActionResult> ViewAvailedLoans()
-        //    {
-        //        try
-        //        {
-        //            var availedLoans = await _loanCustomerService.ViewAvailedLoans();
-        //            return Ok(availedLoans);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError($"Error viewing availed loans: {ex.Message}");
-        //            return StatusCode(500, "Internal server error");
-        //        }
-        //    }
-
-
-        //}
+      
         [Route("ApplyForLoan")]
         [HttpPost]
         public async Task<IActionResult> ApplyForLoan(LoanApplicationDTO loanApplication)

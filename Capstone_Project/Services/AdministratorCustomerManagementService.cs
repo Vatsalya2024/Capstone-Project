@@ -28,8 +28,7 @@ namespace Capstone_Project.Services
 
         public async Task<Customers?> ActivateUser(int customerId)
         {
-            try
-            {
+            
                 var user = await _customersRepository.Get(customerId);
                 if (user == null)
                 {
@@ -46,19 +45,13 @@ namespace Capstone_Project.Services
                 await _validationRepository.Update(validation);
                 _logger.LogInformation($"User with ID {customerId} activated.");
                 return user;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error activating user: {ex.Message}");
-                throw;
-            }
+           
         }
 
 
         public async Task<Customers?> DeactivateUser(int customerId)
         {
-            try
-            {
+            
                 var user = await _customersRepository.Get(customerId);
                 if (user == null)
                 {
@@ -75,12 +68,7 @@ namespace Capstone_Project.Services
                 await _validationRepository.Update(validation);
                 _logger.LogInformation($"User with ID {customerId} deactivated.");
                 return user;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error deactivating user: {ex.Message}");
-                throw;
-            }
+           
         }
 
 
@@ -88,32 +76,8 @@ namespace Capstone_Project.Services
         {
             try
             {
-                var users = await _validationRepository.GetAll();
-                if (users != null)
-                {
-                    var filteredUsers = users
-                        .Where(u => u.UserType == "Customer")
-                        .Select(u => u.Email)
-                        .ToList();
-
-                    var customers = new List<Customers>();
-                    foreach (var email in filteredUsers)
-                    {
-                        var customerList = await _customersRepository.GetAll();
-                        var customer = customerList
-                            .Where(c => c.Email == email)
-                            .FirstOrDefault();
-
-                        if (customer != null)
-                        {
-                            customers.Add(customer);
-                        }
-                    }
-
-                    return customers;
-                }
-
-                return null;
+                var customers =await  _customersRepository.GetAll();
+                return customers;
             }
             catch (Exception ex)
             {
@@ -124,26 +88,19 @@ namespace Capstone_Project.Services
 
         public async Task<Customers?> GetUser(int customerId)
         {
-            try
-            {
+            
                 var customer = await _customersRepository.Get(customerId);
                 if (customer == null)
                 {
                     throw new NoCustomersFoundException($"User with ID {customerId} not found.");
                 }
                 return customer;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error getting user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+           
         }
 
         public async Task<Customers?> UpdateCustomerContact(int customerId, AdminUpdateCustomerContactDTO contactDTO)
         {
-            try
-            {
+            
                 var customer = await _customersRepository.Get(customerId);
                 if (customer == null)
                 {
@@ -154,18 +111,12 @@ namespace Capstone_Project.Services
                 await _customersRepository.Update(customer);
                 _logger.LogInformation($"Contact details updated for user with ID {customerId}.");
                 return customer;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating contact details for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+           
         }
 
         public async Task<Customers?> UpdateCustomerDetails(int customerId, AdminUpdateCustomerDetailsDTO detailsDTO)
         {
-            try
-            {
+            
                 var customer = await _customersRepository.Get(customerId);
                 if (customer == null)
                 {
@@ -176,18 +127,11 @@ namespace Capstone_Project.Services
                 await _customersRepository.Update(customer);
                 _logger.LogInformation($"Details updated for user with ID {customerId}.");
                 return customer;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating details for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+          
         }
 
         public async Task<Customers?> UpdateCustomerName(int customerId, AdminUpdateCustomerNameDTO nameDTO)
         {
-            try
-            {
                 var customer = await _customersRepository.Get(customerId);
                 if (customer == null)
                 {
@@ -198,12 +142,7 @@ namespace Capstone_Project.Services
                 await _customersRepository.Update(customer);
                 _logger.LogInformation($"Name updated for user with ID {customerId}.");
                 return customer;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating name for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+           
         }
 
         public async Task<Customers?> CreateCustomer(RegisterCustomerDTO customerDTO)
@@ -231,7 +170,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError($"Error creating customer: {ex.Message}");
-                throw new CustomerCreationException($"Error creating customer: {ex.Message}");
+                throw new CustomerCreationException($"Error creating customer: Email Already Exists");
             }
         }
     }

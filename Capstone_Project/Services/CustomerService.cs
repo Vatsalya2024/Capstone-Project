@@ -29,7 +29,11 @@ namespace Capstone_Project.Services
             _validationRepository = validationRepository;
             _tokenService = tokenService;
         }
-
+        /// <summary>
+        /// Method for Customer Login
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<LoginUserDTO> Login(LoginUserDTO user)
         {
             try
@@ -59,7 +63,11 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Method to Resgister a Customer
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<LoginUserDTO> Register(RegisterCustomerDTO user)
         {
             try
@@ -86,88 +94,13 @@ namespace Capstone_Project.Services
             }
         }
 
-        //public async Task<List<Customers>> GetCustomersListasync()
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation("Fetching customer list...");
-
-        //        var customer = await _customerRepository.GetAll();
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while fetching the customer list.");
-        //        throw;
-        //    }
-        //}
-
-        //public async Task<Customers> ChangeCustomerPhoneAsync(int id, long phone)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Changing phone number for customer with ID {id}...");
-
-        //        var customer = await _customerRepository.Get(id);
-        //        if (customer != null)
-        //        {
-        //            customer.PhoneNumber = phone;
-        //            customer = await _customerRepository.Update(customer);
-        //            return customer;
-        //        }
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while changing phone number for customer with ID {id}.");
-        //        throw;
-        //    }
-        //}
-
-        //public async Task<Customers> ChangeCustomerName(int id, string name)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Changing name for customer with ID {id}...");
-
-        //        var customer = await _customerRepository.Get(id);
-        //        if (customer != null)
-        //        {
-        //            customer.Name = name;
-        //            customer = await _customerRepository.Update(customer);
-        //            return customer;
-        //        }
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while changing name for customer with ID {id}.");
-        //        throw;
-        //    }
-        //}
-
-        //public async Task<Customers> ChangeCustomerAddress(int id, string address)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Changing address for customer with ID {id}...");
-
-        //        var customer = await _customerRepository.Get(id);
-        //        if (customer != null)
-        //        {
-        //            customer.Address = address;
-        //            customer = await _customerRepository.Update(customer);
-        //            return customer;
-        //        }
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while changing address for customer with ID {id}.");
-        //        throw;
-        //    }
-        //}
-
+       
+        /// <summary>
+        /// Method to Change the phone number of a customer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
         public async Task<Customers> ChangeCustomerPhoneAsync(int id, long phone)
         {
             try
@@ -190,7 +123,12 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Method to Change the name of customer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public async Task<Customers> ChangeCustomerName(int id, string name)
         {
             try
@@ -213,7 +151,12 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Method to change the Address of customer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public async Task<Customers> ChangeCustomerAddress(int id, string address)
         {
             try
@@ -237,26 +180,11 @@ namespace Capstone_Project.Services
             }
         }
 
-        //public async Task<Customers> DeleteCustomers(int id)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Deleting customer with ID {id}...");
-
-        //        var customer = await _customerRepository.Get(id);
-        //        if (customer == null)
-        //        {
-        //            throw new NoCustomersFoundException();
-        //        }
-        //        var result = await _customerRepository.Delete(id);
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while deleting customer with ID {id}.");
-        //        throw;
-        //    }
-        //}
+       /// <summary>
+       /// Method to delete the customer
+       /// </summary>
+       /// <param name="id"></param>
+       /// <returns></returns>
         public async Task<Customers> DeleteCustomers(int id)
         {
             try
@@ -279,63 +207,13 @@ namespace Capstone_Project.Services
             }
         }
 
-        //public async Task<Customers> GetCustomers(int id)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Fetching customer with ID {id}...");
-
-        //        var customer = await _customerRepository.Get(id);
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while fetching customer with ID {id}.");
-        //        throw;
-        //    }
-        //}
-        //public async Task<List<Customers>> GetCustomersListasync()
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation("Fetching customer list...");
-
-        //        var customer = await _customerRepository.GetAll();
-        //        return customer;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while fetching the customer list.");
-        //        throw;
-        //    }
-        //}
-
-
-        //public async Task<bool> UpdateCustomerPassword(string email, string newPassword)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation($"Updating password for customer with email {email}...");
-
-        //        var validation = await _validationRepository.Get(email);
-        //        if (validation == null)
-        //        {
-        //            return false;
-        //        }
-        //        byte[] newKey = GenerateNewKey();
-        //        byte[] encryptedPassword = GetPasswordEncrypted(newPassword, newKey);
-        //        validation.Password = encryptedPassword;
-        //        validation.Key = newKey;
-        //        await _validationRepository.Update(validation);
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"An error occurred while updating password for customer with email {email}.");
-        //        throw;
-        //    }
-        //}
-
+       
+        /// <summary>
+        /// Meethod to update the customer password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
         public async Task<bool> UpdateCustomerPassword(string email, string newPassword)
         {
             try
@@ -361,6 +239,48 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
+        /// <summary>
+        /// Method to reset password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="newPassword"></param>
+        /// <param name="confirmPassword"></param>
+        /// <returns></returns>
+        /// <exception cref="PasswordMismatchException"></exception>
+        /// <exception cref="ValidationNotFoundException"></exception>
+        public async Task<bool> ResetPassword(string email, string newPassword, string confirmPassword)
+        {
+            _logger.LogInformation($"Resetting password for customer with email {email}...");
+
+            // Check if newPassword and confirmPassword match
+            if (newPassword != confirmPassword)
+            {
+                throw new PasswordMismatchException("New password and confirm password do not match.");
+            }
+
+            // Retrieve the validation record associated with the email
+            var validation = await _validationRepository.Get(email);
+            if (validation == null)
+            {
+                throw new ValidationNotFoundException($"Validation not found for email: {email}");
+            }
+
+            // Generate a new key and encrypt the new password
+            byte[] newKey = GenerateNewKey();
+            byte[] encryptedPassword = GetPasswordEncrypted(newPassword, newKey);
+
+            // Update the validation record with the new password and key
+            validation.Password = encryptedPassword;
+            validation.Key = newKey;
+            await _validationRepository.Update(validation);
+
+            _logger.LogInformation($"Password for customer with email {email} reset successfully.");
+            return true;
+        }
+
+
+
+
 
 
         private bool ComparePasswords(byte[] password, byte[] userPassword)

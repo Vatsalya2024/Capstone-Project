@@ -17,35 +17,7 @@ public class CustomerLoanService : ILoanCustomerService
         _customerRepository = customerRepository;
     }
 
-    //public async Task<bool> ApplyForLoan(LoanApplicationDTO loanApplication)
-    //{
-    //    try
-    //    {
-    //        // Set status to "Pending" when applying for a loan
-    //        loanApplication.Status = "Pending";
-
-    //        // Convert LoanApplication to Loans entity
-    //        var loan = new Loans
-    //        {
-    //            LoanAmount = loanApplication.LoanAmount,
-    //            LoanType = loanApplication.LoanType,
-    //            Interest = loanApplication.Interest,
-    //            Tenure = loanApplication.Tenure,
-    //            Purpose = loanApplication.Purpose,
-    //            CustomerID = loanApplication.CustomerID,
-    //            Status = loanApplication.Status // Set status here
-    //        };
-
-    //        await _loansRepository.Add(loan);
-    //        _logger.LogInformation($"Loan application submitted for customer ID: {loanApplication.CustomerID}");
-    //        return true;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError($"Error applying for loan: {ex.Message}");
-    //        return false;
-    //    }
-    //}
+  
     public async Task ApplyForLoan(LoanApplicationDTO loanApplication)
     {
         try

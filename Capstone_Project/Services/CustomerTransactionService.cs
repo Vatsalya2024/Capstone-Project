@@ -28,7 +28,11 @@ namespace Capstone_Project.Services
             _accountsRepository = accountsRepository;
             _transactionMapper = transactionMapper; 
         }
-
+        /// <summary>
+        /// Method to do deposit in an account
+        /// </summary>
+        /// <param name="depositDTO"></param>
+        /// <returns></returns>
         public async Task<string> Deposit(DepositDTO depositDTO)
         {
             try
@@ -67,7 +71,11 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Method to withdraw money from an account
+        /// </summary>
+        /// <param name="withdrawalDTO"></param>
+        /// <returns></returns>
         public async Task<string> Withdraw(WithdrawalDTO withdrawalDTO)
         {
             try
@@ -109,7 +117,11 @@ namespace Capstone_Project.Services
                 throw;
             }
         }
-
+        /// <summary>
+        /// Method to transfer money from an account
+        /// </summary>
+        /// <param name="transferDTO"></param>
+        /// <returns></returns>
         public async Task<string> Transfer(TransferDTO transferDTO)
         {
             try

@@ -67,33 +67,18 @@ namespace Capstone_Project.Services
 
         public async Task<List<BankEmployees>?> GetAllEmployees()
         {
-            var employees = await _validationRepository.GetAll();
-            if (employees == null)
+            var bankEmployees = await _bankEmployeesRepository.GetAll();
+
+            if (bankEmployees == null || bankEmployees.Count == 0)
             {
                 throw new EmployeeNotFoundException("No employees found.");
             }
 
-            var filteredEmployees = employees
-                .Where(u => u.UserType == "BankEmployee")
-                .Select(u => u.Email)
-                .ToList();
-
-            var bankEmployees = new List<BankEmployees>();
-            foreach (var email in filteredEmployees)
-            {
-                var employeeList = await _bankEmployeesRepository.GetAll();
-                var employee = employeeList
-                    .Where(e => e.Email == email)
-                    .FirstOrDefault();
-
-                if (employee != null)
-                {
-                    bankEmployees.Add(employee);
-                }
-            }
+            
 
             return bankEmployees;
         }
+
 
         public async Task<BankEmployees?> GetEmployee(int employeeId)
         {

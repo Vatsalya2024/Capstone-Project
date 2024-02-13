@@ -10,6 +10,7 @@ namespace Capstone_Project.Repositories
     {
         private readonly MavericksBankContext _mavericksBankContext;
         private readonly ILogger<ValidationRepository> _loggerValidationRepository;
+        
 
         public ValidationRepository(MavericksBankContext mavericksBankContext, ILogger<ValidationRepository> loggerValidationRepository)
         {

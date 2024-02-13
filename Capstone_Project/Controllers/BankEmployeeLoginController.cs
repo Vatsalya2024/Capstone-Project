@@ -1,5 +1,6 @@
 ﻿using Capstone_Project.Exceptions;
 using Capstone_Project.Interfaces;
+using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace Capstone_Project.Controllers
         }
         [Route("login")]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
+        public async Task<ActionResult<BankEmployees>> Login(LoginUserDTO loginUserDTO)
         {
             try
             {
@@ -43,7 +44,7 @@ namespace Capstone_Project.Controllers
 
         [Route("register")]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterBankEmployeeDTO registerBankEmployeeDTO)
+        public async Task<ActionResult<BankEmployees>> Register( RegisterBankEmployeeDTO registerBankEmployeeDTO)
         {
             try
             {

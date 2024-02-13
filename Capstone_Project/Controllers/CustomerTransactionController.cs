@@ -24,8 +24,8 @@ namespace Capstone_Project.Controllers
             _logger = logger;
             _transactionService = transactionService;
         }
-
-        [HttpPost("deposit")]
+        [Route(("deposit"))]
+        [HttpPost]
         public async Task<IActionResult> Deposit(DepositDTO depositDTO)
         {
             try
@@ -49,8 +49,8 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, new { ErrorMessage = "Internal server error occurred." });
             }
         }
-
-        [HttpPost("withdraw")]
+        [Route("withdraw")]
+        [HttpPost]
         public async Task<IActionResult> Withdraw(WithdrawalDTO withdrawalDTO)
         {
             try
@@ -74,8 +74,8 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, new { ErrorMessage = "Internal server error occurred." });
             }
         }
-
-        [HttpPost("transfer")]
+        [Route("transfer")]
+        [HttpPost]
         public async Task<IActionResult> Transfer(TransferDTO transferDTO)
         {
             try

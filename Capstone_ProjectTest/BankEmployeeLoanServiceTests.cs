@@ -36,7 +36,7 @@ namespace Capstone_ProjectTest
         [Test]
         public async Task ReviewLoanApplication_ValidLoanId_ReturnsLoan()
         {
-            // Arrange
+            
             var loanId = 123;
             var loan = new Loans { LoanID = loanId };
 
@@ -71,7 +71,7 @@ namespace Capstone_ProjectTest
             Assert.IsNotNull(result);
             Assert.AreEqual(100, result.Value.InboundAmount);
             Assert.AreEqual(50, result.Value.OutboundAmount);
-            Assert.AreEqual("Good", result.Value.CreditScore); // Update to expect "Good" credit score
+            Assert.AreEqual("Good", result.Value.CreditScore); 
         }
 
 

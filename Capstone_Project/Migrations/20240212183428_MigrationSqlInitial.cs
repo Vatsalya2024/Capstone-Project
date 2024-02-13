@@ -149,7 +149,7 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     AccountNumber = table.Column<long>(type: "bigint", nullable: false)
-                        ,
+                       ,
                     Balance = table.Column<double>(type: "float", nullable: false),
                     AccountType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -178,7 +178,7 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     BeneficiaryID = table.Column<int>(type: "int", nullable: false)
-                        ,
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     AccountNumber = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IFSC = table.Column<string>(type: "nvarchar(450)", nullable: false),

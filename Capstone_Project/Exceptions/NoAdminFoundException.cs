@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NoAdminFoundException : Exception
+   public class NoAdminFoundException : Exception
     {
         public NoAdminFoundException()
         {

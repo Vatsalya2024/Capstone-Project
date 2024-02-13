@@ -41,7 +41,7 @@ namespace Capstone_Project.Models
         }
         private long GenerateAccountNumber()
         {
-            // Example: Generate a random 10-digit number
+            
             Random rnd = new Random();
             long accountNumber = rnd.Next(1000000000, int.MaxValue) * 10L + rnd.Next(0, 10);
             return accountNumber;

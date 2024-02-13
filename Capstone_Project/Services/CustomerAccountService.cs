@@ -100,7 +100,7 @@ namespace Capstone_Project.Services
             {
                 Balance = 0,
                 AccountType = accountOpeningDTO.AccountType,
-                Status = "Pending", // Set status to Pending
+                Status = "Pending", 
                 IFSC = accountOpeningDTO.IFSC,
                 CustomerID = accountOpeningDTO.CustomerID
             };

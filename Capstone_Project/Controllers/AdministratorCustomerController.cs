@@ -56,11 +56,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error retrieving user with ID {id}: {ex.Message}");
                 return NotFound($"User with ID {id} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error retrieving user with ID {id}: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+           
         }
         [Route("Deactivate Customer")]
         [HttpPut]
@@ -83,11 +79,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error deactivating user: {ex.Message}");
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error deactivating user: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+            
         }
         [Route("Activate Customer")]
         [HttpPut]
@@ -111,11 +103,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error activating user: {ex.Message}");
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error activating user: {ex.Message}");
-                return StatusCode(500, "Internal server error");
-            }
+           
         }
 
         
@@ -135,11 +123,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error updating name for user with ID {customerId}: {ex.Message}");
                 return NotFound($"User with ID {customerId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating name for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+           
         }
 
         [Route("UpdateCustomerContact")]
@@ -156,11 +140,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error updating contact information for user with ID {customerId}: {ex.Message}");
                 return NotFound($"User with ID {customerId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating contact information for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+          
         }
 
         [Route("UpdateCustomerDetails")]
@@ -177,11 +157,7 @@ namespace Capstone_Project.Controllers
                 _logger.LogError($"Error updating details for user with ID {customerId}: {ex.Message}");
                 return NotFound($"User with ID {customerId} not found.");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating details for user with ID {customerId}: {ex.Message}");
-                throw;
-            }
+          
         }
 
         [Route("Register Customer")]
