@@ -28,8 +28,8 @@ namespace Capstone_ProjectTest
             _transactionService = new CustomerTransactionService(
                 _mockLogger.Object,
                 _mockTransactionsRepository.Object,
-                _mockAccountsRepository.Object,
-                new TransactionMapper());
+                _mockAccountsRepository.Object
+                );
         }
 
         [Test]

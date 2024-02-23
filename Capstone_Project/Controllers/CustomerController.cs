@@ -8,12 +8,14 @@ using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("ReactPolicy")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerLoginService _customerLoginService;
@@ -65,7 +67,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-        [Authorize(Roles ="Customer")]
+        [Authorize(Roles = "Customer")]
         [Route("ResetPassword")]
         [HttpPost]
         public async Task<IActionResult> ResetPassword(string email, string newPassword, string confirmPassword)
@@ -143,7 +145,7 @@ namespace Capstone_Project.Controllers
             }
         }
         [Authorize(Roles = "Customer")]
-        [Route("Change Address")]
+        [Route("ChangeAddress")]
         [HttpPut]
         public async Task<IActionResult> ChangeCustomerAddress(int id, string address)
         {
@@ -209,6 +211,32 @@ namespace Capstone_Project.Controllers
             {
                 _logger.LogError(ex, "Error updating password.");
                 return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("GetCustomerInfoByEmail")]
+        public async Task<ActionResult<Customers>> GetCustomerInfoByEmail(string email)
+        {
+            try
+            {
+                var customerInfo = await _customerAdminService.GetCustomerInfoByEmail(email);
+                if (customerInfo == null)
+                {
+                    return NotFound($"Customer with email {email} not found.");
+                }
+                return Ok(customerInfo);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 

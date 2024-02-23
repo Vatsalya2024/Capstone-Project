@@ -34,27 +34,27 @@ namespace Capstone_Project.Services
         {
             try
             {
-                // Fetch the IFSC code based on the branch name
+               
                 string ifscCode = await GetIFSCByBranch(beneficiaryDTO.BranchName);
 
                 if (!string.IsNullOrEmpty(ifscCode))
                 {
-                    // Fetch customer by ID (you should implement this method)
+                   
                     var customer = await _customerRepository.Get(beneficiaryDTO.CustomerId);
 
                     if (customer != null)
                     {
-                        // Create Beneficiary entity
+                       
                         var beneficiary = new Beneficiaries
                         {
                             AccountNumber = beneficiaryDTO.AccountNumber,
                             Name = beneficiaryDTO.Name,
                             IFSC = ifscCode,
-                            CustomerID = customer.CustomerID, // Assign CustomerID
-                                                              // Assign other properties accordingly
+                            CustomerID = customer.CustomerID, 
+                                                             
                         };
 
-                        // Add the beneficiary to the repository
+                       
                         await _beneficiariesRepository.Add(beneficiary);
 
                         _logger.LogInformation("Beneficiary added successfully.");
@@ -84,7 +84,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding beneficiary.");
-                throw; // Re-throwing the exception for higher-level handling
+                throw; 
             }
         }
 
@@ -118,7 +118,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching branches by bank.");
-                throw; // Re-throwing the exception for higher-level handling
+                throw; 
             }
         }
 
@@ -145,7 +145,7 @@ namespace Capstone_Project.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while fetching IFSC by branch.");
-                throw; // Re-throwing the exception for higher-level handling
+                throw; 
             }
         }
     }

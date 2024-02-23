@@ -95,7 +95,7 @@ namespace Capstone_Project.Services
 
         public async Task<Accounts> OpenNewAccount(AccountOpeningDTO accountOpeningDTO)
         {
-            // Create a new account instance
+            
             var newAccount = new Accounts
             {
                 Balance = 0,

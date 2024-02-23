@@ -51,7 +51,7 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
     {
         try
         {
-            // Fetch the loan application
+           
             var loan = await _loansRepository.Get(loanId);
 
             if (loan != null)
@@ -79,7 +79,7 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
     {
         try
         {
-            // Get all transactions for the specified account
+            
             var transactions = await _transactionsRepository.GetAll();
 
             if (transactions == null)
@@ -92,17 +92,17 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
                 throw new NoAccountsFoundException($"No account found with ID: {accountId}");
             }
 
-            // Calculate total inbound amount (credits)
+            
             var inboundAmount = transactions
                 .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Credit")
                 .Sum(t => t.Amount);
 
-            // Calculate total outbound amount (debits)
+            
             var outboundAmount = transactions
                 .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Debit")
                 .Sum(t => t.Amount);
 
-            var creditScore = inboundAmount > outboundAmount ? "Good" : "Bad"; // Determine credit score
+            var creditScore = inboundAmount > outboundAmount ? "Good" : "Bad"; 
 
             var result = new CreditCheckResultDTO
             {
@@ -125,15 +125,15 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
     {
         try
         {
-            // Fetch the loan application
+           
             var loan = await _loansRepository.Get(loanId);
 
             if (loan != null)
             {
-                // Update the status based on the decision
+               
                 loan.Status = approved ? "Accepted" : "Rejected";
 
-                // Update the loan in the repository
+               
                 await _loansRepository.Update(loan);
 
                 _logger.LogInformation($"Loan application with ID {loanId} decision updated to {(approved ? "Accepted" : "Rejected")}.");

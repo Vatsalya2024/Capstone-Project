@@ -94,19 +94,19 @@ namespace Capstone_Project.Services
         {
             try
             {
-                // Map RegisterBankEmployeeDTO to BankEmployees entity
+               
                 var newBankEmployee = new RegiterToBankEmployee(employeeDTO).GetBankEmployees();
 
-                // Map RegisterBankEmployeeDTO to Validation entity
+              
                 var newValidation = new RegisterToBankEmployeeUser(employeeDTO).GetValidation();
 
-                // Add the new validation to the database
+            
                 var addedValidation = await _validationRepository.Add(newValidation);
 
-                // Link the bank employee entity to the validation entity
+              
                 newBankEmployee.Email = addedValidation.Email;
 
-                // Add the new bank employee to the database
+               
                 var addedBankEmployee = await _bankEmployeesRepository.Add(newBankEmployee);
 
                 return addedBankEmployee;
@@ -122,7 +122,7 @@ namespace Capstone_Project.Services
         {
             try
             {
-                // Update the employee in the repository
+                
                 var updatedEmployee = await _bankEmployeesRepository.Update(employee);
                 return updatedEmployee;
             }

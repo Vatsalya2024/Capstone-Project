@@ -9,6 +9,7 @@ using Capstone_Project.Interfaces;
 using Capstone_Project.Mappers;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Repositories;
 
 namespace Capstone_Project.Services
 {
@@ -277,6 +278,36 @@ namespace Capstone_Project.Services
             _logger.LogInformation($"Password for customer with email {email} reset successfully.");
             return true;
         }
+
+
+        public async Task<Customers?> GetCustomerInfoByEmail(string email)
+        {
+            
+            var validationInfo = await _validationRepository.Get(email);
+
+            if (validationInfo != null)
+            {
+                
+                var allCustomers = await _customerRepository.GetAll();
+
+                if (allCustomers != null)
+                {
+                    
+                    var customerInfo = allCustomers.FirstOrDefault(customer => customer.Email == email);
+                    return customerInfo;
+                }
+                else
+                {
+                    throw new NoCustomersFoundException("No Customers");
+                }
+            }
+            else
+            {
+                throw new ValidationNotFoundException("No Email found");
+            }
+        }
+
+
 
 
 

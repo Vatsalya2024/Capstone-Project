@@ -20,7 +20,7 @@ namespace Capstone_Project.Controllers
             _adminLoginService = adminLoginService;
             _logger = logger;
         }
-        [Route("Admin Login")]
+        [Route("AdminLogin")]
         [HttpPost]
         public async Task<ActionResult<Admin>> Login(LoginUserDTO loginUserDTO)
         {
@@ -39,7 +39,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing the login request.");
             }
         }
-        [Route("Admin Register")]
+        [Route("AdminRegister")]
         [HttpPost]
         public async Task<ActionResult<Admin>> Register(RegisterAdminDTO registerAdminDTO)
         {

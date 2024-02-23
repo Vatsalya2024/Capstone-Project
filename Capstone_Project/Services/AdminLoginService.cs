@@ -87,7 +87,7 @@ namespace Capstone_Project.Services
                 _logger.LogInformation("Registering new admin with email: {0}", user.Email);
 
                 Validation myuser = new RegisterToAdminUser(user).GetValidation();
-                myuser.Status = "Active"; // Set status to "Active" by default
+                myuser.Status = "Active"; 
                 myuser = await _validationRepository.Add(myuser);
                 Admin admins = new RegisterToAdmin(user).GetAdmin();
                 admins = await _adminRepository.Add(admins);

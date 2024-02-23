@@ -2,6 +2,7 @@
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +13,7 @@ namespace Capstone_Project.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("ReactPolicy")]
     public class AdministratorCustomerController : ControllerBase
     {
         private readonly IAdministratorCustomerManagementService _customerManagementService;
@@ -22,7 +24,7 @@ namespace Capstone_Project.Controllers
             _customerManagementService = customerManagementService;
             _logger = logger;
         }
-        [Route("Get All Customers")]
+        [Route("GetAllCustomers")]
         [HttpGet]
         public async Task<ActionResult<Customers>> GetAllUsers()
         {
@@ -58,7 +60,7 @@ namespace Capstone_Project.Controllers
             }
            
         }
-        [Route("Deactivate Customer")]
+        [Route("DeactivateCustomer")]
         [HttpPut]
         public async Task<ActionResult<Customers>> DeactivateUser(int customerId)
         {
@@ -81,7 +83,7 @@ namespace Capstone_Project.Controllers
             }
             
         }
-        [Route("Activate Customer")]
+        [Route("ActivateCustomer")]
         [HttpPut]
         public async Task<ActionResult<Customers>> ActivateUser(int customerId)
         {
@@ -160,7 +162,7 @@ namespace Capstone_Project.Controllers
           
         }
 
-        [Route("Register Customer")]
+        [Route("RegisterCustomer")]
         [HttpPost]
         public async Task<ActionResult<Customers>> CreateCustomer(RegisterCustomerDTO customerDTO)
         {

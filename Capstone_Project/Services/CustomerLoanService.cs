@@ -22,16 +22,16 @@ public class CustomerLoanService : ILoanCustomerService
     {
         try
         {
-            // Check if the customer is present
+            
             if (loanApplication.CustomerID <= 0)
             {
                 throw new NoCustomersFoundException("Customer ID not provided or invalid.");
             }
 
-            // Set status to "Pending" when applying for a loan
+           
             loanApplication.Status = "Pending";
 
-            // Convert LoanApplication to Loans entity
+          
             var loan = new Loans
             {
                 LoanAmount = loanApplication.LoanAmount,
@@ -50,7 +50,7 @@ public class CustomerLoanService : ILoanCustomerService
         catch (Exception ex)
         {
             _logger.LogError($"Error applying for loan: {ex.Message}");
-            throw; // Re-throw the exception for handling in the controller
+            throw; 
         }
     }
 
@@ -58,22 +58,21 @@ public class CustomerLoanService : ILoanCustomerService
 
     public async Task<List<Loans>> ViewAvailedLoans(int customerId)
     {
-        // Fetch the customer by ID
         var customer = await _customerRepository.Get(customerId);
 
-        // Check if the customer exists
+       
         if (customer == null)
         {
             throw new NoCustomersFoundException($"No customer found with ID {customerId}");
         }
 
-        // Fetch all loans
+ 
         var allLoans = await _loansRepository.GetAll();
 
-        // Filter loans based on customer ID
+        
         var availedLoans = allLoans.Where(loan => loan.CustomerID == customerId).ToList();
 
-        // Check if there are no loans for the customer
+        
         if (availedLoans.Count == 0)
         {
             throw new NoLoansFoundException($"No loans found for customer with ID {customerId}");

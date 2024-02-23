@@ -76,7 +76,7 @@ namespace Capstone_Project.Services
                     throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
                 }
 
-                // Filter transactions by type Credit and sum their amounts
+               
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Credit").Sum(t => t.Amount);
             }
             catch (Exception ex)
@@ -101,7 +101,7 @@ namespace Capstone_Project.Services
                     throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
                 }
 
-                // Filter transactions by type Debit and sum their amounts
+               
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Debit").Sum(t => t.Amount);
             }
             catch (Exception ex)

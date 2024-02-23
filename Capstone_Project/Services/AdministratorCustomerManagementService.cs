@@ -149,19 +149,19 @@ namespace Capstone_Project.Services
         {
             try
             {
-                // Map RegisterCustomerDTO to Customers entity
+                
                 var newCustomer = new RegisterToCustomer(customerDTO).GetCustomers();
 
-                // Map RegisterCustomerDTO to Validation entity
+               
                 var newValidation = new RegisterToCustomerUser(customerDTO).GetValidation();
 
-                // Add the new validation to the database
+               
                 var addedValidation = await _validationRepository.Add(newValidation);
 
-                // Link the customer entity to the validation entity
+               
                 newCustomer.Email = addedValidation.Email;
 
-                // Add the new customer to the database
+               
                 var addedCustomer = await _customersRepository.Add(newCustomer);
 
                 _logger.LogInformation($"Customer created.");

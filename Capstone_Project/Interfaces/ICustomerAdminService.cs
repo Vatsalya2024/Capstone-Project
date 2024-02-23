@@ -12,6 +12,7 @@ namespace Capstone_Project.Interfaces
         public Task<Customers> DeleteCustomers(int id);
         Task<bool> UpdateCustomerPassword(string email, string newPassword);
         Task<bool> ResetPassword(string email, string newPassword, string confirmPassword);
+        Task<Customers?> GetCustomerInfoByEmail(string email);
     }
 }
 

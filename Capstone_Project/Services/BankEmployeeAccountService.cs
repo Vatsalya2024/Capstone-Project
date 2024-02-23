@@ -61,7 +61,7 @@ namespace Capstone_Project.Services
 
                 if (account != null && account.Status == "Pending")
                 {
-                    account.Status = "Active"; // Approve the account creation
+                    account.Status = "Active"; 
                     await _accountsRepository.Update(account);
                     _logger.LogInformation($"Account creation approved for account number: {accountNumber}");
                     return true;
@@ -109,7 +109,7 @@ namespace Capstone_Project.Services
             try
             {
                 var allAccounts = await _accountsRepository.GetAll();
-                // Filter accounts with "Pending" status
+                
                 var pendingAccounts = allAccounts.Where(account => account.Status == "Pending").ToList();
                 return pendingAccounts;
             }
@@ -125,7 +125,7 @@ namespace Capstone_Project.Services
             try
             {
                 var allAccounts = await _accountsRepository.GetAll();
-                // Filter accounts with "PendingDeletion" status
+          
                 var pendingDeletionAccounts = allAccounts.Where(account => account.Status == "PendingDeletion").ToList();
                 return pendingDeletionAccounts;
             }

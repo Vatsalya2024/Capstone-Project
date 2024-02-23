@@ -67,7 +67,7 @@ namespace Capstone_Project.Services
         public async Task<LoginUserDTO> Register(RegisterBankEmployeeDTO employee)
         {
             Validation myuser = new RegisterToBankEmployeeUser(employee).GetValidation();
-            myuser.Status = "Active"; // Set status to "Active" by default
+            myuser.Status = "Active"; 
             myuser = await _validationRepository.Add(myuser);
             BankEmployees bankEmployees = new RegiterToBankEmployee(employee).GetBankEmployees();
             bankEmployees = await _employeeRepository.Add(bankEmployees);

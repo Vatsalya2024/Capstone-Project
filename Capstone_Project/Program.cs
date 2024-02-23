@@ -68,6 +68,15 @@ public class Program
                 };
             });
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("ReactPolicy", opts =>
+            {
+                opts.WithOrigins("http://localhost:3000", "null").AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
+            });
+        });
+
+
         builder.Services.AddDbContext<MavericksBankContext>(opts =>
         {
             opts.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnectionString"));
@@ -84,7 +93,7 @@ public class Program
         builder.Services.AddScoped<IRepository<int, Loans>, LoansRepository>();
         builder.Services.AddScoped<IRepository<int, Transactions>, TransactionsRepository>();
         builder.Services.AddScoped<IRepository<int,AvailableLoans>,AvailableLoansRepository>();
-        builder.Services.AddSingleton<TransactionMapper>();
+       
         builder.Services.AddScoped<IAdminAvailableLoansService, AdminAvailableLoansService>();
         builder.Services.AddScoped<IAvailableLoansUserService, AvailableLoansUserService>();
         builder.Services.AddScoped<IBanksAdminService, BanksService>();
@@ -116,6 +125,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseCors("ReactPolicy");
         app.UseAuthentication();
         app.UseAuthorization();
 
