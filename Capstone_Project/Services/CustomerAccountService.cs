@@ -45,27 +45,55 @@ namespace Capstone_Project.Services
         }
 
 
-        public async Task<Accounts> GetAccountDetails(long accountNumber)
+        //public async Task<Accounts> GetAccountDetails(long accountNumber)
+        //{
+        //    try
+        //    {
+        //        var account = await _accountsRepository.Get(accountNumber);
+
+        //        if (account != null)
+        //        {
+        //            return account;
+        //        }
+        //        else
+        //        {
+        //            throw new NoAccountsFoundException($"No account found with number: {accountNumber}");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
+        //        throw;
+        //    }
+        //}
+
+        public async Task<Accounts> GetAccountDetails(long accountNumber, int customerId)
         {
             try
             {
                 var account = await _accountsRepository.Get(accountNumber);
 
-                if (account != null)
+                if (account != null && account.CustomerID == customerId)
                 {
                     return account;
                 }
                 else
                 {
-                    throw new NoAccountsFoundException($"No account found with number: {accountNumber}");
+                    throw new NoAccountsFoundException($"No account found with number: {accountNumber} for customer ID: {customerId}");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
+                _logger.LogError(ex, $"Error getting account details for number: {accountNumber} and customer ID: {customerId}");
                 throw;
             }
         }
+
+
+
+
+
+
 
         public async Task<List<Accounts>> GetAllAccountsByCustomerId(int customerId)
         {

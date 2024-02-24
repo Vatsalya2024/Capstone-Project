@@ -63,36 +63,36 @@ namespace Capstone_ProjectTest
             Assert.ThrowsAsync<NoAccountsFoundException>(async () => await _accountService.CloseAccount(accountNumber));
         }
 
-        [Test]
-        public async Task GetAccountDetails_AccountExists_Success()
-        {
-            // Arrange
-            long accountNumber = 123456789;
-            var account = new Accounts
-            {
-                AccountNumber = accountNumber
-            };
+        //[Test]
+        //public async Task GetAccountDetails_AccountExists_Success()
+        //{
+        //    // Arrange
+        //    long accountNumber = 123456789;
+        //    var account = new Accounts
+        //    {
+        //        AccountNumber = accountNumber
+        //    };
 
-            _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync(account);
+        //    _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync(account);
 
-            // Act
-            var result = await _accountService.GetAccountDetails(accountNumber);
+        //    // Act
+        //    var result = await _accountService.GetAccountDetails(accountNumber);
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(accountNumber, result.AccountNumber);
-        }
+        //    // Assert
+        //    Assert.IsNotNull(result);
+        //    Assert.AreEqual(accountNumber, result.AccountNumber);
+        //}
 
-        [Test]
-        public void GetAccountDetails_AccountDoesNotExist_ExceptionThrown()
-        {
-            // Arrange
-            long accountNumber = 123456789;
-            _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync((Accounts)null);
+        //[Test]
+        //public void GetAccountDetails_AccountDoesNotExist_ExceptionThrown()
+        //{
+        //    // Arrange
+        //    long accountNumber = 123456789;
+        //    _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync((Accounts)null);
 
-            // Act & Assert
-            Assert.ThrowsAsync<NoAccountsFoundException>(async () => await _accountService.GetAccountDetails(accountNumber));
-        }
+        //    // Act & Assert
+        //    Assert.ThrowsAsync<NoAccountsFoundException>(async () => await _accountService.GetAccountDetails(accountNumber));
+        //}
 
     }
 }

@@ -60,28 +60,47 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-        [Route("GetAccountDetailsByAccountNumber")]
-        [HttpGet]
-        public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber)
+        //[Route("GetAccountDetailsByAccountNumber")]
+        //[HttpGet]
+        //public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber)
+        //{
+        //    try
+        //    {
+        //        var account = await _accountManagementService.GetAccountDetails(accountNumber);
+
+        //            return Ok(account);
+
+        //    }
+        //    catch (NoAccountsFoundException ex)
+        //    {
+        //        _logger.LogError(ex, $"No account found with number: {accountNumber}");
+        //        return NotFound($"No account found with number: {accountNumber}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
+        //        return StatusCode(500, "Internal server error");
+        //    }
+        //}
+        [HttpGet("{accountNumber}/{customerId}")]
+        public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber, int customerId)
         {
             try
             {
-                var account = await _accountManagementService.GetAccountDetails(accountNumber);
-                
-                    return Ok(account);
-                
+                var account = await _accountManagementService.GetAccountDetails(accountNumber, customerId);
+                return Ok(account);
             }
             catch (NoAccountsFoundException ex)
             {
-                _logger.LogError(ex, $"No account found with number: {accountNumber}");
-                return NotFound($"No account found with number: {accountNumber}");
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
         [Route("GetAccountDetailsByCustomerId")]
         [HttpGet]
         public async Task<ActionResult<List<Accounts>>> GetAllAccountsByCustomerId(int customerId)
