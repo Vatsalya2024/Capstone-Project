@@ -6,9 +6,9 @@ namespace Capstone_Project.Interfaces
 {
     public interface ITransactionService
     {
-        Task<string> Deposit(DepositDTO depositDTO);
-        Task<string> Withdraw(WithdrawalDTO withdrawalDTO);
-        Task<string> Transfer(TransferDTO transferDTO);
+        Task<string> Deposit(int customerId,DepositDTO depositDTO);
+        Task<string> Withdraw(int customerId,WithdrawalDTO withdrawalDTO);
+        Task<string> Transfer(int customerId,TransferDTO transferDTO);
         Task<List<Transactions>> GetLast10Transactions(long accountNumber);
         Task<List<Transactions>> GetLastMonthTransactions(long accountNumber);
         Task<List<Transactions>> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate);

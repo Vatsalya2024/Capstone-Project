@@ -100,6 +100,7 @@ namespace Capstone_Project.Services
             try
             {
                 var accounts = await _accountsRepository.GetAll();
+               
                 var customerAccounts = accounts.FindAll(a => a.CustomerID == customerId);
 
                 if (customerAccounts.Count > 0)

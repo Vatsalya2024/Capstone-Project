@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Capstone_Project.Models;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Capstone_Project.Controllers
 {
@@ -23,7 +25,7 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-      
+        [Authorize(Roles = "Customer")]
         [Route("ApplyForLoan")]
         [HttpPost]
         public async Task<IActionResult> ApplyForLoan(LoanApplicationDTO loanApplication)
@@ -44,6 +46,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("AvailedLoans")]
         [HttpGet]
         public async Task<IActionResult> ViewAvailedLoans(int customerId)

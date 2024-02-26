@@ -1,12 +1,14 @@
 ﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
 //using System.Threading.Tasks;
+//using Capstone_Project.Exceptions;
+//using Capstone_Project.Interfaces;
+//using Capstone_Project.Mappers;
 //using Capstone_Project.Models;
 //using Capstone_Project.Models.DTOs;
 //using Capstone_Project.Repositories;
 //using Microsoft.Extensions.Logging;
-//using Capstone_Project.Mappers; 
-//using Capstone_Project.Interfaces;
-//using Capstone_Project.Exceptions;
 
 //namespace Capstone_Project.Services
 //{
@@ -15,24 +17,17 @@
 //        private readonly ILogger<CustomerTransactionService> _logger;
 //        private readonly IRepository<int, Transactions> _transactionsRepository;
 //        private readonly IRepository<long, Accounts> _accountsRepository;
-//        private readonly TransactionMapper _transactionMapper;
 
 //        public CustomerTransactionService(
 //            ILogger<CustomerTransactionService> logger,
 //            IRepository<int, Transactions> transactionsRepository,
-//            IRepository<long, Accounts> accountsRepository,
-//            TransactionMapper transactionMapper)
+//            IRepository<long, Accounts> accountsRepository)
 //        {
 //            _logger = logger;
 //            _transactionsRepository = transactionsRepository;
 //            _accountsRepository = accountsRepository;
-//            _transactionMapper = transactionMapper; 
 //        }
-//        /// <summary>
-//        /// Method to do deposit in an account
-//        /// </summary>
-//        /// <param name="depositDTO"></param>
-//        /// <returns></returns>
+
 //        public async Task<string> Deposit(DepositDTO depositDTO)
 //        {
 //            try
@@ -47,9 +42,10 @@
 //                        return errorMessage;
 //                    }
 
-//                    var transaction = _transactionMapper.MapDepositDtoToTransaction(depositDTO);
-//                    await _transactionsRepository.Add(transaction);
+//                    var transactionMapper = new TransactionMapper(depositDTO);
+//                    var transaction = transactionMapper.GetTransaction();
 
+//                    await _transactionsRepository.Add(transaction);
 
 //                    account.Balance += depositDTO.Amount;
 //                    await _accountsRepository.Update(account);
@@ -71,11 +67,7 @@
 //                throw;
 //            }
 //        }
-//        /// <summary>
-//        /// Method to withdraw money from an account
-//        /// </summary>
-//        /// <param name="withdrawalDTO"></param>
-//        /// <returns></returns>
+
 //        public async Task<string> Withdraw(WithdrawalDTO withdrawalDTO)
 //        {
 //            try
@@ -93,9 +85,10 @@
 //                    if (account.Balance < withdrawalDTO.Amount)
 //                        throw new NotSufficientBalanceException();
 
-//                    var transaction = _transactionMapper.MapWithdrawalDtoToTransaction(withdrawalDTO);
-//                    await _transactionsRepository.Add(transaction);
+//                    var transactionMapper = new TransactionMapper(withdrawalDTO);
+//                    var transaction = transactionMapper.GetTransaction();
 
+//                    await _transactionsRepository.Add(transaction);
 
 //                    account.Balance -= withdrawalDTO.Amount;
 //                    await _accountsRepository.Update(account);
@@ -117,11 +110,7 @@
 //                throw;
 //            }
 //        }
-//        /// <summary>
-//        /// Method to transfer money from an account
-//        /// </summary>
-//        /// <param name="transferDTO"></param>
-//        /// <returns></returns>
+
 //        public async Task<string> Transfer(TransferDTO transferDTO)
 //        {
 //            try
@@ -139,23 +128,28 @@
 //                    if (sourceAccount.Balance < transferDTO.Amount)
 //                        throw new NotSufficientBalanceException();
 
-//                    var sourceTransaction = _transactionMapper.MapTransferDtoToSourceTransaction(transferDTO);
-//                    var destinationTransaction = _transactionMapper.MapTransferDtoToDestinationTransaction(transferDTO);
+//                    var sourceTransactionMapper = new TransactionMapper(transferDTO, true);
+//                    var sourceTransaction = sourceTransactionMapper.GetTransaction();
+
+//                    var destinationAccount = await _accountsRepository.Get(transferDTO.DestinationAccountNumber);
+//                    if (destinationAccount == null || destinationAccount.Status != "Active")
+//                    {
+//                        var errorMessage = "Destination account not found or inactive";
+//                        _logger.LogError(errorMessage);
+//                        return errorMessage;
+//                    }
+
+//                    var destinationTransactionMapper = new TransactionMapper(transferDTO, false);
+//                    var destinationTransaction = destinationTransactionMapper.GetTransaction();
 
 //                    await _transactionsRepository.Add(sourceTransaction);
 //                    await _transactionsRepository.Add(destinationTransaction);
 
-//                    // Update source account balance
 //                    sourceAccount.Balance -= transferDTO.Amount;
 //                    await _accountsRepository.Update(sourceAccount);
 
-//                    // Update destination account balance
-//                    var destinationAccount = await _accountsRepository.Get(transferDTO.DestinationAccountNumber);
-//                    if (destinationAccount != null && destinationAccount.Status == "Active")
-//                    {
-//                        destinationAccount.Balance += transferDTO.Amount;
-//                        await _accountsRepository.Update(destinationAccount);
-//                    }
+//                    destinationAccount.Balance += transferDTO.Amount;
+//                    await _accountsRepository.Update(destinationAccount);
 
 //                    var successMessage = "Transfer successful.";
 //                    _logger.LogInformation(successMessage);
@@ -173,8 +167,9 @@
 //                _logger.LogError(ex, "Error occurred while processing transfer.");
 //                throw;
 //            }
-
 //        }
+
+
 //        public async Task<List<Transactions>> GetLast10Transactions(long accountNumber)
 //        {
 //            try
@@ -246,6 +241,7 @@
 //}
 
 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -276,12 +272,12 @@ namespace Capstone_Project.Services
             _accountsRepository = accountsRepository;
         }
 
-        public async Task<string> Deposit(DepositDTO depositDTO)
+        public async Task<string> Deposit(int customerId,DepositDTO depositDTO)
         {
             try
             {
                 var account = await _accountsRepository.Get(depositDTO.AccountNumber);
-                if (account != null && account.Status == "Active")
+                if (account != null && account.CustomerID==customerId && account.Status == "Active")
                 {
                     if (depositDTO.Amount <= 0)
                     {
@@ -316,12 +312,12 @@ namespace Capstone_Project.Services
             }
         }
 
-        public async Task<string> Withdraw(WithdrawalDTO withdrawalDTO)
+        public async Task<string> Withdraw(int customerId,WithdrawalDTO withdrawalDTO)
         {
             try
             {
                 var account = await _accountsRepository.Get(withdrawalDTO.AccountNumber);
-                if (account != null && account.Status == "Active")
+                if (account != null&& account.CustomerID==customerId && account.Status == "Active")
                 {
                     if (withdrawalDTO.Amount <= 0)
                     {
@@ -359,12 +355,12 @@ namespace Capstone_Project.Services
             }
         }
 
-        public async Task<string> Transfer(TransferDTO transferDTO)
+        public async Task<string> Transfer(int customerId,TransferDTO transferDTO)
         {
             try
             {
                 var sourceAccount = await _accountsRepository.Get(transferDTO.SourceAccountNumber);
-                if (sourceAccount != null && sourceAccount.Status == "Active")
+                if (sourceAccount != null && sourceAccount.CustomerID==customerId&& sourceAccount.Status == "Active")
                 {
                     if (transferDTO.Amount <= 0)
                     {

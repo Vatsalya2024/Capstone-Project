@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,6 +26,7 @@ namespace Capstone_Project.Controllers
             _accountManagementService = accountManagementService;
             _logger = logger;
         }
+        [Authorize(Roles = "Customer")]
         [Route("Open Account")]
         [HttpPost]
         public async Task<ActionResult<Accounts>> OpenAccount(AccountOpeningDTO accountOpeningDTO)
@@ -39,7 +42,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
+        [Authorize(Roles = "Customer")]
         [Route("Close Account")]
         [HttpPost]
         public async Task<ActionResult<bool>> CloseAccount(long accountNumber)
@@ -82,6 +85,7 @@ namespace Capstone_Project.Controllers
         //        return StatusCode(500, "Internal server error");
         //    }
         //}
+        [Authorize(Roles = "Customer")]
         [HttpGet("{accountNumber}/{customerId}")]
         public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber, int customerId)
         {
@@ -100,7 +104,7 @@ namespace Capstone_Project.Controllers
             }
         }
 
-
+        
         [Route("GetAccountDetailsByCustomerId")]
         [HttpGet]
         public async Task<ActionResult<List<Accounts>>> GetAllAccountsByCustomerId(int customerId)

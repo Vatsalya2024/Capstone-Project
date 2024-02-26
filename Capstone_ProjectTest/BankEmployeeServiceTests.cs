@@ -33,7 +33,7 @@ namespace Capstone_ProjectTest
             var actualBankEmployees = await bankEmployeeService.GetAllBankEmployee();
 
             // Assert
-            Assert.AreEqual(expectedBankEmployees, actualBankEmployees);
+            Assert.That(actualBankEmployees, Is.EqualTo(expectedBankEmployees));
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Capstone_ProjectTest
             // Arrange
             var bankEmployeeRepositoryMock = new Mock<IRepository<int, BankEmployees>>();
             bankEmployeeRepositoryMock.Setup(repo => repo.GetAll())
-                                       .ReturnsAsync((List<BankEmployees>)null);
+                                       .ReturnsAsync((List<BankEmployees>?)null);
 
             var loggerMock = new Mock<ILogger<BankEmployeeService>>();
 
@@ -69,7 +69,7 @@ namespace Capstone_ProjectTest
             var result = await bankEmployeeService.DeleteBankEmployee(employeeIdToDelete);
 
             // Assert
-            Assert.AreEqual(deletedEmployee, result);
+            Assert.That(result, Is.EqualTo(deletedEmployee));
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Capstone_ProjectTest
             var result = await bankEmployeeService.GetBankEmployee(employeeIdToGet);
 
             // Assert
-            Assert.AreEqual(expectedEmployee, result);
+            Assert.That(result, Is.EqualTo(expectedEmployee));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace Capstone_ProjectTest
             var result = await bankEmployeeService.UpdateBankEmployeeName(updateDto);
 
             // Assert
-            Assert.AreEqual(updateDto.Name, result.Name);
+            Assert.That(result.Name, Is.EqualTo(updateDto.Name));
         }
 
 

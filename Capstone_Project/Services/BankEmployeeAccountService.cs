@@ -23,18 +23,22 @@ namespace Capstone_Project.Services
 
         public async Task<Customers> GetCustomers(int id)
         {
-            try
-            {
+           
                 _logger.LogInformation($"Fetching customer with ID {id}...");
 
                 var customer = await _customerRepository.Get(id);
+            if (customer != null)
+            {
                 return customer;
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, $"An error occurred while fetching customer with ID {id}.");
-                throw;
+                throw new NoCustomersFoundException($"Customer with Id: {id} not found");
             }
+            
+            
+              
+            
         }
         public async Task<List<Customers>> GetCustomersListasync()
         {

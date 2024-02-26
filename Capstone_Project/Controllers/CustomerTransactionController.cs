@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 using Capstone_Project.Exceptions;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -24,13 +26,14 @@ namespace Capstone_Project.Controllers
             _logger = logger;
             _transactionService = transactionService;
         }
+        [Authorize(Roles = "Customer")]
         [Route(("deposit"))]
         [HttpPost]
-        public async Task<IActionResult> Deposit(DepositDTO depositDTO)
+        public async Task<IActionResult> Deposit(int customerId,DepositDTO depositDTO)
         {
             try
             {
-                var result = await _transactionService.Deposit(depositDTO);
+                var result = await _transactionService.Deposit(customerId,depositDTO);
                 return Ok(new { Message = result });
             }
             catch (ArgumentException ex)
@@ -49,13 +52,14 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, new { ErrorMessage = "Internal server error occurred." });
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("withdraw")]
         [HttpPost]
-        public async Task<IActionResult> Withdraw(WithdrawalDTO withdrawalDTO)
+        public async Task<IActionResult> Withdraw(int customerId,WithdrawalDTO withdrawalDTO)
         {
             try
             {
-                var result = await _transactionService.Withdraw(withdrawalDTO);
+                var result = await _transactionService.Withdraw(customerId,withdrawalDTO);
                 return Ok(new { Message = result });
             }
             catch (ArgumentException ex)
@@ -74,13 +78,14 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, new { ErrorMessage = "Internal server error occurred." });
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("transfer")]
         [HttpPost]
-        public async Task<IActionResult> Transfer(TransferDTO transferDTO)
+        public async Task<IActionResult> Transfer(int customerId,TransferDTO transferDTO)
         {
             try
             {
-                var result = await _transactionService.Transfer(transferDTO);
+                var result = await _transactionService.Transfer(customerId,transferDTO);
                 return Ok(new { Message = result });
             }
             catch (ArgumentException ex)
@@ -100,6 +105,7 @@ namespace Capstone_Project.Controllers
             }
 
         }
+        [Authorize(Roles = "Customer")]
         [Route("Last 10 Transactions")]
         [HttpGet]
         public async Task<IActionResult> GetLast10Transactions(long accountNumber)
@@ -120,6 +126,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("Last Month Transactions")]
         [HttpGet]
         public async Task<IActionResult> GetLastMonthTransactions(long accountNumber)
@@ -140,6 +147,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("Transactions Between Dates")]
         [HttpGet]
         public async Task<IActionResult> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate)

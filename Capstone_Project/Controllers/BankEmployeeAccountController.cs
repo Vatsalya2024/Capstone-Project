@@ -44,11 +44,12 @@ namespace Capstone_Project.Controllers
             try
             {
                 var customer = await _bankEmployeeAccountService.GetCustomers(id);
-                if (customer == null)
-                {
-                    return NotFound();
-                }
+                
                 return customer;
+            }
+            catch(NoCustomersFoundException ncfe)
+            {
+                return NotFound(ncfe.Message);
             }
             catch (Exception ex)
             {
