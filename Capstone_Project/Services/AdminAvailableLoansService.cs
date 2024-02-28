@@ -18,14 +18,6 @@ namespace Capstone_Project.Services
             return await _availableLoansRepository.Add(loan);
         }
 
-        public async Task<AvailableLoans?> DeleteLoan(int loanId)
-        {
-            return await _availableLoansRepository.Delete(loanId);
-        }
-
-        public async Task<AvailableLoans> UpdateLoan(AvailableLoans loan)
-        {
-            return await _availableLoansRepository.Update(loan);
-        }
+        
     }
 }

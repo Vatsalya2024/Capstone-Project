@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
+using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,24 +24,13 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-        [Route("Add Beneficiary")]
-        [HttpPost]
+        [HttpPost("AddBeneficiary")]
         public async Task<IActionResult> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
         {
             try
             {
-                await _customerBeneficiaryService.AddBeneficiary(beneficiaryDTO);
+                var beneficiary = await _customerBeneficiaryService.AddBeneficiary(beneficiaryDTO);
                 return Ok("Beneficiary added successfully.");
-            }
-            catch (NoCustomersFoundException ex)
-            {
-                _logger.LogError(ex, "Error adding beneficiary: No customer found.");
-                return NotFound(ex.Message);
-            }
-            catch (NoBranchesFoundException ex)
-            {
-                _logger.LogError(ex, "Error adding beneficiary: Branch not found.");
-                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -48,7 +38,35 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-        [Route("Get Bank Branches By Bank Name")]
+
+
+
+
+        [Route("GetBeneficiaryByCustomerId")]
+        [HttpGet]
+        public async Task<IActionResult> GetBeneficiaries(int customerId)
+        {
+            try
+            {
+                var beneficiaries = await _customerBeneficiaryService.GetBeneficiariesByCustomerID(customerId);
+                return Ok(beneficiaries);
+            }
+            catch (NoCustomersFoundException ex)
+            {
+                _logger.LogError(ex, "No Customer Found");
+                return StatusCode(500, "No Customer Found");
+            }
+            catch(NoBeneficiariesFoundException ex)
+            {
+                _logger.LogError(ex, "No Beneficiary found");
+                return StatusCode(500, "No Beneficiary Found");
+            }
+        }
+
+
+
+
+        [Route("GetBankBranchesByBankName")]
         [HttpGet]
         public async Task<IActionResult> GetBranchesByBank(string bankName)
         {
@@ -68,7 +86,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-        [Route("Get IFSC By Branc Name")]
+        [Route("GetIFSCByBranchName")]
         [HttpGet]
         public async Task<IActionResult> GetIFSCByBranch(string branchName)
         {
@@ -88,5 +106,31 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
+        [HttpPost("TransferToBeneficiary")]
+        public async Task<IActionResult> TransferToBeneficiary(BeneficiaryTransferDTO transferDTO)
+        {
+            try
+            {
+                var result = await _customerBeneficiaryService.TransferToBeneficiary(transferDTO);
+                return Ok(result);
+            }
+            catch (NoAccountsFoundException ex)
+            {
+                _logger.LogError(ex, "Error transferring to beneficiary: Account not found.");
+                return NotFound(ex.Message);
+            }
+            catch (NotSufficientBalanceException ex)
+            {
+                _logger.LogError(ex, "Error transferring to beneficiary: Not sufficient balance.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error transferring to beneficiary.");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
     }
 }

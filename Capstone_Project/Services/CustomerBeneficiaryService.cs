@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Capstone_Project.Controllers;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
@@ -13,89 +14,80 @@ namespace Capstone_Project.Services
 {
     public class CustomerBeneficiaryService : ICustomerBeneficiaryService
     {
-        private readonly IRepository<int, Beneficiaries> _beneficiariesRepository;
+        private readonly IRepository<int, Beneficiaries> _beneficiaryRepository;
         private readonly IRepository<string, Branches> _branchesRepository;
         private readonly ILogger<CustomerBeneficiaryService> _logger;
         private readonly IRepository<int, Customers> _customerRepository;
+        private readonly IRepository<int, Transactions> _transactionRepository;
+        private readonly IRepository<long, Accounts> _accountRepository;
 
         public CustomerBeneficiaryService(
-            IRepository<int, Beneficiaries> beneficiariesRepository,
-            IRepository<string, Branches> branchesRepository, IRepository<int, Customers> customerRepository,
+            IRepository<int, Beneficiaries> beneficiaryRepository,
+            IRepository<string, Branches> branchesRepository, IRepository<int, Customers> customerRepository, IRepository<long, Accounts> accountRepository,
+            IRepository<int, Transactions> transactionRepository,
             ILogger<CustomerBeneficiaryService> logger)
         {
-            _beneficiariesRepository = beneficiariesRepository;
+            _beneficiaryRepository = beneficiaryRepository;
             _branchesRepository = branchesRepository;
             _logger = logger;
             _customerRepository = customerRepository;
+            _transactionRepository = transactionRepository;
+            _accountRepository = accountRepository;
         }
 
-        
-        public async Task AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
+        public async Task<List<Beneficiaries>> GetBeneficiariesByCustomerID(int customerID)
         {
-            try
-            {
-               
-                string ifscCode = await GetIFSCByBranch(beneficiaryDTO.BranchName);
-
-                if (!string.IsNullOrEmpty(ifscCode))
+            
+                var beneficiaries = await _beneficiaryRepository.GetAll();
+                if (beneficiaries == null)
                 {
-                   
-                    var customer = await _customerRepository.Get(beneficiaryDTO.CustomerId);
-
-                    if (customer != null)
-                    {
-                       
-                        var beneficiary = new Beneficiaries
-                        {
-                            AccountNumber = beneficiaryDTO.AccountNumber,
-                            Name = beneficiaryDTO.Name,
-                            IFSC = ifscCode,
-                            CustomerID = customer.CustomerID, 
-                                                             
-                        };
-
-                       
-                        await _beneficiariesRepository.Add(beneficiary);
-
-                        _logger.LogInformation("Beneficiary added successfully.");
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Customer not found with the specified ID.");
-                        throw new NoCustomersFoundException("No customer found with the specified ID.");
-                    }
+                    throw new NoBeneficiariesFoundException("No Beneficiary found");
                 }
-                else
+                var customerBeneficiaries = beneficiaries.Where(b => b.CustomerID == customerID).ToList();
+
+                if (customerBeneficiaries.Count == 0)
                 {
-                    _logger.LogWarning("IFSC code not found for the branch.");
-                    throw new NoBranchesFoundException("IFSC code not found for the branch.");
+                    _logger.LogInformation($"No beneficiaries found for customer with ID: {customerID}");
+                    throw new NoCustomersFoundException($"No beneficiaries found for customer with ID: {customerID}");
                 }
-            }
-            catch (NoCustomersFoundException ex)
-            {
-                _logger.LogError(ex, "Error occurred while adding beneficiary: No customer found.");
-                throw;
-            }
-            catch (NoBranchesFoundException ex)
-            {
-                _logger.LogError(ex, "Error occurred while adding beneficiary: IFSC code not found for the branch.");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while adding beneficiary.");
-                throw; 
-            }
+
+                return customerBeneficiaries;
+           
         }
+
+
+        public async Task<Beneficiaries> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
+        {
+            
+            Beneficiaries beneficiary = new Beneficiaries
+            {
+                BeneficiaryAccountNumber = beneficiaryDTO.BeneficiaryAccountNumber,
+                Name = beneficiaryDTO.Name,
+                IFSC = beneficiaryDTO.IFSC,
+                CustomerID = beneficiaryDTO.CustomerID,
+                Balance = 0 
+            };
+
+           
+            return await _beneficiaryRepository.Add(beneficiary);
+        }
+
+
+
+
 
         public async Task<List<BranchDTO>> GetBranchesByBank(string bankName)
         {
             try
             {
                 var branches = await _branchesRepository.GetAll();
-               
-                    var bankBranch = branches
-                        .Where(bankBranch => bankBranch.Banks.BankName == bankName)
+                if (bankName.Equals("MB", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new List<BranchDTO>();
+                }
+
+                var bankBranch = branches
+                        .Where(bankBranch => bankBranch.Banks.BankName.Equals(bankName, StringComparison.OrdinalIgnoreCase))
                         .Select(bankBranch => new BranchDTO
                         {
                             BranchName = bankBranch.BranchName,
@@ -148,5 +140,57 @@ namespace Capstone_Project.Services
                 throw; 
             }
         }
+
+
+
+        public async Task<string> TransferToBeneficiary(BeneficiaryTransferDTO transferDTO)
+        {
+            var sourceAccount = await _accountRepository.Get(transferDTO.SourceAccountNumber);
+            var beneficiaryID = transferDTO.BeneficiaryID;
+
+            var beneficiary = await _beneficiaryRepository.Get(beneficiaryID);
+
+            if (sourceAccount == null || beneficiary == null)
+            {
+                throw new NoAccountsFoundException("Account Not Found");
+            }
+
+           var beneficiaryAccountNumber = beneficiary.BeneficiaryAccountNumber;
+
+            if (sourceAccount.Balance < transferDTO.Amount)
+            {
+                throw new NotSufficientBalanceException();
+            }
+
+            sourceAccount.Balance -= transferDTO.Amount;
+            beneficiary.Balance += transferDTO.Amount;
+
+            await _accountRepository.Update(sourceAccount);
+            await _beneficiaryRepository.Update(beneficiary);
+
+            var transaction = new Transactions
+            {
+                Amount = transferDTO.Amount,
+                TransactionDate = DateTime.Now,
+                Description = "Transfer to Beneficiary",
+                TransactionType = "Debit",
+                Status = "Completed",
+                SourceAccountNumber = transferDTO.SourceAccountNumber,
+                BeneficiaryID = transferDTO.BeneficiaryID 
+            };
+
+            await _transactionRepository.Add(transaction);
+
+            return $"Transfer of {transferDTO.Amount} rupees from account {transferDTO.SourceAccountNumber} to account {beneficiaryAccountNumber} was successful.";
+        }
+
+
+
+
     }
 }
+
+
+
+
+

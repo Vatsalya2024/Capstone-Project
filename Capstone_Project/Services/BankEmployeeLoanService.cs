@@ -127,6 +127,10 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
         {
            
             var loan = await _loansRepository.Get(loanId);
+            if(loan.Status== "Disbursed")
+            {
+                throw new NoLoansFoundException("Loan Already Disbursed");
+            }
 
             if (loan != null)
             {

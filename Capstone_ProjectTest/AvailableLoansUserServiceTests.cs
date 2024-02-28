@@ -41,25 +41,7 @@ namespace Capstone_ProjectTest
 
         }
 
-        [Test]
-        public async Task GetLoanById()
-        {
-            // Arrange
-            int loanId = 1;
-            var expectedLoan = new AvailableLoans { LoanID = loanId, LoanType = "Loan 1", LoanAmount = 10000 };
-
-            _availableLoansRepositoryMock.Setup(repo => repo.Get(loanId))
-                .ReturnsAsync(expectedLoan);
-
-            // Act
-            var result = await _availableLoansUserService.GetLoanById(loanId);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.That(result.LoanID, Is.EqualTo(expectedLoan.LoanID));
-            Assert.That(result.LoanType, Is.EqualTo(expectedLoan.LoanType));
-
-        }
+       
     }
 }
 

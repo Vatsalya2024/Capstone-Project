@@ -176,7 +176,10 @@ namespace Capstone_Project.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BeneficiaryID"), 1L, 1);
 
-                    b.Property<long>("AccountNumber")
+                    b.Property<float>("Balance")
+                        .HasColumnType("real");
+
+                    b.Property<long>("BeneficiaryAccountNumber")
                         .HasColumnType("bigint");
 
                     b.Property<int>("CustomerID")
@@ -316,6 +319,9 @@ namespace Capstone_Project.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
+                    b.Property<int?>("BeneficiaryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -338,6 +344,8 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TransactionID");
+
+                    b.HasIndex("BeneficiaryID");
 
                     b.HasIndex("DestinationAccountNumber");
 
@@ -467,6 +475,10 @@ namespace Capstone_Project.Migrations
 
             modelBuilder.Entity("Capstone_Project.Models.Transactions", b =>
                 {
+                    b.HasOne("Capstone_Project.Models.Beneficiaries", "Beneficiary")
+                        .WithMany()
+                        .HasForeignKey("BeneficiaryID");
+
                     b.HasOne("Capstone_Project.Models.Accounts", "DestinationAccount")
                         .WithMany("Transfers")
                         .HasForeignKey("DestinationAccountNumber");
@@ -476,6 +488,8 @@ namespace Capstone_Project.Migrations
                         .HasForeignKey("SourceAccountNumber");
 
                     b.Navigation("Accounts");
+
+                    b.Navigation("Beneficiary");
 
                     b.Navigation("DestinationAccount");
                 });

@@ -18,10 +18,7 @@ namespace Capstone_Project.Services
             return await _availableLoansRepository.GetAll();
         }
 
-        public async Task<AvailableLoans?> GetLoanById(int loanId)
-        {
-            return await _availableLoansRepository.Get(loanId);
-        }
+        
     }
 }
 

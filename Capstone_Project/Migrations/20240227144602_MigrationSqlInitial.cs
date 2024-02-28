@@ -149,7 +149,7 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     AccountNumber = table.Column<long>(type: "bigint", nullable: false)
-                       ,
+                        ,
                     Balance = table.Column<double>(type: "float", nullable: false),
                     AccountType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -179,7 +179,8 @@ namespace Capstone_Project.Migrations
                 {
                     BeneficiaryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountNumber = table.Column<long>(type: "bigint", nullable: false),
+                    BeneficiaryAccountNumber = table.Column<long>(type: "bigint", nullable: false),
+                    Balance = table.Column<float>(type: "real", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IFSC = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CustomerID = table.Column<int>(type: "int", nullable: false)
@@ -236,7 +237,8 @@ namespace Capstone_Project.Migrations
                     TransactionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SourceAccountNumber = table.Column<long>(type: "bigint", nullable: false),
-                    DestinationAccountNumber = table.Column<long>(type: "bigint", nullable: true)
+                    DestinationAccountNumber = table.Column<long>(type: "bigint", nullable: true),
+                    BeneficiaryID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,6 +253,11 @@ namespace Capstone_Project.Migrations
                         column: x => x.SourceAccountNumber,
                         principalTable: "Accounts",
                         principalColumn: "AccountNumber");
+                    table.ForeignKey(
+                        name: "FK_Transactions_Beneficiaries_BeneficiaryID",
+                        column: x => x.BeneficiaryID,
+                        principalTable: "Beneficiaries",
+                        principalColumn: "BeneficiaryID");
                 });
 
             migrationBuilder.CreateIndex(
@@ -302,6 +309,11 @@ namespace Capstone_Project.Migrations
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Transactions_BeneficiaryID",
+                table: "Transactions",
+                column: "BeneficiaryID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_DestinationAccountNumber",
                 table: "Transactions",
                 column: "DestinationAccountNumber");
@@ -324,9 +336,6 @@ namespace Capstone_Project.Migrations
                 name: "BankEmployees");
 
             migrationBuilder.DropTable(
-                name: "Beneficiaries");
-
-            migrationBuilder.DropTable(
                 name: "Loans");
 
             migrationBuilder.DropTable(
@@ -334,6 +343,9 @@ namespace Capstone_Project.Migrations
 
             migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Beneficiaries");
 
             migrationBuilder.DropTable(
                 name: "Branches");

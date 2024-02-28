@@ -27,9 +27,10 @@ namespace Capstone_Project.Repositories
         {
             _mavericksBankContext.Beneficiaries.Add(item);
             await _mavericksBankContext.SaveChangesAsync();
-            _logger.LogInformation($"Added New Beneficiary : {item.AccountNumber}");
             return item;
         }
+
+       
 
         public async Task<Beneficiaries?> Delete(int key)
         {
@@ -51,6 +52,8 @@ namespace Capstone_Project.Repositories
             var foundedBeneficiary = await _mavericksBankContext.Beneficiaries.FirstOrDefaultAsync(beneficiary => beneficiary.BeneficiaryID == key);
             return foundedBeneficiary;
         }
+
+        
 
         public async Task<List<Beneficiaries>?> GetAll()
         {

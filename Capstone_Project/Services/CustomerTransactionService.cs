@@ -360,7 +360,10 @@ namespace Capstone_Project.Services
             try
             {
                 var sourceAccount = await _accountsRepository.Get(transferDTO.SourceAccountNumber);
-                if (sourceAccount != null && sourceAccount.CustomerID==customerId&& sourceAccount.Status == "Active")
+                var destinationAccount1 = await _accountsRepository.Get(transferDTO.DestinationAccountNumber);
+
+                if (sourceAccount != null && sourceAccount.CustomerID==customerId&& sourceAccount.Status == "Active"&&
+                     destinationAccount1 != null && destinationAccount1.AccountNumber != transferDTO.SourceAccountNumber && destinationAccount1.Status == "Active")
                 {
                     if (transferDTO.Amount <= 0)
                     {
@@ -437,20 +440,50 @@ namespace Capstone_Project.Services
             }
         }
 
+        //public async Task<List<Transactions>> GetLastMonthTransactions(long accountNumber)
+        //{
+        //    try
+        //    {
+        //        var lastMonth = DateTime.Now.AddMonths(-1);
+        //        var transactions = await _transactionsRepository.GetAll();
+        //        var lastMonthTransactions = transactions
+        //            .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
+        //                        t.TransactionDate >= lastMonth)
+        //            .ToList();
+        //        if (lastMonthTransactions.Count == 0)
+        //        {
+        //            throw new NoTransactionsException("No transactions found for the account in the last month.");
+        //        }
+        //        return lastMonthTransactions;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error occurred while retrieving last month transactions.");
+        //        throw; // Re-throw the exception for handling in the controller
+        //    }
+        //}
+
         public async Task<List<Transactions>> GetLastMonthTransactions(long accountNumber)
         {
             try
             {
-                var lastMonth = DateTime.Now.AddMonths(-1);
+                var currentDate = DateTime.Now;
+                var firstDayOfLastMonth = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
+                var lastDayOfLastMonth = new DateTime(currentDate.Year, currentDate.Month, 1).AddDays(-1);
+
                 var transactions = await _transactionsRepository.GetAll();
+
                 var lastMonthTransactions = transactions
                     .Where(t => (t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber) &&
-                                t.TransactionDate >= lastMonth)
+                                t.TransactionDate >= firstDayOfLastMonth &&
+                                t.TransactionDate <= lastDayOfLastMonth)
                     .ToList();
+
                 if (lastMonthTransactions.Count == 0)
                 {
                     throw new NoTransactionsException("No transactions found for the account in the last month.");
                 }
+
                 return lastMonthTransactions;
             }
             catch (Exception ex)
@@ -459,6 +492,7 @@ namespace Capstone_Project.Services
                 throw; // Re-throw the exception for handling in the controller
             }
         }
+
 
         public async Task<List<Transactions>> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate)
         {

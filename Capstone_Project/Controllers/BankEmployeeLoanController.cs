@@ -102,7 +102,7 @@ public class BankEmployeeLoanController : ControllerBase
         }
         catch (NoLoansFoundException ex)
         {
-            _logger.LogError($"No loan found: {ex.Message}");
+            _logger.LogError($"{ex.Message}");
             return NotFound($"Loan with ID {loanId} not found.");
         }
         catch (Exception ex)
