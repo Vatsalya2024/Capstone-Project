@@ -9,11 +9,11 @@ namespace Capstone_Project.Models
         [Key]
         public int LoanID { get; set; }
         public double LoanAmount { get; set; }
-        public string LoanType { get; set; }
+        public string? LoanType { get; set; }
         public double Interest { get; set; }
         public int Tenure { get; set; }
-        public string Purpose { get; set; }
-        public string Status { get; set; }
+        public string? Purpose { get; set; }
+        public string? Status { get; set; }
         public int CustomerID { get; set; }
         [ForeignKey("CustomerID")]
         public Customers? Customers { get; set; }
@@ -36,7 +36,7 @@ namespace Capstone_Project.Models
 
         public bool Equals(Loans? other)
         {
-            return LoanID == other.LoanID;
+            return LoanID == other?.LoanID;
         }
     }
 }

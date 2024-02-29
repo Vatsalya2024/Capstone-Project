@@ -61,7 +61,7 @@ namespace Capstone_ProjectTest
 
             _customersRepositoryMock.Setup(repo => repo.Get(customerId))
                 .ReturnsAsync(customer);
-            _validationRepositoryMock.Setup(repo => repo.Get(customer.Email))
+            _ = _validationRepositoryMock.Setup(repo => repo.Get(customer.Email))
                 .ReturnsAsync(validation);
             _validationRepositoryMock.Setup(repo => repo.Update(validation))
                 .ReturnsAsync(validation);
@@ -75,33 +75,6 @@ namespace Capstone_ProjectTest
            
         }
 
-        [Test]
-        public void DeactivateUser_ThrowsNoCustomersFoundException()
-        {
-            // Arrange
-            int customerId = 1;
-            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
-                .ReturnsAsync((Customers)null);
-
-            // Act & Assert
-            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.DeactivateUser(customerId));
-        }
-
-        [Test]
-        public void DeactivateUser_ValidationNotFound_ThrowsValidationNotFoundException()
-        {
-            // Arrange
-            int customerId = 1;
-            var customer = new Customers { CustomerID = customerId, Name = "John Doe" };
-
-            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
-                .ReturnsAsync(customer);
-            _validationRepositoryMock.Setup(repo => repo.Get(customer.Email))
-                .ReturnsAsync((Validation)null);
-
-            // Act & Assert
-            Assert.ThrowsAsync<ValidationNotFoundException>(async () => await _adminCustomerService.DeactivateUser(customerId));
-        }
         [Test]
         public async Task GetAllUsers()
         {

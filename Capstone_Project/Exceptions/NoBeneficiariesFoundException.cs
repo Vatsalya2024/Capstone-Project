@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NoBeneficiariesFoundException : Exception
+    public class NoBeneficiariesFoundException : Exception
     {
         public NoBeneficiariesFoundException()
         {

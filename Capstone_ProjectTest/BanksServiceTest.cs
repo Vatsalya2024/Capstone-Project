@@ -22,7 +22,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test, Order(1)]
-        public async Task GetAllBanksExceptionTest()
+        public void GetAllBanksExceptionTest()
         {
             // Arrange
             var mockBanksRepositoryLogger = new Mock<ILogger<BanksRepository>>();
@@ -53,7 +53,7 @@ namespace Capstone_ProjectTest
             var allBanks = await banksService.GetAllBanks();
 
             // Assert
-            Assert.AreNotEqual(0, allBanks.Count);
+            Assert.That(allBanks.Count, Is.Not.EqualTo(0));
         }
         [Test, Order(3)]
         public async Task AddBankTest()

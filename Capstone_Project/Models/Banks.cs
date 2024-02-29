@@ -17,7 +17,7 @@ namespace Capstone_Project.Models
 
         public bool Equals(Banks? other)
         {
-            return BankID == other.BankID;
+            return BankID == other?.BankID;
         }
     }
 }

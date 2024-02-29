@@ -42,17 +42,17 @@ namespace Capstone_Project.Services
         }
         public async Task<List<Customers>> GetCustomersListasync()
         {
-            try
-            {
+            
                 _logger.LogInformation("Fetching customer list...");
 
                 var customer = await _customerRepository.GetAll();
-                return customer;
-            }
-            catch (Exception ex)
+                if (customer != null)
+                {
+                    return customer;
+                }
+            else
             {
-                _logger.LogError(ex, "An error occurred while fetching the customer list.");
-                throw;
+                throw new NoCustomersFoundException("No Customer Found");
             }
         }
 
@@ -110,33 +110,33 @@ namespace Capstone_Project.Services
 
         public async Task<List<Accounts>> GetPendingAccounts()
         {
-            try
-            {
+            
                 var allAccounts = await _accountsRepository.GetAll();
-                
-                var pendingAccounts = allAccounts.Where(account => account.Status == "Pending").ToList();
-                return pendingAccounts;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error fetching pending accounts: {ex.Message}");
-                throw new AccountFetchException($"Error fetching pending accounts: {ex.Message}");
+                if (allAccounts != null)
+                {
+                    var pendingAccounts = allAccounts.Where(account => account.Status == "Pending").ToList();
+                    return pendingAccounts;
+                }
+            else { 
+            
+                _logger.LogError($"Error fetching pending accounts");
+                throw new AccountFetchException($"Error fetching pending accounts]");
             }
         }
 
         public async Task<List<Accounts>> GetPendingDeletionAccounts()
         {
-            try
-            {
+            
                 var allAccounts = await _accountsRepository.GetAll();
+            if (allAccounts != null) { 
           
                 var pendingDeletionAccounts = allAccounts.Where(account => account.Status == "PendingDeletion").ToList();
                 return pendingDeletionAccounts;
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError($"Error fetching accounts pending deletion: {ex.Message}");
-                throw new AccountFetchException($"Error fetching accounts pending deletion: {ex.Message}");
+                _logger.LogError($"Error fetching accounts pending deletion");
+                throw new AccountFetchException($"Error fetching accounts pending deletion");
             }
         }
     }

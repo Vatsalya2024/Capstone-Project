@@ -59,14 +59,14 @@ namespace Capstone_Project.Models
         public int TransactionID { get; set; }
         public double Amount { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;
-        public string Description { get; set; }
-        public string TransactionType { get; set; }
-        public string Status { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string TransactionType { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
 
         
         public long SourceAccountNumber { get; set; }
         [ForeignKey("SourceAccountNumber")]
-        public Accounts Accounts { get; set; }
+        public Accounts? Accounts { get; set; }
 
         
         public long? DestinationAccountNumber { get; set; }
@@ -74,8 +74,8 @@ namespace Capstone_Project.Models
         public Accounts? DestinationAccount { get; set; }
 
 
-        public int? BeneficiaryID { get; set; } // Foreign key
-        [ForeignKey("BeneficiaryID")] // Specify the foreign key constraint
+        public int? BeneficiaryID { get; set; } 
+        [ForeignKey("BeneficiaryID")] 
         public Beneficiaries? Beneficiary { get; set; }
 
         public Transactions()
@@ -88,9 +88,9 @@ namespace Capstone_Project.Models
             TransactionID = transactionID;
             Amount = amount;
             TransactionDate = transactionDate;
-            Description = description;
-            TransactionType = transactionType;
-            Status = status;
+            Description = description ?? string.Empty;
+            TransactionType = transactionType ?? string.Empty;
+            Status = status ?? string.Empty;
             SourceAccountNumber = sourceAccountNumber;
             DestinationAccountNumber = destinationAccountNumber;
             BeneficiaryID = beneficiaryId;
@@ -98,7 +98,7 @@ namespace Capstone_Project.Models
 
         public bool Equals(Transactions? other)
         {
-            return TransactionID == other.TransactionID;
+            return TransactionID == other?.TransactionID;
         }
     }
 }

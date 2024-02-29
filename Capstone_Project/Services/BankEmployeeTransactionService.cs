@@ -39,7 +39,7 @@ namespace Capstone_Project.Services
                     throw new BankTransactionServiceException($"No transactions found for account number: {accountNumber}");
                 }
 
-                var transactions = allTransactions.Where(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber).ToList();
+                var transactions = allTransactions.Where(t => t.SourceAccountNumber == accountNumber).ToList();
 
                 if (transactions == null || transactions.Count == 0)
                 {

@@ -16,11 +16,11 @@ namespace Capstone_Project.Migrations
                     LoanID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LoanAmount = table.Column<double>(type: "float", nullable: false),
-                    LoanType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LoanType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Interest = table.Column<double>(type: "float", nullable: false),
                     Tenure = table.Column<int>(type: "int", nullable: false),
-                    Purpose = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Purpose = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,9 +46,9 @@ namespace Capstone_Project.Migrations
                 {
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Key = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -80,9 +80,9 @@ namespace Capstone_Project.Migrations
                 {
                     AdminID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -91,8 +91,7 @@ namespace Capstone_Project.Migrations
                         name: "FK_Admin_Validation_Email",
                         column: x => x.Email,
                         principalTable: "Validation",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -101,10 +100,10 @@ namespace Capstone_Project.Migrations
                 {
                     EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,8 +112,7 @@ namespace Capstone_Project.Migrations
                         name: "FK_BankEmployees_Validation_Email",
                         column: x => x.Email,
                         principalTable: "Validation",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -122,16 +120,16 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     CustomerID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("SqlServer:Identity", "1000, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
                     PhoneNumber = table.Column<long>(type: "bigint", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AadharNumber = table.Column<long>(type: "bigint", nullable: true),
-                    PANNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    PANNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -140,8 +138,7 @@ namespace Capstone_Project.Migrations
                         name: "FK_Customers_Validation_Email",
                         column: x => x.Email,
                         principalTable: "Validation",
-                        principalColumn: "Email",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Email");
                 });
 
             migrationBuilder.CreateTable(
@@ -151,9 +148,9 @@ namespace Capstone_Project.Migrations
                     AccountNumber = table.Column<long>(type: "bigint", nullable: false)
                         ,
                     Balance = table.Column<double>(type: "float", nullable: false),
-                    AccountType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IFSC = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AccountType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IFSC = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CustomerID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -163,8 +160,7 @@ namespace Capstone_Project.Migrations
                         name: "FK_Accounts_Branches_IFSC",
                         column: x => x.IFSC,
                         principalTable: "Branches",
-                        principalColumn: "IFSCNumber",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IFSCNumber");
                     table.ForeignKey(
                         name: "FK_Accounts_Customers_CustomerID",
                         column: x => x.CustomerID,
@@ -207,11 +203,11 @@ namespace Capstone_Project.Migrations
                     LoanID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LoanAmount = table.Column<double>(type: "float", nullable: false),
-                    LoanType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LoanType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Interest = table.Column<double>(type: "float", nullable: false),
                     Tenure = table.Column<int>(type: "int", nullable: false),
-                    Purpose = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Purpose = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CustomerID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -274,13 +270,15 @@ namespace Capstone_Project.Migrations
                 name: "IX_Admin_Email",
                 table: "Admin",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BankEmployees_Email",
                 table: "BankEmployees",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Beneficiaries_CustomerID",
@@ -301,7 +299,8 @@ namespace Capstone_Project.Migrations
                 name: "IX_Customers_Email",
                 table: "Customers",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_CustomerID",

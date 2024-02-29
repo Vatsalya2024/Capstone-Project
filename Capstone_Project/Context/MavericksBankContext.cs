@@ -24,17 +24,17 @@ namespace Capstone_Project.Context
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure Accounts entity
+           
             modelBuilder.Entity<Accounts>()
                 .Property(a => a.AccountNumber)
-                .ValueGeneratedOnAdd(); // This indicates that the value is generated on add
+                .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Transactions>()
                .HasOne(t => t.Accounts)
                .WithMany(a => a.SourceTransaction)
                .HasForeignKey(t => t.SourceAccountNumber)
                .IsRequired(false);
-            // Other configurations...
+           
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class NotSufficientBalanceException : Exception
+    public class NotSufficientBalanceException : Exception
     {
         string message;
         public NotSufficientBalanceException()

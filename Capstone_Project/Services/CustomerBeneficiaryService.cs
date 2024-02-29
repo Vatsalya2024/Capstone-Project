@@ -150,9 +150,14 @@ namespace Capstone_Project.Services
 
             var beneficiary = await _beneficiaryRepository.Get(beneficiaryID);
 
-            if (sourceAccount == null || beneficiary == null)
+            if (sourceAccount == null || beneficiary == null )
             {
                 throw new NoAccountsFoundException("Account Not Found");
+            }
+
+            if (sourceAccount.Status != "Active")
+            {
+                throw new NoAccountsFoundException("Account not active");
             }
 
            var beneficiaryAccountNumber = beneficiary.BeneficiaryAccountNumber;
@@ -172,7 +177,7 @@ namespace Capstone_Project.Services
             {
                 Amount = transferDTO.Amount,
                 TransactionDate = DateTime.Now,
-                Description = "Transfer to Beneficiary",
+                Description = $"Transfer to Beneficiary:{beneficiary.Name},{beneficiaryAccountNumber}",
                 TransactionType = "Debit",
                 Status = "Completed",
                 SourceAccountNumber = transferDTO.SourceAccountNumber,

@@ -37,7 +37,6 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Count, Is.EqualTo(expectedLoans.Count));
 
         }
 

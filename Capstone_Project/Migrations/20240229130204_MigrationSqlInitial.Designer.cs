@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone_Project.Migrations
 {
     [DbContext(typeof(MavericksBankContext))]
-    [Migration("20240227144602_MigrationSqlInitial")]
+    [Migration("20240229130204_MigrationSqlInitial")]
     partial class MigrationSqlInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,6 @@ namespace Capstone_Project.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AccountNumber"), 1L, 1);
 
                     b.Property<string>("AccountType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Balance")
@@ -43,11 +42,9 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("IFSC")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountNumber");
@@ -68,21 +65,19 @@ namespace Capstone_Project.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminID"), 1L, 1);
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AdminID");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("Admin");
                 });
@@ -102,15 +97,12 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("LoanType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Purpose")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Tenure")
@@ -130,25 +122,22 @@ namespace Capstone_Project.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"), 1L, 1);
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Position")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EmployeeID");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("BankEmployees");
                 });
@@ -235,7 +224,6 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Age")
@@ -245,19 +233,15 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PANNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("PhoneNumber")
@@ -266,7 +250,8 @@ namespace Capstone_Project.Migrations
                     b.HasKey("CustomerID");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("Customers");
                 });
@@ -289,15 +274,12 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("LoanType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Purpose")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Tenure")
@@ -370,11 +352,9 @@ namespace Capstone_Project.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Email");
@@ -392,9 +372,7 @@ namespace Capstone_Project.Migrations
 
                     b.HasOne("Capstone_Project.Models.Branches", "Branches")
                         .WithMany()
-                        .HasForeignKey("IFSC")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IFSC");
 
                     b.Navigation("Branches");
 
@@ -405,9 +383,7 @@ namespace Capstone_Project.Migrations
                 {
                     b.HasOne("Capstone_Project.Models.Validation", "Validation")
                         .WithOne("Admin")
-                        .HasForeignKey("Capstone_Project.Models.Admin", "Email")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Capstone_Project.Models.Admin", "Email");
 
                     b.Navigation("Validation");
                 });
@@ -416,9 +392,7 @@ namespace Capstone_Project.Migrations
                 {
                     b.HasOne("Capstone_Project.Models.Validation", "Validation")
                         .WithOne("BankEmployees")
-                        .HasForeignKey("Capstone_Project.Models.BankEmployees", "Email")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Capstone_Project.Models.BankEmployees", "Email");
 
                     b.Navigation("Validation");
                 });
@@ -457,9 +431,7 @@ namespace Capstone_Project.Migrations
                 {
                     b.HasOne("Capstone_Project.Models.Validation", "Validation")
                         .WithOne("Customers")
-                        .HasForeignKey("Capstone_Project.Models.Customers", "Email")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Capstone_Project.Models.Customers", "Email");
 
                     b.Navigation("Validation");
                 });

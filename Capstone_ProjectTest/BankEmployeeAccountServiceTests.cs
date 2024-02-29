@@ -1,9 +1,11 @@
-﻿using System;
+﻿using NUnit.Framework;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Capstone_ProjectTest
 {
@@ -11,7 +13,7 @@ namespace Capstone_ProjectTest
     public class BankEmployeeAccountServiceTests
     {
         [Test]
-        public async Task GetCustomers()
+        public async Task GetCustomers_ReturnsSingleCustomer()
         {
             // Arrange
             var customerId = 1;
@@ -22,7 +24,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(null, customerRepositoryMock.Object, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                Mock.Of<IRepository<long, Accounts>>(),
+                customerRepositoryMock.Object,
+                loggerMock.Object);
 
             // Act
             var result = await service.GetCustomers(customerId);
@@ -32,7 +37,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test]
-        public async Task GetCustomersListasync()
+        public async Task GetCustomersList_ReturnsListOfCustomers()
         {
             // Arrange
             var expectedCustomers = new List<Customers>
@@ -46,7 +51,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(null, customerRepositoryMock.Object, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                Mock.Of<IRepository<long, Accounts>>(),
+                customerRepositoryMock.Object,
+                loggerMock.Object);
 
             // Act
             var result = await service.GetCustomersListasync();
@@ -56,7 +64,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test]
-        public async Task ApproveAccountCreation()
+        public async Task ApproveAccountCreation_ReturnsTrue()
         {
             // Arrange
             var accountNumber = 123456789;
@@ -68,7 +76,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(accountsRepositoryMock.Object, null, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                accountsRepositoryMock.Object,
+                Mock.Of<IRepository<int, Customers>>(),
+                loggerMock.Object);
 
             // Act
             var result = await service.ApproveAccountCreation(accountNumber);
@@ -78,7 +89,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test]
-        public async Task ApproveAccountDeletion()
+        public async Task ApproveAccountDeletion_ReturnsTrue()
         {
             // Arrange
             var accountNumber = 123456789;
@@ -90,7 +101,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(accountsRepositoryMock.Object, null, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                accountsRepositoryMock.Object,
+                Mock.Of<IRepository<int, Customers>>(),
+                loggerMock.Object);
 
             // Act
             var result = await service.ApproveAccountDeletion(accountNumber);
@@ -100,7 +114,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test]
-        public async Task GetPendingAccounts()
+        public async Task GetPendingAccounts_ReturnsListOfAccounts()
         {
             // Arrange
             var pendingAccounts = new List<Accounts>
@@ -114,7 +128,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(accountsRepositoryMock.Object, null, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                accountsRepositoryMock.Object,
+                Mock.Of<IRepository<int, Customers>>(),
+                loggerMock.Object);
 
             // Act
             var result = await service.GetPendingAccounts();
@@ -124,7 +141,7 @@ namespace Capstone_ProjectTest
         }
 
         [Test]
-        public async Task GetPendingDeletionAccounts()
+        public async Task GetPendingDeletionAccounts_ReturnsListOfAccounts()
         {
             // Arrange
             var pendingDeletionAccounts = new List<Accounts>
@@ -138,7 +155,10 @@ namespace Capstone_ProjectTest
 
             var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
 
-            var service = new BankEmployeeAccountService(accountsRepositoryMock.Object, null, loggerMock.Object);
+            var service = new BankEmployeeAccountService(
+                accountsRepositoryMock.Object,
+                Mock.Of<IRepository<int, Customers>>(),
+                loggerMock.Object);
 
             // Act
             var result = await service.GetPendingDeletionAccounts();
@@ -146,8 +166,5 @@ namespace Capstone_ProjectTest
             // Assert
             Assert.That(result, Is.EqualTo(pendingDeletionAccounts));
         }
-
-
     }
 }
-

@@ -9,17 +9,17 @@ namespace Capstone_Project.Models
         [Key]
         public long AccountNumber { get; set; }
         public double Balance { get; set; }
-        public string AccountType { get; set; }
-        public string Status { get; set; }
-        public string IFSC { get; set; }
+        public string? AccountType { get; set; }
+        public string? Status { get; set; }
+        public string? IFSC { get; set; }
         [ForeignKey("IFSC")]
         public Branches? Branches { get; set; }
         public int CustomerID { get; set; }
         [ForeignKey("CustomerID")]
         public Customers? Customers { get; set; }
 
-        public ICollection<Transactions> SourceTransaction { get; set; }
-        public ICollection<Transactions> Transfers { get; set; }
+        public ICollection<Transactions>? SourceTransaction { get; set; }
+        public ICollection<Transactions>? Transfers { get; set; }
 
         public Accounts()
         {
@@ -39,13 +39,22 @@ namespace Capstone_Project.Models
         {
             return AccountNumber == this.AccountNumber;
         }
+        //private long GenerateAccountNumber()
+        //{
+
+        //    Random rnd = new Random();
+        //    long accountNumber = rnd.Next(1000000000, int.MaxValue) * 10L + rnd.Next(0, 10);
+        //    return accountNumber;
+        //}
+
         private long GenerateAccountNumber()
         {
-            
             Random rnd = new Random();
-            long accountNumber = rnd.Next(1000000000, int.MaxValue) * 10L + rnd.Next(0, 10);
+            int randomPart = rnd.Next(10000, 99999);
+            long accountNumber = long.Parse("11133" + randomPart.ToString());
             return accountNumber;
         }
     }
 }
+
 

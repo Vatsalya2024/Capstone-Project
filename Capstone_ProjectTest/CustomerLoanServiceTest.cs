@@ -74,7 +74,7 @@ namespace Capstone_Project.Tests
             var availedLoans = await _customerLoanService.ViewAvailedLoans(customerId);
 
             // Assert
-            Assert.AreEqual(2, availedLoans.Count);
+            Assert.That(availedLoans.Count, Is.EqualTo(2));
             Assert.IsTrue(availedLoans.All(loan => loan.CustomerID == customerId));
         }
 

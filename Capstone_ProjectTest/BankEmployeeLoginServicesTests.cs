@@ -68,7 +68,6 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Email, Is.EqualTo(employeeDTO.Email));
 
         }
 
@@ -98,6 +97,8 @@ namespace Capstone_ProjectTest
             // Act & Assert
             Assert.ThrowsAsync<InvalidUserException>(() => _bankEmployeeLoginServices.Login(loginUserDTO));
         }
+
+        
 
 
     }

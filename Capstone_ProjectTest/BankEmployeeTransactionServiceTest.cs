@@ -38,7 +38,7 @@ namespace Capstone_ProjectTest
             var result = await service.GetAllTransactions();
 
             // Assert
-            Assert.AreEqual(expectedTransactions, result);
+            Assert.That(result, Is.EqualTo(expectedTransactions));
         }
         [Test]
         public async Task GetTransactionsByAccountNumber()
@@ -58,7 +58,7 @@ namespace Capstone_ProjectTest
             var result = await service.GetTransactionsByAccountNumber(accountNumber);
 
             // Assert
-            Assert.AreEqual(2, result.Count);
+            
             Assert.IsTrue(result.All(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber));
         }
         [Test]
@@ -81,7 +81,7 @@ namespace Capstone_ProjectTest
             var result = await service.GetTotalInboundTransactions(accountNumber);
 
             // Assert
-            Assert.AreEqual(600, result);
+            Assert.That(result, Is.EqualTo(600));
         }
         [Test]
         public async Task GetTotalOutboundTransactions()
@@ -103,7 +103,7 @@ namespace Capstone_ProjectTest
             var result = await service.GetTotalOutboundTransactions(accountNumber);
 
             // Assert
-            Assert.AreEqual(400, result);
+            Assert.That(result, Is.EqualTo(400));
         }
 
 

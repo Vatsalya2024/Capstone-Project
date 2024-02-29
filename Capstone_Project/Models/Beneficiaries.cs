@@ -57,16 +57,16 @@ namespace Capstone_Project.Models
         public string IFSC { get; set; }= string.Empty;
 
         [ForeignKey("IFSC")]
-        public Branches Branch { get; set; }
+        public Branches? Branch { get; set; }
 
         public int CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]
-        public Customers Customer { get; set; }
+        public Customers? Customer { get; set; }
 
         public bool Equals(Beneficiaries? other)
         {
-            return BeneficiaryAccountNumber == other.BeneficiaryAccountNumber;
+            return BeneficiaryAccountNumber == other?.BeneficiaryAccountNumber;
         }
     }
 }

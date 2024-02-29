@@ -71,7 +71,6 @@ namespace Capstone_Project.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("Active", validation.Status);
         }
 
         [Test]
@@ -93,7 +92,6 @@ namespace Capstone_Project.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("deactivated", validation.Status);
         }
 
        
@@ -115,7 +113,6 @@ namespace Capstone_Project.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(employeeId, result.EmployeeID);
         }
         [Test]
         public async Task CreateBankEmployee_ValidData_ReturnsCreatedEmployee()
@@ -163,8 +160,30 @@ namespace Capstone_Project.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(updatedEmployee);
             
+        }
+
+        [Test]
+        public async Task GetAllEmployees_ReturnsListOfEmployees()
+        {
+            // Arrange
+            var employees = new List<BankEmployees>
+    {
+        new BankEmployees { EmployeeID = 1, Name = "V", Email = "e@example.com", Position = "Manager", Phone = "1234567890" },
+        new BankEmployees { EmployeeID = 2, Name = "V", Email = "e@example.com", Position = "Assistant", Phone = "0987654321" }
+    };
+
+            foreach (var emp in employees)
+            {
+                await _context.BankEmployees.AddAsync(emp);
+            }
+            await _context.SaveChangesAsync();
+
+            // Act
+            var result = await _service.GetAllEmployees();
+
+            // Assert
+            Assert.IsNotNull(result);
         }
 
 

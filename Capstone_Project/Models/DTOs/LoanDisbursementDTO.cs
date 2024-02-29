@@ -5,7 +5,7 @@ namespace Capstone_Project.Models.DTOs
 	{
         public int LoanId { get; set; }
         public double LoanAmount { get; set; }
-        public List<long> AccountNumbers { get; set; }
+        public List<long>? AccountNumbers { get; set; }
 
     }
 }

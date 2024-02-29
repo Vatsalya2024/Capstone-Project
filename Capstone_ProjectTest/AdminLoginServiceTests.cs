@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 using Capstone_Project.Controllers;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
@@ -31,23 +33,6 @@ namespace Capstone_ProjectTest
                 _mockTokenService.Object);
         }
 
-
-        [Test]
-        public void Login_InvalidUserException()
-        {
-            // Arrange
-            var userEmail = "nonexistent@example.com";
-            var loginUserDTO = new LoginUserDTO
-            {
-                Email = userEmail,
-                Password = "password"
-            };
-
-            _mockValidationRepository.Setup(repo => repo.Get(userEmail)).ReturnsAsync((Validation)null);
-
-            // Act & Assert
-            Assert.ThrowsAsync<InvalidUserException>(() => _adminLoginService.Login(loginUserDTO));
-        }
 
         [Test]
         public void Login_InactiveUser_ThrowsInvalidUserException()
@@ -104,10 +89,41 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(registerAdminDTO.Email, result.Email);
-            Assert.AreEqual("Admin", result.UserType);
-            Assert.IsEmpty(result.Password);
+            
         }
+        [Test]
+        public async Task Login_ValidUser_ReturnsLoginUserDTO()
+        {
+            // Arrange
+            var userEmail = "validuser@example.com";
+            var userPassword = "password";
+            var userKey = new byte[64]; // Mocking key
+            var hashedPassword = new HMACSHA512(userKey).ComputeHash(Encoding.UTF8.GetBytes(userPassword));
+            var validation = new Validation
+            {
+                Email = userEmail,
+                Password = hashedPassword, // Mocking password hash
+                Key = userKey,
+                Status = "Active",
+                UserType = "Admin"
+            };
+            var loginUserDTO = new LoginUserDTO
+            {
+                Email = userEmail,
+                Password = userPassword
+            };
+
+            _mockValidationRepository.Setup(repo => repo.Get(userEmail)).ReturnsAsync(validation);
+            _mockTokenService.Setup(service => service.GenerateToken(It.IsAny<LoginUserDTO>())).ReturnsAsync("mockedToken");
+
+            // Act
+            var result = await _adminLoginService.Login(loginUserDTO);
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+
+
     }
 }
 

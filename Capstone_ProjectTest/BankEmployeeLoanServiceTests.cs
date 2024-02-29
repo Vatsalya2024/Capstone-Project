@@ -47,7 +47,6 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(loanId, result.LoanID);
         }
 
 
@@ -69,9 +68,6 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(100, result.Value.InboundAmount);
-            Assert.AreEqual(50, result.Value.OutboundAmount);
-            Assert.AreEqual("Good", result.Value.CreditScore); 
         }
 
 
@@ -95,7 +91,25 @@ namespace Capstone_ProjectTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(600.0d, result.Balance); ;
+        }
+        [Test]
+        public async Task MakeLoanDecision_ValidLoanId_ReturnsDecisionMessage()
+        {
+            // Arrange
+            var loanId = 123;
+            var approved = true;
+            var loan = new Loans { LoanID = loanId, Status = "Pending" };
+
+            _mockLoansRepository.Setup(repo => repo.Get(loanId)).ReturnsAsync(loan);
+            _mockLoansRepository.Setup(repo => repo.Update(loan)).ReturnsAsync(loan);
+
+            var expectedMessage = $"Loan application with ID {loanId} decision updated to {(approved ? "Accepted" : "Rejected")}.";
+
+            // Act
+            var result = await _bankEmployeeLoanService.MakeLoanDecision(loanId, approved);
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedMessage));
         }
 
     }

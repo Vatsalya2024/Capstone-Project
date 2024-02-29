@@ -94,32 +94,47 @@ namespace Capstone_Project.Mappers
         }
 
         // Constructor for TransferDTO
-        public TransactionMapper(TransferDTO transferDTO)
-        {
-            _transaction = new Transactions
-            {
-                Amount = transferDTO.Amount,
-                Description = "Transfer to " + transferDTO.DestinationAccountNumber,
-                TransactionType = "Debit",
-                Status = "Completed",
-                SourceAccountNumber = transferDTO.SourceAccountNumber,
-                DestinationAccountNumber = transferDTO.DestinationAccountNumber
-            };
-        }
+        //public TransactionMapper(TransferDTO transferDTO)
+        //{
+        //    _transaction = new Transactions
+        //    {
+        //        Amount = transferDTO.Amount,
+        //        Description = "Transfer to " + transferDTO.DestinationAccountNumber,
+        //        TransactionType = "Debit",
+        //        Status = "Completed",
+        //        SourceAccountNumber = transferDTO.SourceAccountNumber,
+        //        DestinationAccountNumber = transferDTO.DestinationAccountNumber
+        //    };
+        //}
 
-        // Constructor for TransferDTO with description "Transfer from + SourceAccountNumber"
+        //// Constructor for TransferDTO with description "Transfer from + SourceAccountNumber"
+        //public TransactionMapper(TransferDTO transferDTO, bool isTransferFrom)
+        //{
+        //    _transaction = new Transactions
+        //    {
+        //        Amount = transferDTO.Amount,
+        //        Description = isTransferFrom ? "Transfer from " + transferDTO.SourceAccountNumber : "Transfer to " + transferDTO.DestinationAccountNumber,
+        //        TransactionType = isTransferFrom ? "Credit" : "Debit",
+        //        Status = "Completed",
+        //        SourceAccountNumber = isTransferFrom ? transferDTO.SourceAccountNumber : transferDTO.DestinationAccountNumber,
+        //        DestinationAccountNumber = isTransferFrom ? transferDTO.DestinationAccountNumber : transferDTO.SourceAccountNumber
+        //    };
+        //}
+
+
         public TransactionMapper(TransferDTO transferDTO, bool isTransferFrom)
         {
             _transaction = new Transactions
             {
                 Amount = transferDTO.Amount,
-                Description = isTransferFrom ? "Transfer from " + transferDTO.SourceAccountNumber : "Transfer to " + transferDTO.DestinationAccountNumber,
-                TransactionType = isTransferFrom ? "Credit" : "Debit",
+                Description = isTransferFrom ? $"Transfer from {transferDTO.SourceAccountNumber} to {transferDTO.DestinationAccountNumber}" : $"Transfer to {transferDTO.DestinationAccountNumber} from {transferDTO.SourceAccountNumber}",
+                TransactionType = isTransferFrom ? "Debit" : "Credit",
                 Status = "Completed",
                 SourceAccountNumber = isTransferFrom ? transferDTO.SourceAccountNumber : transferDTO.DestinationAccountNumber,
                 DestinationAccountNumber = isTransferFrom ? transferDTO.DestinationAccountNumber : transferDTO.SourceAccountNumber
             };
         }
+
 
         public Transactions GetTransaction()
         {

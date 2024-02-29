@@ -8,11 +8,11 @@ namespace Capstone_Project.Models
 
 
         [Key]
-        public string Email { get; set; } 
-        public byte[] Password { get; set; }
-        public string UserType { get; set; } 
-        public byte[] Key { get; set; }
-        public string Status { get; set; } 
+        public string? Email { get; set; } 
+        public byte[] Password { get; set; } = Array.Empty<byte>();
+        public string? UserType { get; set; } 
+        public byte[] Key { get; set; } = Array.Empty<byte>();
+        public string? Status { get; set; } 
         public Customers? Customers { get; set; }
         public BankEmployees? BankEmployees { get; set; }
         public Admin? Admin { get; set; }
@@ -21,15 +21,14 @@ namespace Capstone_Project.Models
 
         public bool Equals(Validation? other)
         {
-            if (Email == other.Email && Password == other.Password)
+            if (other == null)
             {
-                return false;
+                return false; 
             }
-            else
-            {
-                return true;
-            }
+
+            return Email == other.Email && Password == other.Password;
         }
+
     }
 }
 
