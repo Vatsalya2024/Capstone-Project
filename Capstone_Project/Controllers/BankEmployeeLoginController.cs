@@ -28,6 +28,10 @@ namespace Capstone_Project.Controllers
                 var result = await _bankEmployeeService.Login(loginUserDTO);
                 return Ok(result);
             }
+            catch(ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (InvalidUserException)
             {
                 return Unauthorized("Invalid username or password");
@@ -51,9 +55,39 @@ namespace Capstone_Project.Controllers
                 var result = await _bankEmployeeService.Register(registerBankEmployeeDTO);
                 return Ok(result);
             }
+            catch (ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception)
             {
                 return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+        [Route("GetEmployeeInfoByEmail")]
+        [HttpGet]
+        public async Task<ActionResult<BankEmployees>> GetBankEmployeeInfoByEmail(string email)
+        {
+            try
+            {
+                var customerInfo = await _bankEmployeeService.GetBankEmployeeInfoByEmail(email);
+                if (customerInfo == null)
+                {
+                    return NotFound($"Customer with email {email} not found.");
+                }
+                return Ok(customerInfo);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (NoBankEmployeesFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

@@ -6,6 +6,9 @@ using Capstone_Project.Models;
 using Capstone_Project.Controllers;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Exceptions;
+using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -19,6 +22,7 @@ public class BankEmployeeLoanController : ControllerBase
         _bankEmployeeLoanService = bankEmployeeLoanService;
         _logger = logger;
     }
+    [Authorize(Roles = "BankEmployee")]
     [Route("GetAllLoans")]
     [HttpGet]
     public async Task<ActionResult<List<Loans>>> GetAllLoans()
@@ -39,7 +43,7 @@ public class BankEmployeeLoanController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
-
+    [Authorize(Roles = "BankEmployee")]
     [HttpGet("ReviewLoanApplication/{loanId}")]
     public async Task<ActionResult<Loans>> ReviewLoanApplication(int loanId)
     {
@@ -64,7 +68,7 @@ public class BankEmployeeLoanController : ControllerBase
     }
 
 
-   
+    [Authorize(Roles = "BankEmployee")]
     [HttpGet("check-credit/{accountId}")]
     public async Task<ActionResult<CreditCheckResultDTO>> CheckCredit(long accountId)
     {
@@ -91,7 +95,7 @@ public class BankEmployeeLoanController : ControllerBase
     }
 
 
-    
+    [Authorize(Roles = "BankEmployee")]
     [HttpPost("MakeLoanDecision/{loanId}")]
     public async Task<ActionResult<string>> MakeLoanDecision(int loanId, bool approved)
     {
@@ -112,7 +116,7 @@ public class BankEmployeeLoanController : ControllerBase
         }
     }
 
-
+    [Authorize(Roles = "BankEmployee")]
     [HttpPost("disburse-loan/{loanId}/{accountId}")]
     public async Task<ActionResult<Accounts>> DisburseLoan(int loanId, long accountId)
     {
@@ -120,6 +124,11 @@ public class BankEmployeeLoanController : ControllerBase
         {
             var account = await _bankEmployeeLoanService.DisburseLoan(loanId, accountId);
             return Ok(account);
+        }
+        catch(AccountFetchException ex)
+        {
+            _logger.LogError(ex.Message);
+            return NotFound(ex.Message);
         }
         catch (NoLoansFoundException ex)
         {

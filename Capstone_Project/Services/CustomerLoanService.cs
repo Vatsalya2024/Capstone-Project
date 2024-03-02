@@ -68,6 +68,10 @@ public class CustomerLoanService : ILoanCustomerService
 
  
         var allLoans = await _loansRepository.GetAll();
+        if (allLoans == null)
+        {
+            throw new NoLoansFoundException("No loans found");
+        }
 
         
         var availedLoans = allLoans.Where(loan => loan.CustomerID == customerId).ToList();

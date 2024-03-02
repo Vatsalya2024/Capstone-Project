@@ -6,7 +6,7 @@ namespace Capstone_Project.Context
 {
     public class MavericksBankContext : DbContext
     {
-        public DbSet<Validation> Validation { get; set; }
+        public DbSet<Validation> Validation { get; set; } 
         public DbSet<Customers> Customers { get; set; }
         public DbSet<BankEmployees> BankEmployees { get; set; }
         public DbSet<Admin> Admin { get; set; }
@@ -20,6 +20,19 @@ namespace Capstone_Project.Context
             public DbSet<AvailableLoans> AvailableLoans{ get; set; }
         public MavericksBankContext(DbContextOptions options) : base(options)
         {
+            Validation = Set<Validation>();
+            Customers = Set<Customers>();
+            BankEmployees = Set<BankEmployees>();
+            Admin = Set<Admin>();
+            Banks = Set<Banks>();
+            Branches = Set<Branches>();
+            Accounts = Set<Accounts>();
+            Beneficiaries = Set<Beneficiaries>();
+            Transactions = Set<Transactions>();
+            Loans = Set<Loans>();
+            AvailableLoans = Set<AvailableLoans>();
+
+
 
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

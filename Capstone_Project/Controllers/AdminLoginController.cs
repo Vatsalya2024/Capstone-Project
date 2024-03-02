@@ -1,6 +1,7 @@
 ﻿using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,6 +30,10 @@ namespace Capstone_Project.Controllers
                 var user = await _adminLoginService.Login(loginUserDTO);
                 return Ok(user);
             }
+            catch (ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (InvalidUserException)
             {
                 return Unauthorized("Invalid email or password.");
@@ -47,6 +52,10 @@ namespace Capstone_Project.Controllers
             {
                 var user = await _adminLoginService.Register(registerAdminDTO);
                 return Ok(user);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {

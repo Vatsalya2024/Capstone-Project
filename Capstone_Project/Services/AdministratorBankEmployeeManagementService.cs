@@ -32,7 +32,10 @@ namespace Capstone_Project.Services
             {
                 throw new EmployeeNotFoundException($"Employee with ID {employeeId} not found.");
             }
-
+            if (employee.Email == null)
+            {
+                throw new ValidationNotFoundException("User email is null.");
+            }
             var validation = await _validationRepository.Get(employee.Email);
             if (validation == null)
             {
@@ -51,7 +54,10 @@ namespace Capstone_Project.Services
             {
                 throw new EmployeeNotFoundException($"Employee with ID {employeeId} not found.");
             }
-
+            if (employee.Email == null)
+            {
+                throw new ValidationNotFoundException("User email is null.");
+            }
             var validation = await _validationRepository.Get(employee.Email);
             if (validation == null)
             {

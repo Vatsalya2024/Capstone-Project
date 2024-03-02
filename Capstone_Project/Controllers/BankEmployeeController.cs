@@ -3,6 +3,7 @@ using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Capstone_Project.Controllers
@@ -21,7 +22,7 @@ namespace Capstone_Project.Controllers
             _logger = logger;
             _bankEmployeeService = bankEmployeeService;
         }
-
+        [Authorize(Roles = "BankEmployee")]
         [Route("GetAllBankEmployees")]
         [HttpGet]
         public async Task<ActionResult<List<BankEmployees>>> GetAllBankEmployees()

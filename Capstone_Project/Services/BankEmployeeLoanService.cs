@@ -4,6 +4,7 @@ using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Repositories;
+using Capstone_Project.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -127,6 +128,10 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
         {
            
             var loan = await _loansRepository.Get(loanId);
+            if (loan == null)
+            {
+                throw new NoLoansFoundException("No loans Found");
+            }
             if(loan.Status== "Disbursed")
             {
                 throw new NoLoansFoundException("Loan Already Disbursed");
@@ -180,14 +185,19 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
 
             if (loan.Status == "Accepted")
             {
+                if (account.Status != "Active")
+                {
+                    _logger.LogError($"Account with ID {accountId} is not active. Loan cannot be disbursed.");
+                    throw new AccountFetchException("Acount not in Accepted state"); 
+                }
                 account.Balance += loan.LoanAmount;
                 account = await _accountsRepository.Update(account);
 
-                // Update the status of the loan to "Disbursed"
+               
                 loan.Status = "Disbursed";
                 await _loansRepository.Update(loan);
 
-                // Create a new transaction record for the disbursement
+               
                 var transaction = new Transactions
                 {
                     Amount = loan.LoanAmount,

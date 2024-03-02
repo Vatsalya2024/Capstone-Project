@@ -45,7 +45,7 @@ namespace Capstone_Project.Models
 
         public bool Equals(Customers? other)
         {
-            return CustomerID == other.CustomerID;
+            return CustomerID == other?.CustomerID;
         }
     }
 }

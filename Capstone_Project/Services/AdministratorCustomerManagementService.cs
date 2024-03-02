@@ -34,6 +34,10 @@ namespace Capstone_Project.Services
                 {
                     throw new NoCustomersFoundException($"User with ID {customerId} not found.");
                 }
+                if (user.Email == null)
+                 {
+                throw new ValidationNotFoundException("User email is null.");
+                 }
 
                 var validation = await _validationRepository.Get(user.Email);
                 if (validation == null)
@@ -57,8 +61,11 @@ namespace Capstone_Project.Services
                 {
                     throw new NoCustomersFoundException($"User with ID {customerId} not found.");
                 }
-
-                var validation = await _validationRepository.Get(user.Email);
+                if (user.Email == null)
+                {
+                    throw new ValidationNotFoundException("User email is null.");
+                }
+            var validation = await _validationRepository.Get(user.Email);
                 if (validation == null)
                 {
                     throw new ValidationNotFoundException($"Validation for user with ID {customerId} not found.");

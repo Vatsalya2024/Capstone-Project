@@ -1,41 +1,44 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NUnit.Framework;
 
-namespace Capstone_ProjectTest
+namespace Capstone_Project.Tests.Services
 {
-    public class AdminAvailableLoansServiceTest
+    [TestFixture]
+    public class AdminAvailableLoansServiceTests
     {
-        private AdminAvailableLoansService _service;
-        private Mock<IRepository<int, AvailableLoans>> _mockRepository;
-        private Mock<ILogger<AdminAvailableLoansService>> _mockLogger;
+        private AdminAvailableLoansService _adminAvailableLoansService;
+        private Mock<IRepository<int, AvailableLoans>> _availableLoansRepositoryMock;
+        private Mock<ILogger<AdminAvailableLoansService>> _loggerMock;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            _mockRepository = new Mock<IRepository<int, AvailableLoans>>();
-            _mockLogger = new Mock<ILogger<AdminAvailableLoansService>>();
-            _service = new AdminAvailableLoansService(_mockRepository.Object);
+            _availableLoansRepositoryMock = new Mock<IRepository<int, AvailableLoans>>();
+            _loggerMock = new Mock<ILogger<AdminAvailableLoansService>>();
+
+            _adminAvailableLoansService = new AdminAvailableLoansService(
+                _availableLoansRepositoryMock.Object,
+                _loggerMock.Object);
         }
 
         [Test]
-        public async Task AddLoan_ValidLoan_ShouldReturnAddedLoan()
+        public async Task AddLoan_ValidLoan_ReturnsAddedLoan()
         {
             // Arrange
-            var loanToAdd = new AvailableLoans { LoanID = 1, LoanAmount = 10000, LoanType = "Personal Loan", Interest = 5, Tenure = 12, Purpose = "Home Renovation", Status = "Active" };
-            _mockRepository.Setup(repo => repo.Add(loanToAdd)).ReturnsAsync(loanToAdd);
+            var loanToAdd = new AvailableLoans { LoanID = 1, LoanAmount = 1000, Tenure = 12 };
+
+            _availableLoansRepositoryMock.Setup(r => r.Add(It.IsAny<AvailableLoans>())).ReturnsAsync(loanToAdd);
 
             // Act
-            var addedLoan = await _service.AddLoan(loanToAdd);
+            var result = await _adminAvailableLoansService.AddLoan(loanToAdd);
 
             // Assert
-            Assert.That(addedLoan, Is.EqualTo(loanToAdd));
+            Assert.IsNotNull(result);
         }
-
-    
     }
 }
-

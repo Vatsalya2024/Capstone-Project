@@ -4,6 +4,7 @@ using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,7 +24,7 @@ namespace Capstone_Project.Controllers
             _customerBeneficiaryService = customerBeneficiaryService;
             _logger = logger;
         }
-
+        [Authorize(Roles ="Customer")]
         [HttpPost("AddBeneficiary")]
         public async Task<IActionResult> AddBeneficiary(BeneficiaryDTO beneficiaryDTO)
         {
@@ -41,7 +42,7 @@ namespace Capstone_Project.Controllers
 
 
 
-
+        [Authorize(Roles = "Customer")]
         [Route("GetBeneficiaryByCustomerId")]
         [HttpGet]
         public async Task<IActionResult> GetBeneficiaries(int customerId)
@@ -65,7 +66,7 @@ namespace Capstone_Project.Controllers
 
 
 
-
+        [Authorize(Roles = "Customer")]
         [Route("GetBankBranchesByBankName")]
         [HttpGet]
         public async Task<IActionResult> GetBranchesByBank(string bankName)
@@ -74,6 +75,11 @@ namespace Capstone_Project.Controllers
             {
                 var branches = await _customerBeneficiaryService.GetBranchesByBank(bankName);
                 return Ok(branches);
+            }
+            catch(NoBranchesFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             catch(NoBanksFoundException nbfe)
             {
@@ -86,6 +92,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+        [Authorize(Roles = "Customer")]
         [Route("GetIFSCByBranchName")]
         [HttpGet]
         public async Task<IActionResult> GetIFSCByBranch(string branchName)
@@ -107,6 +114,7 @@ namespace Capstone_Project.Controllers
             }
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPost("TransferToBeneficiary")]
         public async Task<IActionResult> TransferToBeneficiary(BeneficiaryTransferDTO transferDTO)
         {

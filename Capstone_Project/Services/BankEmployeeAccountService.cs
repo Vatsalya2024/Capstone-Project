@@ -91,7 +91,10 @@ namespace Capstone_Project.Services
 
                 if (account != null && account.Status == "PendingDeletion")
                 {
-                    await _accountsRepository.Delete(accountNumber);
+                    
+                    account.Status = "Inactive";
+                    await _accountsRepository.Update(account); 
+
                     _logger.LogInformation($"Account deletion approved for account number: {accountNumber}");
                     return true;
                 }
@@ -107,6 +110,7 @@ namespace Capstone_Project.Services
                 throw new AccountApprovalException($"Error approving account deletion for account number {accountNumber}: {ex.Message}");
             }
         }
+
 
         public async Task<List<Accounts>> GetPendingAccounts()
         {

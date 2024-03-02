@@ -59,7 +59,7 @@ namespace Capstone_ProjectTest
 
             // Assert
             
-            Assert.IsTrue(result.All(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber));
+            Assert.IsTrue(result?.All(t => t.SourceAccountNumber == accountNumber || t.DestinationAccountNumber == accountNumber));
         }
         [Test]
         public async Task GetTotalInboundTransactions()

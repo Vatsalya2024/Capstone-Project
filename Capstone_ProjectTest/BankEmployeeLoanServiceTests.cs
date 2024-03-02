@@ -80,7 +80,7 @@ namespace Capstone_ProjectTest
             var loanId = 123;
             var accountId = 456;
             var loan = new Loans { LoanID = loanId, Status = "Accepted", LoanAmount = 100 };
-            var account = new Accounts { AccountNumber = accountId, Balance = 500 };
+            var account = new Accounts { AccountNumber = accountId, Balance = 500,Status="Active" };
 
             _mockLoansRepository.Setup(repo => repo.Get(loanId)).ReturnsAsync(loan);
             _mockAccountsRepository.Setup(repo => repo.Get(accountId)).ReturnsAsync(account);

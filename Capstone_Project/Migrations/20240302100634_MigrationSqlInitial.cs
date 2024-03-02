@@ -120,7 +120,7 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     CustomerID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1000, 1"),
+                        .Annotation("SqlServer:Identity", "1001, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
@@ -188,12 +188,14 @@ namespace Capstone_Project.Migrations
                         name: "FK_Beneficiaries_Branches_IFSC",
                         column: x => x.IFSC,
                         principalTable: "Branches",
-                        principalColumn: "IFSCNumber");
+                        principalColumn: "IFSCNumber",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Beneficiaries_Customers_CustomerID",
                         column: x => x.CustomerID,
                         principalTable: "Customers",
-                        principalColumn: "CustomerID");
+                        principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,7 +203,7 @@ namespace Capstone_Project.Migrations
                 columns: table => new
                 {
                     LoanID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:Identity", "101, 1"),
                     LoanAmount = table.Column<double>(type: "float", nullable: false),
                     LoanType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Interest = table.Column<double>(type: "float", nullable: false),
@@ -248,7 +250,8 @@ namespace Capstone_Project.Migrations
                         name: "FK_Transactions_Accounts_SourceAccountNumber",
                         column: x => x.SourceAccountNumber,
                         principalTable: "Accounts",
-                        principalColumn: "AccountNumber");
+                        principalColumn: "AccountNumber",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Transactions_Beneficiaries_BeneficiaryID",
                         column: x => x.BeneficiaryID,

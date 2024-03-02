@@ -16,4 +16,3 @@ namespace Capstone_Project.Interfaces
     }
 }
 
-//LoanDisbursementDTO loanDisbursement

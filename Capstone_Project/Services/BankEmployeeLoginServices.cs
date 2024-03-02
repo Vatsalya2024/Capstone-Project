@@ -35,6 +35,10 @@ namespace Capstone_Project.Services
             }
             var userPassword = GetPasswordEncrypted(employee.Password, myUser.Key);
             var checkPasswordMatch = ComparePasswords(myUser.Password, userPassword);
+            if (myUser.UserType == null)
+            {
+                throw new ValidationNotFoundException("No ValidationFound");
+            }
             if (checkPasswordMatch)
             {
                 employee.Password = "";
@@ -71,12 +75,42 @@ namespace Capstone_Project.Services
             myuser = await _validationRepository.Add(myuser);
             BankEmployees bankEmployees = new RegiterToBankEmployee(employee).GetBankEmployees();
             bankEmployees = await _employeeRepository.Add(bankEmployees);
+            if (myuser == null || myuser.Email == null || myuser.UserType == null)
+            {
+                throw new ValidationNotFoundException("No Email found");
+            }
             LoginUserDTO result = new LoginUserDTO
             {
                 Email = myuser.Email,
                 UserType = myuser.UserType,
             };
             return result;
+        }
+        public async Task<BankEmployees?> GetBankEmployeeInfoByEmail(string email)
+        {
+
+            var validationInfo = await _validationRepository.Get(email);
+
+            if (validationInfo != null)
+            {
+
+                var allEmployees = await _employeeRepository.GetAll();
+
+                if (allEmployees != null)
+                {
+
+                    var employeeInfo = allEmployees.FirstOrDefault(employee => employee.Email == email);
+                    return employeeInfo;
+                }
+                else
+                {
+                    throw new NoBankEmployeesFoundException("No BankEmployees");
+                }
+            }
+            else
+            {
+                throw new ValidationNotFoundException("No Email found");
+            }
         }
     }
     

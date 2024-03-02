@@ -44,6 +44,10 @@ namespace Capstone_Project.Services
 
                 var userPassword = GetPasswordEncrypted(user.Password, myUser.Key);
                 var checkPasswordMatch = ComparePasswords(myUser.Password, userPassword);
+                if (myUser.UserType == null)
+                {
+                    throw new ValidationNotFoundException("No ValidationFound");
+                }
                 if (checkPasswordMatch)
                 {
                     _logger.LogInformation("User logged in successfully: {0}", user.Email);
@@ -91,6 +95,10 @@ namespace Capstone_Project.Services
                 myuser = await _validationRepository.Add(myuser);
                 Admin admins = new RegisterToAdmin(user).GetAdmin();
                 admins = await _adminRepository.Add(admins);
+                if (myuser == null || myuser.Email == null || myuser.UserType == null)
+                {
+                    throw new ValidationNotFoundException("No Email found");
+                }
                 LoginUserDTO result = new LoginUserDTO
                 {
                     Email = myuser.Email,

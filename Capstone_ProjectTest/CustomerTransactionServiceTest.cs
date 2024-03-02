@@ -1,126 +1,153 @@
-﻿//using System;
-//using System.Threading.Tasks;
-//using Capstone_Project.Interfaces;
-//using Capstone_Project.Mappers;
-//using Capstone_Project.Models;
-//using Capstone_Project.Models.DTOs;
-//using Capstone_Project.Services;
-//using Microsoft.Extensions.Logging;
-//using Moq;
-//using NUnit.Framework;
+﻿using Capstone_Project.Exceptions;
+using Capstone_Project.Interfaces;
+using Capstone_Project.Models;
+using Capstone_Project.Models.DTOs;
+using Capstone_Project.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-//namespace Capstone_ProjectTest
-//{
-//    public class CustomerTransactionServiceTest
-//    {
-//        private CustomerTransactionService _transactionService;
-//        private Mock<IRepository<long, Accounts>> _mockAccountsRepository;
-//        private Mock<IRepository<int, Transactions>> _mockTransactionsRepository;
-//        private Mock<ILogger<CustomerTransactionService>> _mockLogger;
+namespace Capstone_Project.Tests
+{
+    [TestFixture]
+    public class CustomerTransactionServiceTests
+    {
+        private CustomerTransactionService _service;
+        private Mock<IRepository<int, Transactions>> _transactionsRepositoryMock;
+        private Mock<IRepository<long, Accounts>> _accountsRepositoryMock;
+        private Mock<ILogger<CustomerTransactionService>> _loggerMock;
 
-//        [SetUp]
-//        public void Setup()
-//        {
-//            _mockAccountsRepository = new Mock<IRepository<long, Accounts>>();
-//            _mockTransactionsRepository = new Mock<IRepository<int, Transactions>>();
-//            _mockLogger = new Mock<ILogger<CustomerTransactionService>>();
+        [SetUp]
+        public void SetUp()
+        {
+            _transactionsRepositoryMock = new Mock<IRepository<int, Transactions>>();
+            _accountsRepositoryMock = new Mock<IRepository<long, Accounts>>();
+            _loggerMock = new Mock<ILogger<CustomerTransactionService>>();
 
-//            _transactionService = new CustomerTransactionService(
-//                _mockLogger.Object,
-//                _mockTransactionsRepository.Object,
-//                _mockAccountsRepository.Object
-//                );
-//        }
+            _service = new CustomerTransactionService(
+                _loggerMock.Object,
+                _transactionsRepositoryMock.Object,
+                _accountsRepositoryMock.Object);
+        }
 
-//        [Test]
-//        public async Task Deposit_Successful()
-//        {
-//            // Arrange
-//            var depositDTO = new DepositDTO
-//            {
-//                AccountNumber = 123456789,
-//                Amount = 100
-//            };
+        [Test]
+        public async Task Deposit_ValidDepositDTO_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var depositDTO = new DepositDTO
+            {
+                AccountNumber = 123456789,
+                Amount = 100
+            };
+            var account = new Accounts { AccountNumber = depositDTO.AccountNumber, CustomerID = 1, Status = "Active", Balance = 0 };
+            _accountsRepositoryMock.Setup(r => r.Get(depositDTO.AccountNumber)).ReturnsAsync(account);
 
-//            var account = new Accounts
-//            {
-//                AccountNumber = depositDTO.AccountNumber,
-//                Balance = 0,
-//                Status = "Active"
-//            };
+            // Act
+            var result = await _service.Deposit(1, depositDTO);
 
-//            _mockAccountsRepository.Setup(repo => repo.Get(depositDTO.AccountNumber)).ReturnsAsync(account);
+            // Assert
+            Assert.That(result, Is.EqualTo("Deposit successful."));
+        }
 
-//            // Act
-//            var result = await _transactionService.Deposit(depositDTO);
+        [Test]
+        public async Task Withdraw_ValidWithdrawalDTO_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var withdrawalDTO = new WithdrawalDTO
+            {
+                AccountNumber = 123456789,
+                Amount = 50
+            };
+            var account = new Accounts { AccountNumber = withdrawalDTO.AccountNumber, CustomerID = 1, Status = "Active", Balance = 100 };
+            _accountsRepositoryMock.Setup(r => r.Get(withdrawalDTO.AccountNumber)).ReturnsAsync(account);
 
-//            // Assert
-//            Assert.AreEqual("Deposit successful.", result);
-//            Assert.AreEqual(100, account.Balance);
-//        }
+            // Act
+            var result = await _service.Withdraw(1, withdrawalDTO);
 
-//        [Test]
-//        public async Task Withdraw_From_Active_Account_With_Sufficient_Balance()
-//        {
-//            // Arrange
-//            long accountNumber = 123456789;
-//            double initialBalance = 1000;
-//            double withdrawalAmount = 500;
+            // Assert
+            Assert.That(result, Is.EqualTo("Withdrawal successful."));
+        }
 
-//            var account = new Accounts
-//            {
-//                AccountNumber = accountNumber,
-//                Status = "Active",
-//                Balance = initialBalance
-//            };
+        [Test]
+        public async Task Transfer_ValidTransferDTO_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var transferDTO = new TransferDTO
+            {
+                SourceAccountNumber = 123456789,
+                DestinationAccountNumber = 987654321,
+                Amount = 50
+            };
+            var sourceAccount = new Accounts { AccountNumber = transferDTO.SourceAccountNumber, CustomerID = 1, Status = "Active", Balance = 100 };
+            var destinationAccount = new Accounts { AccountNumber = transferDTO.DestinationAccountNumber, Status = "Active", Balance = 0 };
+            _accountsRepositoryMock.Setup(r => r.Get(transferDTO.SourceAccountNumber)).ReturnsAsync(sourceAccount);
+            _accountsRepositoryMock.Setup(r => r.Get(transferDTO.DestinationAccountNumber)).ReturnsAsync(destinationAccount);
 
-//            _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync(account);
+            // Act
+            var result = await _service.Transfer(1, transferDTO);
 
-//            var withdrawalDTO = new WithdrawalDTO
-//            {
-//                AccountNumber = accountNumber,
-//                Amount = withdrawalAmount
-//            };
+            // Assert
+            Assert.That(result, Is.EqualTo("Transfer successful."));
+        }
 
-//            // Act
-//            var result = await _transactionService.Withdraw(withdrawalDTO);
+        [Test]
+        public async Task GetLast10Transactions_ValidAccountNumber_ReturnsTransactions()
+        {
+            // Arrange
+            long accountNumber = 123456789;
+            var transactions = new List<Transactions>
+            {
+                new Transactions { SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now }
+            };
+            _transactionsRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(transactions);
 
-//            // Assert
-//            Assert.AreEqual("Withdrawal successful.", result);
-//            Assert.AreEqual(initialBalance - withdrawalAmount, account.Balance);
-//        }
+            // Act
+            var result = await _service.GetLast10Transactions(accountNumber);
 
-//        [Test]
-//        public async Task Transfer()
-//        {
-//            // Arrange
-//            long sourceAccountNumber = 123456789;
-//            long destinationAccountNumber = 987654321;
-//            double initialSourceBalance = 1000;
-//            double transferAmount = 500;
+            // Assert
+            Assert.IsNotNull(result);
+        }
 
-//            var sourceAccount = new Accounts
-//            {
-//                AccountNumber = sourceAccountNumber,
-//                Status = "Active",
-//                Balance = initialSourceBalance
-//            };
+        [Test]
+        public async Task GetLastMonthTransactions_ValidAccountNumber_ReturnsTransactions()
+        {
+            // Arrange
+            long accountNumber = 123456789;
+            var transactions = new List<Transactions>
+            {
+                new Transactions { SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddMonths(-1) }
+            };
+            _transactionsRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(transactions);
 
-//            _mockAccountsRepository.Setup(repo => repo.Get(sourceAccountNumber)).ReturnsAsync(sourceAccount);
+            // Act
+            var result = await _service.GetLastMonthTransactions(accountNumber);
 
-//            var transferDTO = new TransferDTO
-//            {
-//                SourceAccountNumber = sourceAccountNumber,
-//                DestinationAccountNumber = destinationAccountNumber,
-//                Amount = transferAmount
-//            };
+            // Assert
+            Assert.IsNotNull(result);
+        }
 
-//            // Act
-//            var result = await _transactionService.Transfer(transferDTO);
+        [Test]
+        public async Task GetTransactionsBetweenDates_ValidAccountNumber_ReturnsTransactions()
+        {
+            // Arrange
+            long accountNumber = 123456789;
+            DateTime startDate = DateTime.Now.AddDays(-10);
+            DateTime endDate = DateTime.Now;
+            var transactions = new List<Transactions>
+            {
+                new Transactions { SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-5) }
+            };
+            _transactionsRepositoryMock.Setup(r => r.GetAll()).ReturnsAsync(transactions);
 
-//            // Assert
-//            Assert.AreEqual("Transfer successful.", result);
-//            Assert.AreEqual(initialSourceBalance - transferAmount, sourceAccount.Balance);
-//        }
-//    }
-//}
+            // Act
+            var result = await _service.GetTransactionsBetweenDates(accountNumber, startDate, endDate);
+
+            // Assert
+            Assert.IsNotNull(result);
+        }
+    }
+}

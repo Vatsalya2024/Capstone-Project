@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Capstone_Project.Controllers
 {
@@ -12,10 +13,14 @@ namespace Capstone_Project.Controllers
     public class AvailableLoansUserController : ControllerBase
     {
         private readonly IAvailableLoansUserService _availableLoansUserService;
+        private readonly ILogger<AvailableLoansUserController> _logger;
 
-        public AvailableLoansUserController(IAvailableLoansUserService availableLoansUserService)
+        public AvailableLoansUserController(
+            IAvailableLoansUserService availableLoansUserService,
+            ILogger<AvailableLoansUserController> logger)
         {
             _availableLoansUserService = availableLoansUserService;
+            _logger = logger;
         }
 
         [HttpGet("getAllLoans")]
@@ -23,6 +28,7 @@ namespace Capstone_Project.Controllers
         {
             try
             {
+                _logger.LogInformation("Retrieving all loans via API.");
                 var loans = await _availableLoansUserService.GetAllLoans();
                 if (loans == null || loans.Count == 0)
                 {
@@ -32,6 +38,7 @@ namespace Capstone_Project.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while retrieving all loans via API.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }

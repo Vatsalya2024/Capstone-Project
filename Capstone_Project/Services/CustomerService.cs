@@ -48,6 +48,10 @@ namespace Capstone_Project.Services
                 }
                 var userPassword = GetPasswordEncrypted(user.Password, myUser.Key);
                 var checkPasswordMatch = ComparePasswords(myUser.Password, userPassword);
+                if (myUser.UserType == null)
+                {
+                    throw new ValidationNotFoundException("No ValidationFound");
+                }
                 if (checkPasswordMatch)
                 {
                     user.Password = "";
@@ -80,6 +84,10 @@ namespace Capstone_Project.Services
                 myuser = await _validationRepository.Add(myuser);
                 Customers customers = new RegisterToCustomer(user).GetCustomers();
                 customers = await _customerRepository.Add(customers);
+                if (myuser == null || myuser.Email == null || myuser.UserType == null)
+                {
+                    throw new ValidationNotFoundException("No Email found");
+                }
                 LoginUserDTO result = new LoginUserDTO
                 {
                     Email = myuser.Email,
@@ -199,6 +207,10 @@ namespace Capstone_Project.Services
                 }
 
                 var result = await _customerRepository.Delete(id);
+                if (result == null)
+                {
+                    throw new NoCustomersFoundException("No Customer found");
+                }
                 return result;
             }
             catch (Exception ex)
@@ -334,11 +346,12 @@ namespace Capstone_Project.Services
         private byte[] GenerateNewKey()
         {
             byte[] newKey = new byte[64];
-            using (var rng = new RNGCryptoServiceProvider())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(newKey);
             }
             return newKey;
         }
+
     }
 }

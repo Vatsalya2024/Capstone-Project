@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using Capstone_Project.Controllers;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
@@ -28,6 +29,11 @@ namespace Capstone_Project.Services
 
                 if (account != null)
                 {
+                    if (account.Balance != 0)
+                    {
+                        throw new AccountApprovalException($"Cannot close account {accountNumber}: Balance is not zero.");
+                    }
+
                     account.Status = "PendingDeletion";
                     await _accountsRepository.Update(account);
                     return $"Account with number {accountNumber} is scheduled for deletion.";
@@ -79,8 +85,12 @@ namespace Capstone_Project.Services
             try
             {
                 var accounts = await _accountsRepository.GetAll();
+                if (accounts == null )
+                {
+                    throw new NoAccountsFoundException("No accounts");
+                }
                
-                var customerAccounts = accounts.FindAll(a => a.CustomerID == customerId);
+                var customerAccounts = accounts.FindAll(a => a.CustomerID == customerId && a.Status!="Inactive");
 
                 if (customerAccounts.Count > 0)
                 {

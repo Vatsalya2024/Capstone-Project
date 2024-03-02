@@ -21,6 +21,7 @@ namespace Capstone_Project.Services
 
         public async Task<string> GenerateToken(LoginUserDTO user)
         {
+            await Task.CompletedTask;
             string token = string.Empty;
             var claims = new List<Claim>
             {

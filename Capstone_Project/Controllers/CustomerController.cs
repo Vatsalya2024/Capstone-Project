@@ -37,6 +37,11 @@ namespace Capstone_Project.Controllers
                 var result = await _customerLoginService.Register(user);
                 return Ok(result);
             }
+            catch(ValidationNotFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
@@ -51,6 +56,11 @@ namespace Capstone_Project.Controllers
             {
                 var result = await _customerLoginService.Login(user);
                 return Ok(result);
+            }
+            catch (ValidationNotFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (InvalidUserException iuse)
             {

@@ -57,34 +57,17 @@ namespace Capstone_Project.Controllers
                 _logger.LogError(ex, $"No account found with number: {accountNumber}");
                 return NotFound($"No account found with number: {accountNumber}");
             }
+            catch(AccountApprovalException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error closing account with number: {accountNumber}");
                 return StatusCode(500, "Internal server error");
             }
         }
-        //[Route("GetAccountDetailsByAccountNumber")]
-        //[HttpGet]
-        //public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber)
-        //{
-        //    try
-        //    {
-        //        var account = await _accountManagementService.GetAccountDetails(accountNumber);
-
-        //            return Ok(account);
-
-        //    }
-        //    catch (NoAccountsFoundException ex)
-        //    {
-        //        _logger.LogError(ex, $"No account found with number: {accountNumber}");
-        //        return NotFound($"No account found with number: {accountNumber}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, $"Error getting account details for number: {accountNumber}");
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
         [Authorize(Roles = "Customer")]
         [HttpGet("{accountNumber}/{customerId}")]
         public async Task<ActionResult<Accounts>> GetAccountDetails(long accountNumber, int customerId)
@@ -115,6 +98,11 @@ namespace Capstone_Project.Controllers
                return Ok(customerAccounts);
                 
                 
+            }
+            catch(NoAccountsFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (NoCustomersFoundException ex)
             {

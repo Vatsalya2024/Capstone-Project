@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone_Project.Migrations
 {
     [DbContext(typeof(MavericksBankContext))]
-    [Migration("20240229130204_MigrationSqlInitial")]
+    [Migration("20240302100634_MigrationSqlInitial")]
     partial class MigrationSqlInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

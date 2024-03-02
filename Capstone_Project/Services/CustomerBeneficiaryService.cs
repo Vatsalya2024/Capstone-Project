@@ -81,22 +81,27 @@ namespace Capstone_Project.Services
             try
             {
                 var branches = await _branchesRepository.GetAll();
+                if (branches == null)
+                {
+                    throw new NoBranchesFoundException("No branches found");
+                }
                 if (bankName.Equals("MB", StringComparison.OrdinalIgnoreCase))
                 {
                     return new List<BranchDTO>();
                 }
 
                 var bankBranch = branches
-                        .Where(bankBranch => bankBranch.Banks.BankName.Equals(bankName, StringComparison.OrdinalIgnoreCase))
-                        .Select(bankBranch => new BranchDTO
-                        {
-                            BranchName = bankBranch.BranchName,
-                            IFSC = bankBranch.IFSCNumber
-                        })
-                        .ToList();
+             .Where(bankBranch => bankBranch.Banks != null && bankBranch.Banks.BankName != null &&
+                                   bankBranch.Banks.BankName.Equals(bankName, StringComparison.OrdinalIgnoreCase))
+             .Select(bankBranch => new BranchDTO
+             {
+                 BranchName = bankBranch.BranchName,
+                 IFSC = bankBranch.IFSCNumber
+             })
+             .ToList();
 
 
-                    _logger.LogInformation("Branches fetched successfully by bank.");
+                _logger.LogInformation("Branches fetched successfully by bank.");
                 if (bankBranch.Count == 0)
                 {
                     throw new NoBanksFoundException("No branches found for the specified bank.");
@@ -119,6 +124,10 @@ namespace Capstone_Project.Services
             try
             {
                 var branches = await _branchesRepository.GetAll();
+                if (branches == null)
+                {
+                    throw new NoBranchesFoundException("Branch not found.");
+                }
                 var branch = branches.FirstOrDefault(b => b.BranchName.Equals(branchName, StringComparison.OrdinalIgnoreCase));
 
                 if (branch == null)

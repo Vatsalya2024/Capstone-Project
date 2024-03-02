@@ -33,7 +33,7 @@ namespace Capstone_ProjectTest
         {
             // Arrange
             int customerId = 1;
-            var customer = new Customers { CustomerID = customerId, Name = "V" };
+            var customer = new Customers { CustomerID = customerId, Name = "V",Email= "v@example.com" };
             var validation = new Validation { Email = "v@example.com", Status = "Inactive" };
 
             _customersRepositoryMock.Setup(repo => repo.Get(customerId))
@@ -56,7 +56,7 @@ namespace Capstone_ProjectTest
         {
             // Arrange
             int customerId = 1;
-            var customer = new Customers { CustomerID = customerId, Name = "v" };
+            var customer = new Customers { CustomerID = customerId, Name = "v",Email= "v@example.com" };
             var validation = new Validation { Email = "v@example.com", Status = "Active" };
 
             _customersRepositoryMock.Setup(repo => repo.Get(customerId))

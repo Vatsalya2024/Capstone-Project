@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Capstone_Project.Interfaces;
 using Capstone_Project.Models;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,7 +23,7 @@ namespace Capstone_Project.Controllers
             _logger = logger;
         }
 
-      
+        [Authorize(Roles ="BankEmployee")]
         [Route("GetAllTransactions")]
         [HttpGet]
         public async Task<ActionResult<List<Transactions>?>> GetAllTransactions()
@@ -43,6 +44,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles = "BankEmployee")]
         [Route("GetTransactionByAccountNumber")]
         [HttpGet]
         public async Task<ActionResult<List<Transactions>?>> GetTransactionsByAccountNumber(long accountNumber)
@@ -68,6 +70,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles = "BankEmployee")]
         [Route("TotalInbound")]
         [HttpGet]
         public async Task<ActionResult<double>> GetTotalInboundTransactions(long accountNumber)
@@ -93,6 +96,7 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        [Authorize(Roles = "BankEmployee")]
         [Route("TotalOutbound")]
         [HttpGet]
         public async Task<ActionResult<double>> GetTotalOutboundTransactions(long accountNumber)

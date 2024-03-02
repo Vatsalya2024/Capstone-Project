@@ -3,10 +3,12 @@ using Capstone_Project.Mappers;
 using Capstone_Project.Models;
 using Capstone_Project.Models.DTOs;
 using Capstone_Project.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Capstone_Project.Controllers
@@ -24,6 +26,7 @@ namespace Capstone_Project.Controllers
             _bankEmployeeService = bankEmployeeService;
             _logger = logger;
         }
+        [Authorize(Roles = "Admin")]
         [Route("GetAllEmployees")]
         [HttpGet]
         public async Task<ActionResult<List<BankEmployees>>> GetAllEmployees()
@@ -32,7 +35,7 @@ namespace Capstone_Project.Controllers
             {
                 var employees = await _bankEmployeeService.GetAllEmployees();
                 
-                return employees;
+                return Ok(employees);
             }
             catch (EmployeeNotFoundException ex)
             {
@@ -41,7 +44,8 @@ namespace Capstone_Project.Controllers
             }
             
         }
-        [Route("get employee by id")]
+        [Authorize(Roles = "Admin")]
+        [Route("getemployeebyid")]
         [HttpGet]
         public async Task<ActionResult<BankEmployees>> GetEmployee(int employeeId)
         {
@@ -49,7 +53,7 @@ namespace Capstone_Project.Controllers
             {
                 var employee = await _bankEmployeeService.GetEmployee(employeeId);
                
-                return employee;
+                return Ok(employee);
             }
             catch (EmployeeNotFoundException ex)
             {
@@ -58,7 +62,8 @@ namespace Capstone_Project.Controllers
             }
            
         }
-        [Route("Activate Employee")]
+        [Authorize(Roles = "Admin")]
+        [Route("ActivateEmployee")]
         [HttpPost]
         public async Task<ActionResult<BankEmployees>> ActivateEmployee(int employeeId)
         {
@@ -66,8 +71,9 @@ namespace Capstone_Project.Controllers
             {
                 var activatedEmployee = await _bankEmployeeService.ActivateEmployee(employeeId);
                 
-                return activatedEmployee;
+                return Ok(activatedEmployee);
             }
+            
             catch (EmployeeNotFoundException ex)
             {
                 _logger.LogError($"Employee not found: {ex.Message}");
@@ -80,7 +86,8 @@ namespace Capstone_Project.Controllers
             }
           
         }
-        [Route("Deactivate Employee")]
+        [Authorize(Roles = "Admin")]
+        [Route("DeactivateEmployee")]
         [HttpPost]
         public async Task<ActionResult<BankEmployees>> DeactivateEmployee(int employeeId)
         {
@@ -88,7 +95,7 @@ namespace Capstone_Project.Controllers
             {
                 var deactivatedEmployee = await _bankEmployeeService.DeactivateEmployee(employeeId);
                 
-                return deactivatedEmployee;
+                return Ok(deactivatedEmployee);
             }
             catch (EmployeeNotFoundException ex)
             {
@@ -102,7 +109,8 @@ namespace Capstone_Project.Controllers
             }
            
         }
-        [Route("Register Bank Employee")]
+        [Authorize(Roles = "Admin")]
+        [Route("RegisterBankEmployee")]
         [HttpPost]
         public async Task<ActionResult<BankEmployees>> CreateBankEmployee(RegisterBankEmployeeDTO employeeDTO)
         {
@@ -110,7 +118,7 @@ namespace Capstone_Project.Controllers
             {
                 var addedBankEmployee = await _bankEmployeeService.CreateBankEmployee(employeeDTO);
                
-                return addedBankEmployee;
+                return Ok(addedBankEmployee);
             }
             catch (BankEmployeeCreationException ex)
             {
@@ -118,7 +126,8 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "Error creating bank employee");
             }
         }
-        [Route("Update Bank Employee")]
+        [Authorize(Roles = "Admin")]
+        [Route("UpdateBankEmployee")]
         [HttpPut]
         public async Task<IActionResult> UpdateEmployee(int employeeId, UpdateBankEmployeeByAdminDTO updateDTO)
         {
@@ -130,7 +139,7 @@ namespace Capstone_Project.Controllers
                     return NotFound($"Employee with ID {employeeId} not found.");
                 }
 
-                // Update the employee
+                
                 UpdateBankEmployeeByAdminMapper.MapToBankEmployee(updateDTO, employee);
 
                 
