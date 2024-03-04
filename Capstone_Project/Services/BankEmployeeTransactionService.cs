@@ -19,6 +19,7 @@ namespace Capstone_Project.Services
         {
             try
             {
+                _logger.LogInformation("Transactions fetched successfully.");
                 return await _transactionsRepository.GetAll();
             }
             catch (Exception ex)
@@ -45,7 +46,7 @@ namespace Capstone_Project.Services
                 {
                     throw new NoAccountsFoundException($"Account not found for account number: {accountNumber}");
                 }
-
+                _logger.LogInformation("Transactions fetched successfully.");
                 return transactions;
             }
             catch (Exception ex)
@@ -76,7 +77,7 @@ namespace Capstone_Project.Services
                     throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
                 }
 
-               
+                _logger.LogInformation("Inbound fetched successfully.");
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Credit").Sum(t => t.Amount);
             }
             catch (Exception ex)
@@ -101,7 +102,7 @@ namespace Capstone_Project.Services
                     throw new NoAccountsFoundException($"No transactions found for account number: {accountNumber}");
                 }
 
-               
+                _logger.LogInformation("Outbound fetched successfully.");
                 return transactions.Where(t => t.SourceAccountNumber == accountNumber && t.TransactionType == "Debit").Sum(t => t.Amount);
             }
             catch (Exception ex)

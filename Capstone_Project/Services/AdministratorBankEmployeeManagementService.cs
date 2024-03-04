@@ -44,6 +44,7 @@ namespace Capstone_Project.Services
 
             validation.Status = "Active";
             await _validationRepository.Update(validation);
+            _logger.LogInformation($"Employee with ID {employeeId} activated.");
             return employee;
         }
 
@@ -80,8 +81,8 @@ namespace Capstone_Project.Services
                 throw new EmployeeNotFoundException("No employees found.");
             }
 
-            
 
+            _logger.LogInformation("Fetched all employees");
             return bankEmployees;
         }
 
@@ -114,7 +115,7 @@ namespace Capstone_Project.Services
 
                
                 var addedBankEmployee = await _bankEmployeesRepository.Add(newBankEmployee);
-
+                _logger.LogInformation($"Employee created.");
                 return addedBankEmployee;
             }
             catch (Exception ex)

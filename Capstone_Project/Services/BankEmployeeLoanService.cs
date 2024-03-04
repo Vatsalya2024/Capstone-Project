@@ -93,22 +93,36 @@ public class BankEmployeeLoanService : IBankEmployeeLoanService
                 throw new NoAccountsFoundException($"No account found with ID: {accountId}");
             }
 
-            
-            var inboundAmount = transactions
-                .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Credit")
-                .Sum(t => t.Amount);
 
-            
-            var outboundAmount = transactions
-                .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Debit")
-                .Sum(t => t.Amount);
+            //var inboundAmount = transactions
+            //    .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Credit")
+            //    .Sum(t => t.Amount);
 
-            var creditScore = inboundAmount > outboundAmount ? "Good" : "Bad"; 
+
+            //var outboundAmount = transactions
+            //    .Where(t => t.SourceAccountNumber == accountId && t.TransactionType == "Debit")
+            //    .Sum(t => t.Amount);
+
+            //var creditScore = inboundAmount > outboundAmount ? "Good" : "Bad"; 
+
+            //var result = new CreditCheckResultDTO
+            //{
+            //    InboundAmount = inboundAmount,
+            //    OutboundAmount = outboundAmount,
+            //    CreditScore = creditScore
+            //};
+            var inboundCount = transactions
+           .Count(t => t.SourceAccountNumber == accountId && t.TransactionType == "Credit");
+
+            var outboundCount = transactions
+                .Count(t => t.SourceAccountNumber == accountId && t.TransactionType == "Debit");
+
+            var creditScore = inboundCount > outboundCount ? "Good" : "Bad";
 
             var result = new CreditCheckResultDTO
             {
-                InboundAmount = inboundAmount,
-                OutboundAmount = outboundAmount,
+                InboundAmount = inboundCount,
+                OutboundAmount = outboundCount,
                 CreditScore = creditScore
             };
 

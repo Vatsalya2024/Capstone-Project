@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class BankTransactionServiceException : Exception
+    public class BankTransactionServiceException : Exception
     {
         public BankTransactionServiceException()
         {

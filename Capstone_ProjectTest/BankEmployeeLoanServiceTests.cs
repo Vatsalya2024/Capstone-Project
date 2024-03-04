@@ -111,7 +111,17 @@ namespace Capstone_ProjectTest
             // Assert
             Assert.That(result, Is.EqualTo(expectedMessage));
         }
+        [Test]
+        public void ReviewLoanApplication_InvalidLoanId_ThrowsLoanNotFoundException()
+        {
+            // Arrange
+            var invalidLoanId = 999;
 
+            _mockLoansRepository.Setup(repo => repo.Get(invalidLoanId)).ReturnsAsync((Loans?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoLoansFoundException>(async () => await _bankEmployeeLoanService.ReviewLoanApplication(invalidLoanId));
+        }
     }
 }
 

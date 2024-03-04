@@ -77,7 +77,19 @@ namespace Capstone_Project.Tests
             Assert.That(availedLoans.Count, Is.EqualTo(2));
             Assert.IsTrue(availedLoans.All(loan => loan.CustomerID == customerId));
         }
+        [Test]
+        public void ViewAvailedLoans_InvalidCustomerId_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int invalidCustomerId = -1; 
+            _mockCustomerRepository.Setup(repo => repo.Get(invalidCustomerId))
+                .ReturnsAsync((Customers?)null); 
 
-       
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _customerLoanService.ViewAvailedLoans(invalidCustomerId));
+            Assert.That(ex.Message, Is.EqualTo($"No customer found with ID {invalidCustomerId}"));
+        }
+
+
     }
 }

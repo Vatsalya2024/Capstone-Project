@@ -34,7 +34,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var employees = await _bankEmployeeService.GetAllEmployees();
-                
+                _logger.LogInformation("Retrieved all employees successfully.");
                 return Ok(employees);
             }
             catch (EmployeeNotFoundException ex)
@@ -52,7 +52,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var employee = await _bankEmployeeService.GetEmployee(employeeId);
-               
+                _logger.LogInformation("Retrieved employee successfully.");
                 return Ok(employee);
             }
             catch (EmployeeNotFoundException ex)
@@ -70,7 +70,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var activatedEmployee = await _bankEmployeeService.ActivateEmployee(employeeId);
-                
+                _logger.LogInformation("Activated employee successfully.");
                 return Ok(activatedEmployee);
             }
             
@@ -94,7 +94,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var deactivatedEmployee = await _bankEmployeeService.DeactivateEmployee(employeeId);
-                
+                _logger.LogInformation("Deactivated employee successfully.");
                 return Ok(deactivatedEmployee);
             }
             catch (EmployeeNotFoundException ex)
@@ -117,7 +117,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var addedBankEmployee = await _bankEmployeeService.CreateBankEmployee(employeeDTO);
-               
+                _logger.LogInformation("Registered employee successfully.");
                 return Ok(addedBankEmployee);
             }
             catch (BankEmployeeCreationException ex)

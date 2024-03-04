@@ -18,6 +18,7 @@ namespace Capstone_Project.Services
 
         public async Task<Banks> AddBank(Banks item)
         {
+            _loggerBanksService.LogInformation("Adding bank...");
             return await _banksRepository.Add(item);
         }
 
@@ -28,6 +29,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBanksFoundException($"Bank ID {key} not found");
             }
+            _loggerBanksService.LogInformation("Bank Deleted");
             return deletedBank;
         }
 
@@ -38,6 +40,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBanksFoundException($"No Banks Data Found");
             }
+            _loggerBanksService.LogInformation("Banks Fetched");
             return allBanks;
         }
 
@@ -48,6 +51,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBanksFoundException($"Bank ID {key} not found");
             }
+            _loggerBanksService.LogInformation("Bank Found");
             return foundedBank;
         }
 
@@ -56,6 +60,7 @@ namespace Capstone_Project.Services
             var foundedBank = await GetBank(updateBankNameDTO.BankID);
             foundedBank.BankName = updateBankNameDTO.BankName;
             var updatedBank = await _banksRepository.Update(foundedBank);
+            _loggerBanksService.LogInformation("Bank Updated");
             return updatedBank;
         }
     }

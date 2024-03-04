@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class EmployeeNotFoundException : Exception
+    public class EmployeeNotFoundException : Exception
     {
         public EmployeeNotFoundException()
         {

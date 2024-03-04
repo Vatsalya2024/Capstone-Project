@@ -30,6 +30,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var customers = await _bankEmployeeAccountService.GetCustomersListasync();
+                _logger.LogInformation("Retrieved Employees successfully.");
                 return Ok(customers);
             }
             catch (Exception ex)
@@ -46,7 +47,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var customer = await _bankEmployeeAccountService.GetCustomers(id);
-                
+                _logger.LogInformation("Retrieved Employees successfully.");
                 return customer;
             }
             catch(NoCustomersFoundException ncfe)

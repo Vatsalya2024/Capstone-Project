@@ -31,6 +31,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var transactions = await _bankEmployeeTransactionService.GetAllTransactions();
+                _logger.LogInformation("Retrieved Transaction successfully.");
                 return transactions;
             }
             catch (BankTransactionServiceException ex)

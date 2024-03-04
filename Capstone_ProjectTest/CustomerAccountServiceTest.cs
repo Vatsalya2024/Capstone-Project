@@ -123,5 +123,38 @@ namespace Capstone_ProjectTest
             // Assert
             Assert.IsNotNull(result);
         }
+        [Test]
+        public void CloseAccount_AccountNotFound_ThrowsNoAccountsFoundException()
+        {
+            // Arrange
+            long accountNumber = 123456789;
+            _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync((Accounts?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoAccountsFoundException>(() => _customerAccountService.CloseAccount(accountNumber));
+        }
+        [Test]
+        public void GetAccountDetails_AccountNotFound_ThrowsNoAccountsFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            long accountNumber = 123456789;
+            _mockAccountsRepository.Setup(repo => repo.Get(accountNumber)).ReturnsAsync((Accounts?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoAccountsFoundException>(() => _customerAccountService.GetAccountDetails(accountNumber, customerId));
+        }
+        [Test]
+        public void GetAllAccountsByCustomerId_NoAccountsFound_ThrowsNoAccountsFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            _mockAccountsRepository.Setup(repo => repo.GetAll()).ReturnsAsync((List<Accounts>?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoAccountsFoundException>(() => _customerAccountService.GetAllAccountsByCustomerId(customerId));
+        }
+
+
     }
 }

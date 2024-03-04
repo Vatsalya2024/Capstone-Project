@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class PasswordMismatchException : Exception
+    public class PasswordMismatchException : Exception
     {
         public PasswordMismatchException()
         {

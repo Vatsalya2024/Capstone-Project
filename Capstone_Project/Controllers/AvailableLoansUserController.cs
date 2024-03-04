@@ -28,7 +28,7 @@ namespace Capstone_Project.Controllers
         {
             try
             {
-                _logger.LogInformation("Retrieving all loans via API.");
+                _logger.LogInformation("Retrieving all loans.");
                 var loans = await _availableLoansUserService.GetAllLoans();
                 if (loans == null || loans.Count == 0)
                 {

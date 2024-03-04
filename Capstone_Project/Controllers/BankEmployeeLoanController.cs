@@ -30,6 +30,7 @@ public class BankEmployeeLoanController : ControllerBase
         try
         {
             var loans = await _bankEmployeeLoanService.GetAllLoans();
+            _logger.LogInformation("Retrieved Loans successfully.");
             return loans;
         }
         catch (NoLoansFoundException ex)
@@ -50,8 +51,8 @@ public class BankEmployeeLoanController : ControllerBase
         try
         {
             var loan = await _bankEmployeeLoanService.ReviewLoanApplication(loanId);
-            
-                return Ok(loan);
+            _logger.LogInformation("Reviewed Loans successfully.");
+            return Ok(loan);
       
             
         }
@@ -75,6 +76,7 @@ public class BankEmployeeLoanController : ControllerBase
         try
         {
             var creditCheckResult = await _bankEmployeeLoanService.CheckCredit(accountId);
+            _logger.LogInformation("Credit checked.");
             return Ok(creditCheckResult);
         }
         catch (NoAccountsFoundException ex)
@@ -102,6 +104,7 @@ public class BankEmployeeLoanController : ControllerBase
         try
         {
             var decisionMessage = await _bankEmployeeLoanService.MakeLoanDecision(loanId, approved);
+            _logger.LogInformation("Making Loan Descision.");
             return Ok(decisionMessage);
         }
         catch (NoLoansFoundException ex)
@@ -123,6 +126,7 @@ public class BankEmployeeLoanController : ControllerBase
         try
         {
             var account = await _bankEmployeeLoanService.DisburseLoan(loanId, accountId);
+            _logger.LogInformation("Loan Disbursed.");
             return Ok(account);
         }
         catch(AccountFetchException ex)

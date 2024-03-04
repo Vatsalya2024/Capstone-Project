@@ -39,11 +39,11 @@ namespace Capstone_ProjectTest
         {
             // Arrange
             var userEmail = "inactive@example.com";
-            var userKey = new byte[64]; // Mocking key
+            var userKey = new byte[64]; 
             var validation = new Validation
             {
                 Email = userEmail,
-                Password = userKey, // Mocking password hash
+                Password = userKey, 
                 Key = userKey,
                 Status = "Inactive",
                 UserType = "Admin"
@@ -97,12 +97,12 @@ namespace Capstone_ProjectTest
             // Arrange
             var userEmail = "validuser@example.com";
             var userPassword = "password";
-            var userKey = new byte[64]; // Mocking key
+            var userKey = new byte[64]; 
             var hashedPassword = new HMACSHA512(userKey).ComputeHash(Encoding.UTF8.GetBytes(userPassword));
             var validation = new Validation
             {
                 Email = userEmail,
-                Password = hashedPassword, // Mocking password hash
+                Password = hashedPassword, 
                 Key = userKey,
                 Status = "Active",
                 UserType = "Admin"

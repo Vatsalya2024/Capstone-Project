@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [Serializable]
-internal class NoLoansFoundException : Exception
+public class NoLoansFoundException : Exception
 {
     public NoLoansFoundException()
     {

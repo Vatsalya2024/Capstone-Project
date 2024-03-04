@@ -32,6 +32,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBankEmployeesFoundException($"No Bank Employee Data Found");
             }
+            _logger.LogInformation("All bank employees fetched successfully.");
             return allBankEmployee;
         }
 
@@ -42,6 +43,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBankEmployeesFoundException($"Bank Employee ID {key} not found");
             }
+            _logger.LogInformation("Bank employees deleted successfully.");
             return deletedBankEmployee;
         }
 
@@ -52,6 +54,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBankEmployeesFoundException($"Bank Employee ID {key} not found");
             }
+            _logger.LogInformation("Bank employee fetched successfully.");
             return foundedBankEmployee;
         }
 
@@ -60,6 +63,7 @@ namespace Capstone_Project.Services
             var foundedBankEmployee = await GetBankEmployee(updateBankEmployeeNameDTO.EmployeeID);
             foundedBankEmployee.Name = updateBankEmployeeNameDTO.Name;
             var updatedBankEmployee = await _bankEmployeeRepository.Update(foundedBankEmployee);
+            _logger.LogInformation("Bank employees updated successfully.");
             return updatedBankEmployee;
         }
     }

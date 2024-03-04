@@ -131,5 +131,38 @@ namespace Capstone_Project.Services.Tests
         }
 
 
+        [Test]
+        public void Login_ThrowsDeactivatedUserException()
+        {
+            // Arrange
+            var loginUserDTO = new LoginUserDTO
+            {
+                Email = "deactivated@example.com",
+                Password = "password"
+            };
+
+            var deactivatedValidation = new Validation
+            {
+                Email = "deactivated@example.com",
+                Status = "Deactivated",
+                Password = new byte[64],
+                Key = new byte[64]
+            };
+
+            _validationRepositoryMock.Setup(repo => repo.Get(loginUserDTO.Email))
+                .ReturnsAsync(deactivatedValidation);
+
+            // Act & Assert
+            Assert.ThrowsAsync<DeactivatedUserException>(() => _service.Login(loginUserDTO));
+        }
+
+
+
+
+       
+
+
+
+
     }
 }

@@ -106,7 +106,7 @@ namespace Capstone_Project.Controllers
 
         }
         [Authorize(Roles = "Customer")]
-        [Route("Last 10 Transactions")]
+        [Route("Last10Transactions")]
         [HttpGet]
         public async Task<IActionResult> GetLast10Transactions(long accountNumber)
         {
@@ -127,7 +127,7 @@ namespace Capstone_Project.Controllers
             }
         }
         [Authorize(Roles = "Customer")]
-        [Route("Last Month Transactions")]
+        [Route("LastMonthTransactions")]
         [HttpGet]
         public async Task<IActionResult> GetLastMonthTransactions(long accountNumber)
         {
@@ -148,7 +148,7 @@ namespace Capstone_Project.Controllers
             }
         }
         [Authorize(Roles = "Customer")]
-        [Route("Transactions Between Dates")]
+        [Route("TransactionsBetweenDates")]
         [HttpGet]
         public async Task<IActionResult> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate)
         {

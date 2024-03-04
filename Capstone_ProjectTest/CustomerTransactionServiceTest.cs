@@ -149,5 +149,99 @@ namespace Capstone_Project.Tests
             // Assert
             Assert.IsNotNull(result);
         }
+        [Test]
+        public void GetLastMonthTransactions_NoTransactionsFound_ThrowsNoTransactionsException()
+        {
+            // Arrange
+            long accountNumber = 123;
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(new List<Transactions>());
+
+            // Act and Assert
+            Assert.ThrowsAsync<NoTransactionsException>(async () => await _service.GetLastMonthTransactions(accountNumber));
+        }
+        [Test]
+        public void GetTransactionsBetweenDates_NoTransactionsFound_ThrowsNoTransactionsException()
+        {
+            // Arrange
+            long accountNumber = 123;
+            var startDate = DateTime.Now.AddMonths(-1);
+            var endDate = DateTime.Now;
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(new List<Transactions>());
+
+            // Act and Assert
+            Assert.ThrowsAsync<NoTransactionsException>(async () => await _service.GetTransactionsBetweenDates(accountNumber, startDate, endDate));
+        }
+
+        [Test]
+        public async Task GetTransactionsBetweenDates_ValidData_ReturnsFilteredTransactions()
+        {
+            // Arrange
+            long accountNumber = 123;
+            var startDate = DateTime.Now.AddMonths(-1);
+            var endDate = DateTime.Now;
+            var transactions = new List<Transactions>
+    {
+        new Transactions { TransactionID = 1, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-5).Date },
+        new Transactions { TransactionID = 2, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-10).Date },
+        new Transactions { TransactionID = 3, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-15).Date }
+    };
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(transactions);
+
+            // Act
+            var result = await _service.GetTransactionsBetweenDates(accountNumber, startDate, endDate);
+
+            // Assert
+            CollectionAssert.AreEqual(transactions, result);
+        }
+
+        [Test]
+        public async Task GetLast10Transactions_ValidAccountNumber_ReturnsLast10Transactions()
+        {
+            // Arrange
+            long accountNumber = 123;
+            var transactions = new List<Transactions>
+        {
+            new Transactions { TransactionID = 1, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-1).Date },
+            new Transactions { TransactionID = 2, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-2).Date },
+
+        };
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(transactions);
+
+            // Act
+            var result = await _service.GetLast10Transactions(accountNumber);
+
+            // Assert
+            CollectionAssert.AreEqual(transactions.Take(10).OrderByDescending(t => t.TransactionDate), result);
+        }
+
+        [Test]
+        public void GetLast10Transactions_NoTransactionsFound_ThrowsNoTransactionsException()
+        {
+            // Arrange
+            long accountNumber = 123;
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(new List<Transactions>());
+
+            // Act and Assert
+            Assert.ThrowsAsync<NoTransactionsException>(async () => await _service.GetLast10Transactions(accountNumber));
+        }
+
+        [Test]
+        public async Task GetLast10Transactions_LessThan10Transactions_ReturnsAllTransactions()
+        {
+            // Arrange
+            long accountNumber = 123;
+            var transactions = new List<Transactions>
+        {
+            new Transactions { TransactionID = 1, SourceAccountNumber = accountNumber, TransactionDate = DateTime.Now.AddDays(-1).Date },
+            
+        };
+            _transactionsRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(transactions);
+
+            // Act
+            var result = await _service.GetLast10Transactions(accountNumber);
+
+            // Assert
+            CollectionAssert.AreEqual(transactions.OrderByDescending(t => t.TransactionDate), result);
+        }
     }
 }

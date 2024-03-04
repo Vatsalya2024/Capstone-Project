@@ -80,7 +80,7 @@ namespace Capstone_Project.Services
                 _logger.LogInformation("Attempting user registration...");
 
                 Validation myuser = new RegisterToCustomerUser(user).GetValidation();
-                myuser.Status = "Active"; // Set status to "Active" by default
+                myuser.Status = "Active"; 
                 myuser = await _validationRepository.Add(myuser);
                 Customers customers = new RegisterToCustomer(user).GetCustomers();
                 customers = await _customerRepository.Add(customers);
@@ -265,24 +265,24 @@ namespace Capstone_Project.Services
         {
             _logger.LogInformation($"Resetting password for customer with email {email}...");
 
-            // Check if newPassword and confirmPassword match
+            
             if (newPassword != confirmPassword)
             {
                 throw new PasswordMismatchException("New password and confirm password do not match.");
             }
 
-            // Retrieve the validation record associated with the email
+            
             var validation = await _validationRepository.Get(email);
             if (validation == null)
             {
                 throw new ValidationNotFoundException($"Validation not found for email: {email}");
             }
 
-            // Generate a new key and encrypt the new password
+            
             byte[] newKey = GenerateNewKey();
             byte[] encryptedPassword = GetPasswordEncrypted(newPassword, newKey);
 
-            // Update the validation record with the new password and key
+           
             validation.Password = encryptedPassword;
             validation.Key = newKey;
             await _validationRepository.Update(validation);

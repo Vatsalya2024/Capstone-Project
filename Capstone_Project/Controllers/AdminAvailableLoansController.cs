@@ -28,7 +28,7 @@ namespace Capstone_Project.Controllers
         {
             try
             {
-                _logger.LogInformation("Adding loan via API.");
+                _logger.LogInformation("Adding loan.");
                 var addedLoan = await _adminAvailableLoansService.AddLoan(loan);
                 return Ok(addedLoan);
             }

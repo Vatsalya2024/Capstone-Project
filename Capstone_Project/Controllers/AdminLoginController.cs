@@ -28,6 +28,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var user = await _adminLoginService.Login(loginUserDTO);
+                _logger.LogInformation("Login Successful.");
                 return Ok(user);
             }
             catch (ValidationNotFoundException ex)
@@ -51,6 +52,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var user = await _adminLoginService.Register(registerAdminDTO);
+                _logger.LogInformation("Register successfull.");
                 return Ok(user);
             }
             catch (ValidationNotFoundException ex)

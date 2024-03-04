@@ -34,6 +34,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var newAccount = await _accountManagementService.OpenNewAccount(accountOpeningDTO);
+                _logger.LogInformation("Account Opening successful.");
                 return Ok(newAccount);
             }
             catch (NoAccountsFoundException nafe)
@@ -50,6 +51,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var result = await _accountManagementService.CloseAccount(accountNumber);
+                _logger.LogInformation("Account Closing successful.");
                 return Ok(result);
             }
             catch (NoAccountsFoundException ex)
@@ -75,6 +77,7 @@ namespace Capstone_Project.Controllers
             try
             {
                 var account = await _accountManagementService.GetAccountDetails(accountNumber, customerId);
+                _logger.LogInformation("Retrieved Account Details successfully.");
                 return Ok(account);
             }
             catch (NoAccountsFoundException ex)
@@ -95,7 +98,8 @@ namespace Capstone_Project.Controllers
             try
             {
                 var customerAccounts = await _accountManagementService.GetAllAccountsByCustomerId(customerId);
-               return Ok(customerAccounts);
+                _logger.LogInformation("Retrieved Account Details successfully.");
+                return Ok(customerAccounts);
                 
                 
             }

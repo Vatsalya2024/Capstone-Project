@@ -32,6 +32,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoAdminFoundException($"Admin ID {key} not found");
             }
+            _logger.LogInformation($"Admin found.");
             return foundedAdmin;
         }
 
@@ -50,6 +51,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoAdminFoundException($"No Admin Data Found");
             }
+            _logger.LogInformation($"Fetched all admins.");
             return allAdmin;
         }
 
@@ -60,6 +62,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoAdminFoundException($"Admin ID {key} not found");
             }
+            _logger.LogInformation($"Deleted admin.");
             return deletedAdmin;
         }
     }

@@ -3,7 +3,7 @@
 namespace Capstone_Project.Services
 {
     [Serializable]
-    internal class AccountFetchException : Exception
+    public class AccountFetchException : Exception
     {
         public AccountFetchException()
         {

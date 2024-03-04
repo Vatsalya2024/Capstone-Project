@@ -121,7 +121,98 @@ namespace Capstone_ProjectTest
             Assert.That(result, Is.EqualTo(expectedCustomer));
         }
 
-       
+        [Test]
+        public void ActivateUser_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.ActivateUser(customerId));
+        }
+
+
+
+        [Test]
+        public void DeactivateUser_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.DeactivateUser(customerId));
+        }
+
+
+
+
+
+        [Test]
+        public void GetUser_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.GetUser(customerId));
+        }
+
+        [Test]
+        public void UpdateCustomerContact_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            var contactDTO = new AdminUpdateCustomerContactDTO { PhoneNumber = 1234567890 };
+
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.UpdateCustomerContact(customerId, contactDTO));
+        }
+
+        [Test]
+        public void UpdateCustomerDetails_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            var detailsDTO = new AdminUpdateCustomerDetailsDTO
+            {
+                DOB = new DateTime(2002, 1, 1),
+                Age = 30,
+                PANNumber = "ABCDE1234F",
+                Gender = "Male"
+            };
+
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.UpdateCustomerDetails(customerId, detailsDTO));
+        }
+
+        [Test]
+        public void UpdateCustomerName_CustomerNotFound_ThrowsNoCustomersFoundException()
+        {
+            // Arrange
+            int customerId = 1;
+            var nameDTO = new AdminUpdateCustomerNameDTO { Name = "T" };
+
+            _customersRepositoryMock.Setup(repo => repo.Get(customerId))
+                .ReturnsAsync((Customers?)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await _adminCustomerService.UpdateCustomerName(customerId, nameDTO));
+        }
+
+
+
 
         [Test]
         public async Task UpdateCustomerContact()

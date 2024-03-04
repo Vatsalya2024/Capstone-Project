@@ -166,5 +166,24 @@ namespace Capstone_ProjectTest
             // Assert
             Assert.That(result, Is.EqualTo(pendingDeletionAccounts));
         }
+        [Test]
+        public void GetCustomers_InvalidCustomerId_ThrowsNotFoundException()
+        {
+            // Arrange
+            var invalidCustomerId = 999; 
+
+            var customerRepositoryMock = new Mock<IRepository<int, Customers>>();
+            customerRepositoryMock.Setup(repo => repo.Get(invalidCustomerId)).ReturnsAsync((Customers?)null);
+
+            var loggerMock = new Mock<ILogger<BankEmployeeAccountService>>();
+
+            var service = new BankEmployeeAccountService(
+                Mock.Of<IRepository<long, Accounts>>(),
+                customerRepositoryMock.Object,
+                loggerMock.Object);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoCustomersFoundException>(async () => await service.GetCustomers(invalidCustomerId));
+        }
     }
 }

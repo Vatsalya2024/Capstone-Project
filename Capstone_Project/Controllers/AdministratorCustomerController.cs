@@ -33,8 +33,8 @@ namespace Capstone_Project.Controllers
             try
             {
                 var users = await _customerManagementService.GetAllUsers();
-               
-                    return Ok(users);
+                _logger.LogInformation("Retrieved Customer successfully.");
+                return Ok(users);
                 
             }
             catch (Exception ex)
@@ -51,8 +51,8 @@ namespace Capstone_Project.Controllers
             try
             {
                 var user = await _customerManagementService.GetUser(id);
-               
-                    return Ok(user);
+                _logger.LogInformation("Retrieved Customer successfully.");
+                return Ok(user);
               
             }
             catch (NoCustomersFoundException ex)
@@ -70,8 +70,8 @@ namespace Capstone_Project.Controllers
             try
             {
                 var user = await _customerManagementService.DeactivateUser(customerId);
-                
-                    return Ok($"User with ID {customerId} deactivated successfully.");
+                _logger.LogInformation("Deactivated successfully.");
+                return Ok($"User with ID {customerId} deactivated successfully.");
                 
             }
             catch (NoCustomersFoundException ex)
@@ -94,8 +94,8 @@ namespace Capstone_Project.Controllers
             try
             {
                 var user = await _customerManagementService.ActivateUser(customerId);
-                
-                    return Ok($"User with ID {customerId} activated successfully.");
+                _logger.LogInformation("Activated successfully.");
+                return Ok($"User with ID {customerId} activated successfully.");
                 
                 
             }

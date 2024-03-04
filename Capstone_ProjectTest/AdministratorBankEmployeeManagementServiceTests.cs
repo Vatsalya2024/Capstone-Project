@@ -147,15 +147,15 @@ namespace Capstone_Project.Tests
                 Phone = "1234567890"
             };
 
-            // Add the employee to the database
+           
             await _context.BankEmployees.AddAsync(employee);
             await _context.SaveChangesAsync();
 
-            // Act: Update the employee's information
+           
             employee.Name = "Updated Name";
             var result = await _service.UpdateEmployee(employee);
 
-            // Retrieve the employee after the update
+           
             var updatedEmployee = await _context.BankEmployees.FindAsync(employee.EmployeeID);
 
             // Assert
@@ -184,6 +184,45 @@ namespace Capstone_Project.Tests
 
             // Assert
             Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void GetEmployee_InvalidEmployeeId_ThrowsEmployeeNotFoundException()
+        {
+            // Arrange
+            var invalidEmployeeId = 999;
+
+            // Act & Assert
+            var exception = Assert.ThrowsAsync<EmployeeNotFoundException>(() => _service.GetEmployee(invalidEmployeeId));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo($"Employee with ID {invalidEmployeeId} not found."));
+        }
+
+        [Test]
+        public void DeactivateEmployee_InvalidEmployeeId_ThrowsEmployeeNotFoundException()
+        {
+            // Arrange
+            var invalidEmployeeId = 999;
+
+            // Act & Assert
+            var exception = Assert.ThrowsAsync<EmployeeNotFoundException>(() => _service.DeactivateEmployee(invalidEmployeeId));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo($"Employee with ID {invalidEmployeeId} not found."));
+        }
+
+        [Test]
+        public void ActivateEmployee_InvalidEmployeeId_ThrowsEmployeeNotFoundException()
+        {
+            // Arrange
+            var invalidEmployeeId = 999;
+
+            // Act & Assert
+            var exception = Assert.ThrowsAsync<EmployeeNotFoundException>(() => _service.ActivateEmployee(invalidEmployeeId));
+
+            // Assert
+            Assert.That(exception.Message, Is.EqualTo($"Employee with ID {invalidEmployeeId} not found."));
         }
 
 

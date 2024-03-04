@@ -18,6 +18,7 @@ namespace Capstone_Project.Services
 
         public async Task<Branches> AddBranch(Branches item)
         {
+            _loggerBranchesService.LogInformation("Adding Branch");
             return await _branchesRepository.Add(item);
         }
 
@@ -28,6 +29,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBranchesFoundException($"Branch IFSC {key} not found");
             }
+            _loggerBranchesService.LogInformation("Branch Deleted");
             return deletedBranch;
         }
 
@@ -38,6 +40,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBranchesFoundException($"No Branches Data Found");
             }
+            _loggerBranchesService.LogInformation("All branches");
             return allBranches;
         }
 
@@ -48,6 +51,7 @@ namespace Capstone_Project.Services
             {
                 throw new NoBranchesFoundException($"Branch IFSC {key} not found");
             }
+            _loggerBranchesService.LogInformation("Branch Found");
             return foundBranch;
         }
 

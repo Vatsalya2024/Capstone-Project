@@ -83,7 +83,7 @@ namespace Capstone_Project.Controllers
         {
             try
             {
-                // Call the service method to reset the password
+                
                 var resetSuccessful = await _customerAdminService.ResetPassword(email, newPassword, confirmPassword);
 
                 if (resetSuccessful)

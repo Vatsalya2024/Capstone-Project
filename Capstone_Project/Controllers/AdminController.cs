@@ -9,6 +9,7 @@ namespace Capstone_Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class AdminController : ControllerBase
     {
 
@@ -22,18 +23,13 @@ namespace Capstone_Project.Controllers
             _adminService = adminService;
         }
 
-
-
-
-
-
-
         [Route("GetAllAdmin")]
         [HttpGet]
         public async Task<ActionResult<List<Admin>>> GetAllAdmin()
         {
             try
             {
+                _logger.LogInformation("Retrieved Admin successfully.");
                 return await _adminService.GetAllAdmin();
             }
             catch (NoAdminFoundException e)
@@ -49,6 +45,7 @@ namespace Capstone_Project.Controllers
         {
             try
             {
+                _logger.LogInformation("Retrieved Admin successfully.");
                 return await _adminService.GetAdmin(key);
             }
             catch (NoAdminFoundException e)
