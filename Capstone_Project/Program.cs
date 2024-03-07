@@ -81,7 +81,7 @@ public class Program
         {
             opts.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnectionString"));
         });
-
+        #region Repository
         builder.Services.AddScoped<IRepository<string, Validation>, ValidationRepository>();
         builder.Services.AddScoped<IRepository<int, Customers>, CustomersRepository>();
         builder.Services.AddScoped<IRepository<int, BankEmployees>, BankEmployeesRepository>();
@@ -93,7 +93,9 @@ public class Program
         builder.Services.AddScoped<IRepository<int, Loans>, LoansRepository>();
         builder.Services.AddScoped<IRepository<int, Transactions>, TransactionsRepository>();
         builder.Services.AddScoped<IRepository<int,AvailableLoans>,AvailableLoansRepository>();
-       
+        #endregion
+
+        #region Services
         builder.Services.AddScoped<IAdminAvailableLoansService, AdminAvailableLoansService>();
         builder.Services.AddScoped<IAvailableLoansUserService, AvailableLoansUserService>();
         builder.Services.AddScoped<IBanksAdminService, BanksService>();
@@ -115,7 +117,7 @@ public class Program
         builder.Services.AddScoped<IAccountManagementService, CustomerAccountService>();
         builder.Services.AddScoped<ICustomerBeneficiaryService, CustomerBeneficiaryService>();
         var app = builder.Build();
-
+        #endregion
 
 
 

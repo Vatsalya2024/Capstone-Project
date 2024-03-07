@@ -12,7 +12,7 @@ namespace Capstone_Project.Interfaces
         Task<List<Transactions>> GetLast10Transactions(long accountNumber);
         Task<List<Transactions>> GetLastMonthTransactions(long accountNumber);
         Task<List<Transactions>> GetTransactionsBetweenDates(long accountNumber, DateTime startDate, DateTime endDate);
-
+        Task<AccountStatementDTO> GetAccountStatement(long accountNumber, DateTime startDate, DateTime endDate);
     }
 }
 

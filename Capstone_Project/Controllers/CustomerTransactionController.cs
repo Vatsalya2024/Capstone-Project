@@ -168,5 +168,27 @@ namespace Capstone_Project.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+        [Authorize(Roles = "Customer")]
+        [Route("AccountStatement")]
+        [HttpGet]
+        public async Task<IActionResult> GetAccountStatement(long accountNumber, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var accountStatement = await _transactionService.GetAccountStatement(accountNumber, startDate, endDate);
+                return Ok(accountStatement);
+            }
+            catch (NoTransactionsException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the account statement.");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
     }
 }

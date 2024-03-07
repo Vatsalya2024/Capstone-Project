@@ -262,5 +262,46 @@ namespace Capstone_Project.Services
                 throw; 
             }
         }
+        public async Task<AccountStatementDTO> GetAccountStatement(long accountNumber, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var transactions = await _transactionsRepository.GetAll();
+                if (transactions == null || transactions.Count == 0)
+                {
+                    throw new NoTransactionsException("No transactions found.");
+                }
+
+                var accountTransactions = transactions.Where(t => t.SourceAccountNumber == accountNumber &&
+                                                                   t.TransactionDate >= startDate &&
+                                                                   t.TransactionDate <= endDate)
+                                                      .ToList();
+
+                if (accountTransactions.Count == 0)
+                {
+                    throw new NoTransactionsException("No transactions found for the specified account within the specified dates.");
+                }
+
+                double totalDebit = accountTransactions.Where(t => t.TransactionType == "Debit").Sum(t => t.Amount);
+                double totalCredit = accountTransactions.Where(t => t.TransactionType == "Credit").Sum(t => t.Amount);
+
+                string creditScore = totalDebit < totalCredit ? "Good" : "Bad";
+
+                var accountStatementDTO = new AccountStatementDTO
+                {
+                    CreditScore = creditScore,
+                    TotalDebit = totalDebit,
+                    TotalCredit = totalCredit
+                };
+
+                return accountStatementDTO;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving account statement.");
+                throw;
+            }
+        }
+
     }
 }
