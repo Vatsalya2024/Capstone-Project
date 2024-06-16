@@ -43,8 +43,8 @@ namespace Capstone_Project.Repositories
         public async Task<Accounts?> Get(long key)
         {
             var foundedAccount = await _mavericksBankContext.Accounts
-                .Include(account => account.Customers) // Include related customers
-                .Include(account => account.Branches)  // Include related branches
+                .Include(account => account.Customers) 
+                .Include(account => account.Branches)  
                 .FirstOrDefaultAsync(account => account.AccountNumber == key);
 
             return foundedAccount;

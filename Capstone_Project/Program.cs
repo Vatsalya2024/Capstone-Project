@@ -116,6 +116,7 @@ public class Program
         builder.Services.AddScoped<ITransactionService, CustomerTransactionService>();
         builder.Services.AddScoped<IAccountManagementService, CustomerAccountService>();
         builder.Services.AddScoped<ICustomerBeneficiaryService, CustomerBeneficiaryService>();
+       
         var app = builder.Build();
         #endregion
 
